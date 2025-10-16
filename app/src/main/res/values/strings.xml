@@ -1,0 +1,102 @@
+<resources>
+    <string name="app_name">SportsDiary</string>
+    <string name="menu_title">Меню</string>
+    <string name="training_title">Тренировки</string>
+    <string name="list_of_training">Список проведенных тренировок</string>
+    <string name="main_block">Основные</string>
+    <string name="other_block">Прочее</string>
+    <string name="morning_exercises_title">Зарядка</string>
+    <string name="statistic_and_note">Статистика и заметки</string>
+    <string name="proportions_title">Замеры тела</string>
+    <string name="list_of_proportions">Список проведенных замеров</string>
+    <string name="list_of_exercises">Список упражнений с описанием</string>
+    <string name="sports_exercises_title">Упражнения</string>
+    <string name="calculate_title">Калькуляторы</string>
+    <string name="calculate_description">Калькуляторы для вычисления различных показателей</string>
+    <string name="settings_title">Настройки</string>
+    <string name="interface_block">Интерфейс</string>
+    <string name="language_title">Язык</string>
+    <string name="theme_title">Тема</string>
+    <string name="morning_exercises_description">Внести заметку о проделанной зарядке?</string>
+    <string name="proportions_description">Пришло время помериться обхватом бицепса!</string>
+    <string name="not_entries_of_training">На данный момент нет записей о тренировках</string>
+    <string name="statistic_title">Статистика</string>
+    <string name="count_of_training">Количество тренировок</string>
+    <string name="all_weight">Общий тоннаж</string>
+    <string name="effect_of_training">Эффективность тренировок</string>
+
+    <string name="days">Дни</string>
+    <string name="months">Месяцы</string>
+    <string name="years">Года</string>
+
+    <string name="January">Янв</string>
+    <string name="Februaby">Фев</string>
+    <string name="March">Мар</string>
+    <string name="April">Апр</string>
+    <string name="May">Май</string>
+    <string name="June">Июн</string>
+    <string name="sorted_about">Сортировать по</string>
+    <string name="not_category">Не выбрано</string>
+    <string name="add_exercise">Добавить упражнение</string>
+    <string name="minus">-</string>
+    <string name="constructor">Конструктор</string>
+    <string name="new_category">Новая категория</string>
+
+    <string name="category_name">Название категории</string>
+    <string name="choose_exercises">Выбрать упражнения</string>
+    <string name="chosen_n">Выбрано: %1$d</string>
+    <string name="search">Поиск…</string>
+    <string name="select_all">Выбрать всё</string>
+    <string name="nothing_found">Ничего не найдено</string>
+    <string name="close">Закрыть</string>
+    <string name="cancel">Отмена</string>
+    <string name="create">Создать</string>
+    <string name="apply">Применить</string>
+
+    <!-- типы замеров -->
+    <string name="cm">см</string>
+    <string name="kg">кг</string>
+
+    <string name="thigh_right">Бедро правое</string>
+    <string name="thigh_left">Бедро левое</string>
+    <string name="biceps_left">Бицепс левый</string>
+    <string name="biceps_right">Бицепс правый</string>
+    <string name="weight">Вес</string>
+    <string name="calf_left">Голень левая</string>
+    <string name="calf_right">Голень правая</string>
+    <string name="chest_girth">Обхват груди</string>
+    <string name="shoulder_girth">Обхват плеч</string>
+    <string name="shoulders_width">Плечи</string>
+    <string name="forearm_left">Предплечье левое</string>
+    <string name="forearm_right">Предплечье правое</string>
+    <string name="height">Рост</string>
+    <string name="hips">Таз</string>
+    <string name="waist">Талия</string>
+    <string name="neck">Шея</string>
+    <string name="wrist_left">Кисть левая</string>
+    <string name="wrist_right">Кисть правая</string>
+    <string name="triceps_left">Трицепс левый</string>
+    <string name="triceps_right">Трицепс правый</string>
+    <string name="quadriceps_left">Квадрицепс левый</string>
+    <string name="quadriceps_right">Квадрицепс правый</string>
+
+    <string name="biceps">Бицепс</string>
+    <string name="triceps">Трицепс</string>
+    <string name="quadriceps">Квадрицепс</string>
+    <string name="thigh">Бедро</string>
+    <string name="calf">Голень</string>
+    <string name="forearm">Предплечье</string>
+    <string name="wrist">Кисть</string>
+    <string name="data_of_morning_exercises">Данные по зарядкам</string>
+    <string name="note_of_morning_exercises">Заметки по зарядкам</string>
+    <string name="finish_morning_exercises">Выполнил зарядку?</string>
+    <string name="finished_morning_exercises">Зарядка выполнена</string>
+    <string name="morning_exercises">- зарядка</string>
+    <string name="training">- тренировка</string>
+    <string name="error_title">Ошибка</string>
+    <string name="sport_exercises_title">Упражнения</string>
+    <string name="illustration">Иллюстрации</string>
+    <string name="dark_mode">Темная</string>
+    <string name="light_mode">Светлая</string>
+    <string name="choose_lang">Выбор языка</string>
+</resources>

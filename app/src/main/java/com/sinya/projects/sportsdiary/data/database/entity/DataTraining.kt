@@ -1,0 +1,30 @@
+package com.sinya.projects.sportsdiary.data.database.entity
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+
+@Entity(
+    tableName = "data_training",
+    primaryKeys = ["training_id", "exercises_id"],
+    foreignKeys = [
+        ForeignKey(
+            entity = Trainings::class,
+            parentColumns = ["id"],
+            childColumns = ["training_id"],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = Exercises::class,
+            parentColumns = ["id"],
+            childColumns = ["exercises_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+data class DataTraining(
+    @ColumnInfo(name = "training_id") val trainingId: Int,
+    @ColumnInfo(name = "exercises_id") val exerciseId: Int,
+    @ColumnInfo(name = "count_result", defaultValue = "0/0/0/0") val countResult: String = "0/0/0/0",
+    @ColumnInfo(name = "weight_result", defaultValue = "0/0/0/0") val weightResult: String = "0/0/0/0"
+)

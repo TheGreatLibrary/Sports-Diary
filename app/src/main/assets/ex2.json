@@ -1,0 +1,313 @@
+[
+  {
+    "id": "Smith_Machine_Bench_Press",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "machine",
+    "category": "strength",
+    "images": [
+      "Smith_Machine_Bench_Press/0.jpg",
+      "Smith_Machine_Bench_Press/1.jpg"
+    ],
+    "primary_muscles": [1, 2, 3],
+    "secondary_muscles": [4, 5, 7, 8, 9],
+    "translations": {
+      "en": {
+        "name": "Smith Machine Bench Press",
+        "instructions": [
+          "Place a flat bench underneath the smith machine. Now place the barbell at a height that you can reach when lying down and your arms are almost fully extended. Once the weight you need is selected, lie down on the flat bench. Using a pronated grip that is wider than shoulder width, unlock the bar from the rack and hold it straight over you with your arms locked. This will be your starting position.",
+          "As you breathe in, come down slowly until you feel the bar on your middle chest.",
+          "After a second pause, bring the bar back to the starting position as you breathe out and push the bar using your chest muscles. Lock your arms in the contracted position, hold for a second and then start coming down slowly again. Tip: It should take at least twice as long to go down than to come up.",
+          "Repeat the movement for the prescribed amount of repetitions.",
+          "When you are done, lock the bar back in the rack."
+        ],
+        "description": "A fundamental compound pressing movement performed in the Smith machine for chest development. The fixed bar path provides stability and safety, making it ideal for beginners while allowing experienced lifters to focus purely on chest activation without stabilizer fatigue. Essential for building overall chest mass, developing pressing strength, and creating a solid foundation for upper body power. The Smith machine's guided motion allows for controlled progressive overload and safer training to failure."
+      },
+      "ru": {
+        "name": "Жим лёжа в тренажёре Смита",
+        "instructions": [
+          "Установите горизонтальную скамью под тренажёром Смита. Установите гриф на такую высоту, чтобы вы могли достать до него лёжа с почти полностью выпрямленными руками. После выбора нужного веса лягте на скамью. Возьмитесь прямым хватом шире плеч, снимите гриф со стоек и удерживайте его над собой на прямых руках. Это исходное положение.",
+          "На вдохе медленно опускайте гриф, пока не почувствуете его на середине груди.",
+          "После секундной паузы верните гриф в исходное положение на выдохе, выжимая его грудными мышцами. Зафиксируйте руки в верхней точке, задержитесь на секунду, затем снова начинайте медленное опускание. Совет: опускание должно занимать минимум в два раза больше времени, чем подъём.",
+          "Повторите движение заданное количество раз.",
+          "По завершении зафиксируйте гриф обратно на стойках."
+        ],
+        "description": "Базовое жимовое движение в тренажёре Смита для развития грудных мышц. Фиксированная траектория грифа обеспечивает стабильность и безопасность, что идеально подходит новичкам, а опытным атлетам позволяет сосредоточиться исключительно на работе груди без утомления стабилизаторов. Необходимо для построения общей массы грудных, развития жимовой силы и создания прочного фундамента силы верхней части тела. Управляемое движение в тренажёре Смита позволяет контролировать прогрессивную перегрузку и безопаснее тренироваться до отказа."
+      }
+    }
+  },
+  {
+    "id": "Smith_Machine_Bent_Over_Row",
+    "force": "pull",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "machine",
+    "category": "strength",
+    "images": [
+      "Smith_Machine_Bent_Over_Row/0.jpg",
+      "Smith_Machine_Bent_Over_Row/1.jpg"
+    ],
+    "primary_muscles": [20, 34],
+    "secondary_muscles": [27, 22, 23, 6],
+    "translations": {
+      "en": {
+        "name": "Smith Machine Bent Over Row",
+        "instructions": [
+          "Set the barbell attached to the smith machine to a height that is about 2 inches below your knees.",
+          "Bend your knees slightly and bring your torso forward, by bending at the waist, while keeping the back straight until it is almost parallel to the floor. Tip: Make sure that you keep the head up.",
+          "Now grasp the barbell using an overhand (pronated) grip and unlock it from the smith machine rack. Then let it hang directly in front of you as your arms hang extended perpendicular to the floor and your torso. This is your starting position.",
+          "While keeping the torso stationary, lift the barbell as you breathe out, keeping the elbows close to the body and not doing any force with the forearm other than holding the weights. On the top contracted position, squeeze the back muscles and hold for a second.",
+          "Slowly lower the weight again to the starting position as you inhale.",
+          "Repeat for the recommended amount of repetitions."
+        ],
+        "description": "A fundamental compound pulling movement for building back thickness and strength. The Smith machine's fixed bar path ensures consistent form and allows you to focus on squeezing the target muscles without worrying about bar stabilization. Essential for developing middle back density, improving posture, and creating the foundational pulling strength needed for a complete physique. The controlled motion pattern makes it perfect for mastering the rowing technique while safely progressing in weight for maximum muscle growth."
+      },
+      "ru": {
+        "name": "Тяга в наклоне в тренажёре Смита",
+        "instructions": [
+          "Установите гриф в тренажёре Смита на высоту примерно на 5 см ниже уровня колен.",
+          "Слегка согните колени и наклоните корпус вперёд в пояснице, сохраняя спину прямой, пока она не станет почти параллельной полу. Совет: держите голову поднятой.",
+          "Возьмитесь за гриф прямым хватом (ладони вниз) и снимите его со стоек. Позвольте ему висеть прямо перед вами на полностью выпрямленных руках перпендикулярно полу и корпусу. Это исходное положение.",
+          "Сохраняя корпус неподвижным, поднимайте гриф на выдохе, держа локти близко к телу и не прилагая усилий предплечьями, кроме удержания веса. В верхней точке сожмите мышцы спины и задержитесь на секунду.",
+          "Медленно опустите вес обратно в исходное положение на вдохе.",
+          "Повторите заданное количество повторений."
+        ],
+        "description": "Базовое тяговое движение для построения толщины и силы спины. Фиксированная траектория грифа в тренажёре Смита обеспечивает стабильную технику и позволяет сосредоточиться на сокращении целевых мышц без необходимости стабилизации грифа. Необходимо для развития плотности средней части спины, улучшения осанки и создания базовой тяговой силы для полноценного телосложения. Контролируемая траектория движения идеально подходит для освоения техники тяги с безопасной прогрессией веса для максимального роста мышц."
+      }
+    }
+  },
+  {
+    "id": "Smith_Machine_Calf_Raise",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "isolation",
+    "equipment": "machine",
+    "category": "strength",
+    "images": [
+      "Smith_Machine_Calf_Raise/0.jpg",
+      "Smith_Machine_Calf_Raise/1.jpg"
+    ],
+    "primary_muscles": [17, 18],
+    "secondary_muscles": [],
+    "translations": {
+      "en": {
+        "name": "Smith Machine Calf Raise",
+        "instructions": [
+          "Place a block or weight plate below the bar on the Smith machine. Set the bar to a position that best matches your height. Once the correct height is chosen and the bar is loaded, step onto the plates with the balls of your feet and place the bar on the back of your shoulders.",
+          "Take the bar with both hands facing forward. Rotate the bar to unrack it. This will be your starting position.",
+          "Raise your heels as high as possible by pushing off of the balls of your feet, flexing your calf at the top of the contraction. Your knees should remain extended. Hold the contracted position for a second before you start to go back down.",
+          "Return slowly to the starting position as you breathe in while lowering your heels.",
+          "Repeat for the recommended amount of repetitions."
+        ],
+        "description": "A fundamental isolation movement for building powerful, well-developed calves. The Smith machine provides stability and safety while allowing heavy loading for maximum calf development. Essential for building lower leg mass, improving ankle strength, and creating balanced leg development. The fixed bar path eliminates balance concerns, letting you focus entirely on achieving full range of motion and peak contraction. Perfect for both building calf size and developing the explosive power needed for athletic performance and complete lower body development."
+      },
+      "ru": {
+        "name": "Подъёмы на носки в тренажёре Смита",
+        "instructions": [
+          "Поместите блок или диск под гриф в тренажёре Смита. Установите гриф на высоту, соответствующую вашему росту. После выбора правильной высоты и установки веса встаньте на платформу носками и разместите гриф на задней части плеч.",
+          "Возьмитесь за гриф обеими руками хватом вперёд. Проверните гриф, чтобы снять его со стоек. Это исходное положение.",
+          "Поднимитесь на носки как можно выше, отталкиваясь подушечками стоп и сокращая икроножные мышцы в верхней точке. Колени должны оставаться выпрямленными. Задержитесь в сокращённом положении на секунду перед опусканием.",
+          "Медленно вернитесь в исходное положение на вдохе, опуская пятки.",
+          "Повторите рекомендованное количество повторений."
+        ],
+        "description": "Базовое изолирующее движение для построения мощных, развитых икроножных мышц. Тренажёр Смита обеспечивает стабильность и безопасность, позволяя работать с большими весами для максимального развития икр. Необходимо для построения массы голени, улучшения силы голеностопа и создания сбалансированного развития ног. Фиксированная траектория грифа устраняет проблемы с балансом, позволяя полностью сосредоточиться на достижении полной амплитуды движения и пикового сокращения. Идеально подходит как для построения размера икр, так и для развития взрывной силы, необходимой для атлетических результатов и полноценного развития нижней части тела."
+      }
+    }
+  },
+  {
+    "id": "Smith_Machine_Close-Grip_Bench_Press",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "machine",
+    "category": "strength",
+    "images": [
+      "Smith_Machine_Close-Grip_Bench_Press/0.jpg",
+      "Smith_Machine_Close-Grip_Bench_Press/1.jpg"
+    ],
+    "primary_muscles": [7, 8, 9],
+    "secondary_muscles": [2, 3, 4],
+    "translations": {
+      "en": {
+        "name": "Smith Machine Close-Grip Bench Press",
+        "instructions": [
+          "Place a flat bench underneath the smith machine. Place the barbell at a height that you can reach when lying down and your arms are almost fully extended. Once the weight you need is selected, lie down on the flat bench. Using a close and pronated grip (palms facing forward) that is around shoulder width, unlock the bar from the rack and hold it straight over you with your arms locked. This will be your starting position.",
+          "As you breathe in, come down slowly until you feel the bar on your middle chest. Tip: Make sure that as opposed to a regular bench press, you keep the elbows close to the torso at all times in order to maximize triceps involvement.",
+          "After a second pause, bring the bar back to the starting position as you breathe out and push the bar using your triceps muscles. Lock your arms in the contracted position, hold for a second and then start coming down slowly again. Tip: It should take at least twice as long to go down than to come up.",
+          "Repeat the movement for the prescribed amount of repetitions.",
+          "When you are done, lock the bar back in the rack."
+        ],
+        "description": "A compound pressing movement specifically designed for triceps development and arm mass building. The close grip and Smith machine's guided path allow for intense triceps focus while maintaining safe, controlled form. Essential for building horseshoe triceps, increasing pressing strength, and developing the arm size needed for impressive upper body development. The fixed bar path removes stabilization demands, allowing you to safely push closer to failure and maximize triceps hypertrophy while the close grip position ensures optimal triceps engagement throughout the entire range of motion."
+      },
+      "ru": {
+        "name": "Жим узким хватом в тренажёре Смита",
+        "instructions": [
+          "Установите горизонтальную скамью под тренажёром Смита. Установите гриф на такую высоту, чтобы вы могли достать до него лёжа с почти полностью выпрямленными руками. После выбора нужного веса лягте на скамью. Возьмитесь узким прямым хватом (ладони вперёд) примерно на ширине плеч, снимите гриф со стоек и удерживайте его над собой на прямых руках. Это исходное положение.",
+          "На вдохе медленно опускайте гриф, пока не почувствуете его на середине груди. Совет: в отличие от обычного жима лёжа, держите локти прижатыми к корпусу на протяжении всего движения для максимального вовлечения трицепсов.",
+          "После секундной паузы верните гриф в исходное положение на выдохе, выжимая его трицепсами. Зафиксируйте руки в верхней точке, задержитесь на секунду, затем снова начинайте медленное опускание. Совет: опускание должно занимать минимум в два раза больше времени, чем подъём.",
+          "Повторите движение заданное количество раз.",
+          "По завершении зафиксируйте гриф обратно на стойках."
+        ],
+        "description": "Базовое жимовое движение, специально разработанное для развития трицепсов и построения массы рук. Узкий хват и управляемая траектория тренажёра Смита позволяют интенсивно сосредоточиться на трицепсах, сохраняя безопасную контролируемую технику. Необходимо для построения подковообразных трицепсов, увеличения жимовой силы и развития размера рук для впечатляющей верхней части тела. Фиксированная траектория грифа устраняет необходимость стабилизации, позволяя безопасно работать ближе к отказу и максимизировать гипертрофию трицепсов, а положение узкого хвата обеспечивает оптимальное вовлечение трицепсов на протяжении всей амплитуды движения."
+      }
+    }
+  },
+  {
+    "id": "Smith_Machine_Decline_Press",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "machine",
+    "category": "strength",
+    "images": [
+      "Smith_Machine_Decline_Press/0.jpg",
+      "Smith_Machine_Decline_Press/1.jpg"
+    ],
+    "primary_muscles": [3, 2],
+    "secondary_muscles": [4, 7, 8, 9],
+    "translations": {
+      "en": {
+        "name": "Smith Machine Decline Press",
+        "instructions": [
+          "Position a decline bench in the rack so that the bar will be above your chest. Load an appropriate weight and take your place on the bench.",
+          "Rotate the bar to unhook it from the rack and fully extend your arms. Your back should be slightly arched and your shoulder blades retracted. This will be your starting position.",
+          "Begin the movement by flexing your arms, lowering the bar to your chest.",
+          "Pause briefly, and then extend your arms to push the weight back to the starting position.",
+          "After completing the desired number of repetitions, rotate the bar to rack the weight."
+        ],
+        "description": "A powerful compound movement targeting the lower chest for complete pectoral development. The decline angle shifts emphasis to the often-underdeveloped lower chest region while the Smith machine provides stability for safe heavy loading. Essential for building a full, dense chest with proper lower pec definition, creating the shelf-like appearance of a well-developed chest, and developing balanced pushing strength. The guided bar path allows you to focus purely on chest contraction while safely training with maximum intensity for optimal lower chest growth."
+      },
+      "ru": {
+        "name": "Жим на наклонной скамье вниз головой в тренажёре Смита",
+        "instructions": [
+          "Установите скамью с отрицательным наклоном в стойках так, чтобы гриф находился над вашей грудью. Установите подходящий вес и займите положение на скамье.",
+          "Проверните гриф, чтобы снять его со стоек, и полностью выпрямите руки. Спина должна быть слегка прогнута, лопатки сведены. Это исходное положение.",
+          "Начните движение, сгибая руки и опуская гриф к груди.",
+          "Сделайте короткую паузу, затем разогните руки, выжимая вес обратно в исходное положение.",
+          "После завершения желаемого количества повторений проверните гриф, чтобы зафиксировать его на стойках."
+        ],
+        "description": "Мощное базовое движение для проработки нижней части груди и полноценного развития грудных мышц. Отрицательный угол наклона смещает акцент на часто недостаточно развитую нижнюю область груди, а тренажёр Смита обеспечивает стабильность для безопасной работы с большими весами. Необходимо для построения полных, плотных грудных мышц с правильной дефиницией нижней части, создания характерного выступа хорошо развитой груди и развития сбалансированной жимовой силы. Управляемая траектория грифа позволяет полностью сосредоточиться на сокращении грудных мышц, безопасно тренируясь с максимальной интенсивностью для оптимального роста нижней части груди."
+      }
+    }
+  },
+  {
+    "id": "Smith_Machine_Hang_Power_Clean",
+    "force": "pull",
+    "level": "intermediate",
+    "mechanic": "compound",
+    "equipment": "machine",
+    "category": "strength",
+    "images": [
+      "Smith_Machine_Hang_Power_Clean/0.jpg",
+      "Smith_Machine_Hang_Power_Clean/1.jpg"
+    ],
+    "primary_muscles": [28, 32],
+    "secondary_muscles": [21, 35, 29, 4, 5, 24, 25],
+    "translations": {
+      "en": {
+        "name": "Smith Machine Hang Power Clean",
+        "instructions": [
+          "Position the bar at knee height and load it to an appropriate weight.",
+          "Take a pronated grip on the bar outside of shoulder width and unhook the bar from the machine. Your arms should be fully extended with your head and chest up. Your elbows should be pointed out with your shoulders back and down. Your hips should be back, loading the tension into the hamstrings. This will be your starting position.",
+          "Initate the movement by forcefully extending the hips and knees, accelerating into the bar. Ensure that you keep your arms straight during this part of the motion.",
+          "Upon full extension, rebend the hips and knees to lower your receiving position.",
+          "Allow the arms to flex at this point, rotating the elbows around the bar to receive it on your shoulders.",
+          "Extend through the hips and knees to come to a standing position with the bar racked on your shoulders to complete the movement."
+        ],
+        "description": "An explosive compound movement that develops total body power and athletic performance. The Smith machine's guided path allows you to learn proper power clean mechanics safely while building explosive strength throughout the posterior chain. Essential for developing hip drive, improving rate of force development, and creating the explosive power needed for athletic performance and functional strength. This variation teaches proper triple extension mechanics while allowing progressive overload in a controlled environment, perfect for building the fast-twitch muscle fiber recruitment and coordination needed for explosive movements."
+      },
+      "ru": {
+        "name": "Взятие на грудь с виса в тренажёре Смита",
+        "instructions": [
+          "Установите гриф на высоте колен и загрузите подходящий вес.",
+          "Возьмитесь прямым хватом шире плеч и снимите гриф с тренажёра. Руки должны быть полностью выпрямлены, голова и грудь подняты. Локти направлены в стороны, плечи отведены назад и вниз. Таз отведён назад, создавая напряжение в бицепсах бедра. Это исходное положение.",
+          "Начните движение мощным разгибанием тазобедренных и коленных суставов, ускоряя гриф. Убедитесь, что руки остаются прямыми на этой части движения.",
+          "При полном разгибании снова согните таз и колени, чтобы опуститься в положение приёма.",
+          "Позвольте рукам согнуться в этот момент, проворачивая локти вокруг грифа, чтобы принять его на плечи.",
+          "Разогните таз и колени, чтобы встать в положение стоя с грифом на плечах и завершить движение."
+        ],
+        "description": "Взрывное базовое движение, развивающее силу всего тела и атлетические показатели. Управляемая траектория тренажёра Смита позволяет безопасно освоить правильную технику взятия на грудь, одновременно наращивая взрывную силу во всей задней цепи мышц. Необходимо для развития мощности разгибания таза, улучшения скорости развития силы и создания взрывной мощности для атлетических результатов и функциональной силы. Эта вариация обучает правильной механике тройного разгибания, позволяя прогрессивно увеличивать нагрузку в контролируемой среде, идеально подходя для построения рекрутирования быстрых мышечных волокон и координации, необходимых для взрывных движений."
+      }
+    }
+  },
+  {
+    "id": "Smith_Machine_Hip_Raise",
+    "force": "pull",
+    "level": "beginner",
+    "mechanic": "isolation",
+    "equipment": "machine",
+    "category": "strength",
+    "images": [
+      "Smith_Machine_Hip_Raise/0.jpg",
+      "Smith_Machine_Hip_Raise/1.jpg"
+    ],
+    "primary_muscles": [13, 12],
+    "secondary_muscles": [32],
+    "translations": {
+      "en": {
+        "name": "Smith Machine Hip Raise",
+        "instructions": [
+          "Position a bench in the rack and load the bar to an appropriate weight. Lie down on the bench, placing the bottom of your feet against the bar. Unlock the bar and extend your legs. You may need to use your hands to assist you. For added stability grasp the sides of the Smith Machine. This will be your starting position.",
+          "Initiate the movement by rotating your pelvis, flexing your spine to raise your hips off of the bench. Maintain a slight bend in the knees throughout the motion.",
+          "After a brief pause, return the hips to the bench.",
+          "Repeat for the desired number of repetitions."
+        ],
+        "description": "An isolation movement targeting the lower abdominals and hip flexors with controlled resistance. The Smith machine provides consistent resistance throughout the movement while allowing precise control over the range of motion. Essential for developing lower ab definition, improving core control, and building the foundation for advanced abdominal development. The fixed bar path ensures proper pelvic tilt mechanics while the adjustable resistance makes progressive overload possible, perfect for creating deep lower ab cuts and developing the core strength needed for overall stability and athletic performance."
+      },
+      "ru": {
+        "name": "Подъёмы таза в тренажёре Смита",
+        "instructions": [
+          "Установите скамью в стойках и загрузите гриф подходящим весом. Лягте на скамью, поместив ступни под гриф. Снимите гриф и выпрямите ноги. Возможно, вам потребуется помочь себе руками. Для дополнительной стабильности возьмитесь за стойки тренажёра Смита. Это исходное положение.",
+          "Начните движение с ротации таза, сгибая позвоночник для подъёма бёдер от скамьи. Сохраняйте лёгкий сгиб в коленях на протяжении всего движения.",
+          "После короткой паузы верните таз на скамью.",
+          "Повторите желаемое количество повторений."
+        ],
+        "description": "Изолирующее движение для проработки нижней части пресса и сгибателей бедра с контролируемым сопротивлением. Тренажёр Смита обеспечивает постоянное сопротивление на протяжении всего движения, позволяя точно контролировать амплитуду. Необходимо для развития дефиниции нижнего пресса, улучшения контроля кора и построения фундамента для продвинутого развития мышц живота. Фиксированная траектория грифа обеспечивает правильную механику наклона таза, а регулируемое сопротивление делает возможной прогрессивную перегрузку, идеально подходя для создания глубоких линий нижнего пресса и развития силы кора, необходимой для общей стабильности и атлетических результатов."
+      }
+    }
+  },
+  {
+    "id": "Smith_Machine_Incline_Bench_Press",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "machine",
+    "category": "strength",
+    "images": [
+      "Smith_Machine_Incline_Bench_Press/0.jpg",
+      "Smith_Machine_Incline_Bench_Press/1.jpg"
+    ],
+    "primary_muscles": [1, 2],
+    "secondary_muscles": [4, 5, 7, 8, 9],
+    "translations": {
+      "en": {
+        "name": "Smith Machine Incline Bench Press",
+        "instructions": [
+          "Place an incline bench underneath the smith machine. Place the barbell at a height that you can reach when lying down and your arms are almost fully extended. Once the weight you need is selected, lie down on the incline bench and make sure your upper chest is aligned with the barbell. Using a pronated grip (palms facing forward) that is wider than shoulder width, unlock the bar from the rack and hold it straight over you with your arms locked. This will be your starting position.",
+          "As you breathe in, come down slowly until you feel the bar on your upper chest.",
+          "After a second pause, bring the bar back to the starting position as you breathe out and push the bar using your chest muscles. Lock your arms in the contracted position, hold for a second and then start coming down slowly again. Tip: It should take at least twice as long to go down than to come up.",
+          "Repeat the movement for the prescribed amount of repetitions.",
+          "When you are done, place the bar back in the rack."
+        ],
+        "description": "A fundamental upper chest builder that creates the full, rounded pectoral development needed for a complete physique. The incline angle specifically targets the often-underdeveloped upper chest while the Smith machine's guided path ensures consistent form and safe progression. Essential for building upper pec mass, creating chest fullness from collarbone to sternum, and developing the balanced pressing strength needed for overall upper body power. The fixed bar path removes stability demands, allowing maximum focus on upper chest activation and safe training to failure for optimal muscle growth and impressive upper body development."
+      },
+      "ru": {
+        "name": "Жим на наклонной скамье в тренажёре Смита",
+        "instructions": [
+          "Установите наклонную скамью под тренажёром Смита. Установите гриф на такую высоту, чтобы вы могли достать до него лёжа с почти полностью выпрямленными руками. После выбора нужного веса лягте на наклонную скамью и убедитесь, что верхняя часть груди выровнена с грифом. Возьмитесь прямым хватом (ладони вперёд) шире плеч, снимите гриф со стоек и удерживайте его над собой на прямых руках. Это исходное положение.",
+          "На вдохе медленно опускайте гриф, пока не почувствуете его на верхней части груди.",
+          "После секундной паузы верните гриф в исходное положение на выдохе, выжимая его грудными мышцами. Зафиксируйте руки в верхней точке, задержитесь на секунду, затем снова начинайте медленное опускание. Совет: опускание должно занимать минимум в два раза больше времени, чем подъём.",
+          "Повторите движение заданное количество раз.",
+          "По завершении установите гриф обратно на стойки."
+        ],
+        "description": "Базовое упражнение для построения верхней части груди, создающее полное, округлое развитие грудных мышц, необходимое для завершённого телосложения. Наклон скамьи специально нацелен на часто недостаточно развитую верхнюю часть груди, а управляемая траектория тренажёра Смита обеспечивает стабильную технику и безопасную прогрессию. Необходимо для построения массы верхних грудных, создания наполненности груди от ключиц до грудины и развития сбалансированной жимовой силы для общей мощности верхней части тела. Фиксированная траектория грифа устраняет требования к стабилизации, позволяя максимально сосредоточиться на активации верхней части груди и безопасно тренироваться до отказа для оптимального мышечного роста и впечатляющего развития верхней части тела."
+      }
+    }
+  },
+
+
+
+
+
+]

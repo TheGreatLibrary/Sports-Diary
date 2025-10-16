@@ -1,0 +1,51 @@
+package com.sinya.projects.sportsdiary.di
+
+import android.content.Context
+import androidx.room.Room
+import com.sinya.projects.sportsdiary.data.database.AppDatabase
+import com.sinya.projects.sportsdiary.data.database.dao.DataMorningDao
+import com.sinya.projects.sportsdiary.data.database.dao.ExercisesDao
+import com.sinya.projects.sportsdiary.data.database.dao.ProportionsDao
+import com.sinya.projects.sportsdiary.data.database.dao.TrainingsDao
+import com.sinya.projects.sportsdiary.data.database.dao.TypeTrainingDao
+import com.sinya.projects.sportsdiary.data.database.repository.TrainingRepository
+import com.sinya.projects.sportsdiary.data.database.repository.TrainingRepositoryImpl
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import jakarta.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
+    @Provides
+    @Singleton
+    fun provideDatabase(
+        @ApplicationContext context: Context
+    ): AppDatabase {
+        return Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            "diary.db"
+        )
+        .createFromAsset("diary.db")
+        .build()
+    }
+
+    @Provides
+    fun provideTypeTrainingDao(db: AppDatabase): TypeTrainingDao = db.typeTrainingDao()
+
+    @Provides
+    fun provideTrainingDao(db: AppDatabase): TrainingsDao = db.trainingsDao()
+
+    @Provides
+    fun provideExercisesDao(db: AppDatabase) : ExercisesDao = db.exercisesDao()
+
+    @Provides
+    fun provideProportionsDao(db: AppDatabase) : ProportionsDao = db.proportionsDao()
+
+    @Provides
+    fun provideDataMorningDao(db: AppDatabase) : DataMorningDao = db.dataMorningDao()
+}

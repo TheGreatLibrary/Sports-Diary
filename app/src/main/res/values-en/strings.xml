@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="interface_block">UI</string>
+    <string name="language_title">Language</string>
+    <string name="theme_title">Theme</string>
+</resources>

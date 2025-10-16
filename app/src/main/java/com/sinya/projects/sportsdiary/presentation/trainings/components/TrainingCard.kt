@@ -1,0 +1,53 @@
+package com.sinya.projects.sportsdiary.presentation.trainings.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.sinya.projects.sportsdiary.presentation.trainings.Training
+import com.sinya.projects.sportsdiary.ui.features.AnimationCard
+
+@Composable
+fun TrainingCard(
+    t: Training,
+    rowFill: Float,
+    onTrainingClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth(rowFill)
+    ) {
+        AnimationCard(
+            onClick = onTrainingClick,
+            shapeCard = MaterialTheme.shapes.small,
+            colorCard = MaterialTheme.colorScheme.primaryContainer,
+        ) {
+            val dateText = t.localDateOrNull()?.format(dateFmt) ?: t.date
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp, vertical = 8.dp),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                Text(
+                    text = "Тренировка ${t.name}",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                Text(
+                    text = "${t.category} • $dateText",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        }
+    }
+}
