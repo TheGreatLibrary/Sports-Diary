@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.sinya.projects.sportsdiary.data.database.AppDatabase
 import com.sinya.projects.sportsdiary.data.database.dao.DataMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.ExercisesDao
+import com.sinya.projects.sportsdiary.data.database.dao.PlanMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.ProportionsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TrainingsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TypeTrainingDao
@@ -48,4 +49,7 @@ object AppModule {
 
     @Provides
     fun provideDataMorningDao(db: AppDatabase) : DataMorningDao = db.dataMorningDao()
+
+    @Provides
+    fun providePlanMorningDao(db: AppDatabase) : PlanMorningDao = db.planMorningDao()
 }

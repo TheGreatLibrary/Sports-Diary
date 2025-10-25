@@ -5,12 +5,13 @@ sealed class MorningExercisesUiState {
     data class Success(
         val countTraining: Int,
         val seriesScope: Int,
-        val listPlan: List<String>,
-        val listNote: List<String>
+        val noteExpanded: Boolean = false,
+        val planExpanded: Boolean = false
     ) : MorningExercisesUiState()
     data class Error(val message: String) : MorningExercisesUiState()
 }
 
 sealed class MorningExercisesUiEvent {
-
+    data class OnNoteExpanded(val state: Boolean) : MorningExercisesUiEvent()
+    data class OnPlanExpanded(val state: Boolean) : MorningExercisesUiEvent()
 }

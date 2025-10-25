@@ -3,16 +3,26 @@ package com.sinya.projects.sportsdiary.presentation.proportionPage
 sealed class ProportionPageUiState {
     data object Loading : ProportionPageUiState()
     data class Success(
-       val item: ProportionItem
+        val item: ProportionItem,
+        val dialogContent: ProportionDialogContent? = null
     ) : ProportionPageUiState()
     data class Error(val message: String) : ProportionPageUiState()
 }
 
+
+
 sealed class ProportionPageUiEvent {
     data object Save : ProportionPageUiEvent()
     data class OnChangeValue(val id: Int, val value: String) : ProportionPageUiEvent()
-
+    data class OpenDialog(val id: Int?) : ProportionPageUiEvent()
 }
+
+data class ProportionDialogContent(
+    val id: Int,
+    val name: String,
+    val description: String
+)
+
 
 enum class Side { LEFT, RIGHT, NONE }
 

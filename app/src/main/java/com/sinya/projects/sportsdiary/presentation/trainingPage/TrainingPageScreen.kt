@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
@@ -23,6 +24,9 @@ import com.sinya.projects.sportsdiary.presentation.trainingPage.components.Custo
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.ExerciseList
 import com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetCategory.TrainingBottomSheetCategory
 import com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetTraining.TrainingBottomSheetTraining
+import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDescriptionView
+import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDiagramView
+import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDialog
 
 @Composable
 fun TrainingPageScreen(
@@ -43,7 +47,8 @@ fun TrainingPageScreen(
             categories = state.categories,
             exercises = state.items,
             category = state.category,
-            onEvent = onEvent
+            dialogContent = state.dialogContent,
+            onEvent = onEvent,
         )
 
         is TrainingPageUiState.Error -> ErrorScreen(state.message)
@@ -53,6 +58,7 @@ fun TrainingPageScreen(
 @Composable
 private fun TrainingPage(
     id: Int?,
+    dialogContent: ExerciseDialogContent?,
     onEvent: (TrainingPageUiEvent) -> Unit,
     title: String,
     category: TypeTraining,
@@ -88,7 +94,7 @@ private fun TrainingPage(
         )
         ExerciseList(
             exercises = exercises,
-            onInfoClick = onInfoClick,
+            onInfoClick = { id -> onEvent(TrainingPageUiEvent.OpenDialog(id)) },
             onMinusClick = { id -> onEvent(TrainingPageUiEvent.Delete(id)) },
             onPlusClick = { id -> onEvent(TrainingPageUiEvent.AddSet(id)) },
             onDeleteSet = { id, index -> onEvent(TrainingPageUiEvent.DeleteSet(id, index)) },
@@ -115,6 +121,21 @@ private fun TrainingPage(
             )
         }
 
+        dialogContent?.let {
+            GuideDialog(
+                onDismiss = {
+                    onEvent(TrainingPageUiEvent.OpenDialog(null))
+                },
+                content = {
+                    GuideDescriptionView(
+                        title = it.name,
+                        description = it.description,
+                        image = null
+                    )
+                }
+            )
+        }
+
         if (isOpenBottomSheetCategory) {
             TrainingBottomSheetCategory(
                 onDismiss = {
@@ -127,8 +148,8 @@ private fun TrainingPage(
             TrainingBottomSheetTraining(
                 id = id?:0,
                 onDismiss = {
-                    onEvent(TrainingPageUiEvent.OpenBottomSheetTraining(false))
                     onEvent(TrainingPageUiEvent.UpdateListTraining)
+//                    onEvent(TrainingPageUiEvent.OpenBottomSheetTraining(false))
                 }
             )
         }

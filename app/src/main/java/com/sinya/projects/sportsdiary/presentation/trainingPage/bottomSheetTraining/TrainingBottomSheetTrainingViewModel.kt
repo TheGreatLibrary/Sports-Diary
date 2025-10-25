@@ -65,6 +65,7 @@ class TrainingBottomSheetTrainingViewModel @Inject constructor(
         val currentState = _state.value as? TrainingBottomSheetTrainingUiState.Success ?: return listOf()
         return if (currentState.query.isBlank()) currentState.items else currentState.items.filter { it.name.contains(currentState.query, ignoreCase = true) }
     }
+
     private fun selectedIds(): List<Int> {
         val currentState = _state.value as? TrainingBottomSheetTrainingUiState.Success ?: return listOf()
         return currentState.items.filter { it.checked }.map { it.id }
@@ -101,8 +102,7 @@ class TrainingBottomSheetTrainingViewModel @Inject constructor(
                 )
             }) }
                 .onSuccess { onDone() }
-                .onFailure {
-                    onDone() }
+                .onFailure { onDone() }
         }
     }
 }

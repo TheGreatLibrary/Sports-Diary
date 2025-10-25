@@ -18550,6 +18550,7 @@
     ],
     "id": "Smith_Machine_Upright_Row"
   },
+
   {
     "name": "Smith Single-Leg Split Squat",
     "force": "push",
@@ -18781,6 +18782,7 @@
     ],
     "id": "Speed_Band_Overhead_Triceps"
   },
+
   {
     "name": "Speed Box Squat",
     "force": "push",
@@ -19006,6 +19008,7 @@
     ],
     "id": "Split_Jerk"
   },
+
   {
     "name": "Split Jump",
     "force": "push",
@@ -19239,6 +19242,7 @@
     ],
     "id": "Squat_with_Plate_Movers"
   },
+
   {
     "name": "Squats - With Bands",
     "force": "push",
@@ -19421,6 +19425,7 @@
     ],
     "id": "Standing_Bent-Over_Two-Arm_Dumbbell_Triceps_Extension"
   },
+
   {
     "name": "Standing Biceps Cable Curl",
     "force": "pull",
@@ -19603,6 +19608,7 @@
     ],
     "id": "Standing_Calf_Raises"
   },
+
   {
     "name": "Standing Concentration Curl",
     "force": "pull",
@@ -19774,6 +19780,7 @@
     ],
     "id": "Standing_Dumbbell_Upright_Row"
   },
+
   {
     "name": "Standing Elevated Quad Stretch",
     "force": "static",
@@ -19938,6 +19945,7 @@
     ],
     "id": "Standing_Inner-Biceps_Curl"
   },
+
   {
     "name": "Standing Lateral Stretch",
     "force": "static",
@@ -20118,6 +20126,7 @@
     ],
     "id": "Standing_Olympic_Plate_Hand_Squeeze"
   },
+
   {
     "name": "Standing One-Arm Cable Curl",
     "force": "pull",
@@ -20300,6 +20309,7 @@
     ],
     "id": "Standing_Palms-Up_Barbell_Behind_The_Back_Wrist_Curl"
   },
+
   {
     "name": "Standing Pelvic Tilt",
     "force": "static",
@@ -20466,6 +20476,7 @@
     ],
     "id": "Star_Jump"
   },
+
   {
     "name": "Step-up with Knee Raise",
     "force": "push",
@@ -20651,6 +20662,7 @@
     ],
     "id": "Straight-Arm_Dumbbell_Pullover"
   },
+
   {
     "name": "Straight-Arm Pulldown",
     "force": "pull",
@@ -20849,6 +20861,7 @@
     ],
     "id": "Sumo_Deadlift_with_Chains"
   },
+
   {
     "name": "Superman",
     "force": "static",
@@ -21031,6 +21044,7 @@
     ],
     "id": "Suspended_Reverse_Crunch"
   },
+
   {
     "name": "Suspended Row",
     "force": "pull",
@@ -21215,6 +21229,7 @@
     ],
     "id": "Thigh_Abductor"
   },
+
   {
     "name": "Thigh Adductor",
     "force": "pull",
@@ -21393,6 +21408,7 @@
     ],
     "id": "Tricep_Dumbbell_Kickback"
   },
+
   {
     "name": "Tricep Side Stretch",
     "force": "static",
@@ -21557,6 +21573,7 @@
     ],
     "id": "Tuck_Crunch"
   },
+
   {
     "name": "Two-Arm Dumbbell Preacher Curl",
     "force": "pull",
@@ -21732,6 +21749,7 @@
     ],
     "id": "Upper_Back-Leg_Grab"
   },
+
   {
     "name": "Upper Back Stretch",
     "force": "static",
@@ -21910,6 +21928,7 @@
     ],
     "id": "V-Bar_Pullup"
   },
+
   {
     "name": "Vertical Swing",
     "force": "pull",
@@ -22094,6 +22113,7 @@
     ],
     "id": "Weighted_Jump_Squat"
   },
+
   {
     "name": "Weighted Pull Ups",
     "force": "pull",
@@ -22278,6 +22298,7 @@
     ],
     "id": "Wide-Grip_Decline_Barbell_Pullover"
   },
+
   {
     "name": "Wide-Grip Lat Pulldown",
     "force": "pull",
@@ -22443,6 +22464,7 @@
     ],
     "id": "Wide_Stance_Stiff_Legs"
   },
+
   {
     "name": "Wind Sprints",
     "force": "pull",
@@ -22618,6 +22640,7 @@
     ],
     "id": "Yoke_Walk"
   },
+
   {
     "name": "Zercher Squats",
     "force": "push",

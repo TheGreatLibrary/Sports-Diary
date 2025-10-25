@@ -16,6 +16,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
+import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetNote.ModalSheetNote
+import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetPlan.ModalSheetPlan
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.statistic.components.StatCard
 import com.sinya.projects.sportsdiary.ui.features.CardWithArrow
@@ -74,15 +76,27 @@ private fun MorningExercisesView(
         CardWithArrow(
             title = stringResource(R.string.data_of_morning_exercises),
             onClick = {
-
+                onEvent(MorningExercisesUiEvent.OnPlanExpanded(true))
             }
         )
         CardWithArrow(
             title = stringResource(R.string.note_of_morning_exercises),
             onClick = {
-
+                onEvent(MorningExercisesUiEvent.OnNoteExpanded(true))
             }
         )
+
+        if (state.noteExpanded) {
+            ModalSheetNote(
+                onDismiss = { onEvent(MorningExercisesUiEvent.OnNoteExpanded(false))}
+            )
+        }
+
+        if (state.planExpanded) {
+            ModalSheetPlan(
+                onDismiss = { onEvent(MorningExercisesUiEvent.OnPlanExpanded(false))}
+            )
+        }
     }
 }
 

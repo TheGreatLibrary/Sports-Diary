@@ -1,10 +1,10 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetTraining
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -12,36 +12,29 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetCategory.ExerciseUi
-import com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetCategory.TrainingBottomSheetCategoryUiEvent
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.CustomTextField
-import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.CompactUnitField
 import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.CustomElementCheckBox
 import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.CustomElementTriCheck
 
@@ -52,8 +45,6 @@ fun TrainingBottomSheetTraining(
     viewModel: TrainingBottomSheetTrainingViewModel = hiltViewModel()
 ) {
     LaunchedEffect(id) { viewModel.init(id) }
-
-
 
     TrainingBottomSheetTrainingView(
         state = viewModel.state.value,
@@ -117,12 +108,12 @@ fun TrainingBottomSheetTrainingView(
                         keyboardType = KeyboardType.Text,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    CustomElementTriCheck(
-                        triState = triState,
-                        onEvent = {
-                            val target = triState != ToggleableState.On
-                            onEvent(TrainingBottomSheetTrainingUiEvent.SetAll(target))
-                        })
+//                    CustomElementTriCheck(
+//                        triState = triState,
+//                        onEvent = {
+//                            val target = triState != ToggleableState.On
+//                            onEvent(TrainingBottomSheetTrainingUiEvent.SetAll(target))
+//                        })
 
                     HorizontalDivider()
                     if (filtered.isEmpty()) {
@@ -130,11 +121,12 @@ fun TrainingBottomSheetTrainingView(
                             text = stringResource(R.string.nothing_found),
                             modifier = Modifier.padding(16.dp)
                         )
-                    } else {
+                    }
+                    else {
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(max = 480.dp)
+                                .fillMaxHeight(0.7f)
                         ) {
                             items(filtered) { ex ->
                                 CustomElementCheckBox(
@@ -154,7 +146,7 @@ fun TrainingBottomSheetTrainingView(
                     Row(
                         Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp, bottom = 20.dp),
+                            .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(

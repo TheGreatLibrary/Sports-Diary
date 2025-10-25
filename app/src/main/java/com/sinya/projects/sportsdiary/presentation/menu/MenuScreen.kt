@@ -65,14 +65,14 @@ fun MenuScreen(
         BlockOfCards(
             title = stringResource(R.string.other_block)
         ) {
-            AnimationCard(
-                onClick = onCalculateClick
-            ) {
-                ColumnOfCard(
-                    title = stringResource(R.string.calculate_title),
-                    description = stringResource(R.string.calculate_description),
-                )
-            }
+//            AnimationCard(
+//                onClick = onCalculateClick
+//            ) {
+//                ColumnOfCard(
+//                    title = stringResource(R.string.calculate_title),
+//                    description = stringResource(R.string.calculate_description),
+//                )
+//            }
             AnimationCard(
                 onClick = onSportsExercisesClick
             ) {

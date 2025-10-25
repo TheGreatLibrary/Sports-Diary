@@ -47,6 +47,12 @@ class StatisticScreenViewModel @Inject constructor(
                 }
 
             }
+
+            is StatisticScreenUiEvent.OnDialogState -> {
+                _state.value = currentState.copy(
+                    dialogState = event.state
+                )
+            }
         }
     }
 

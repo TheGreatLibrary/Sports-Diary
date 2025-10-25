@@ -1,15 +1,20 @@
 package com.sinya.projects.sportsdiary.data.database.repository
 
+import androidx.compose.ui.text.intl.Locale
 import com.sinya.projects.sportsdiary.data.database.dao.TrainingsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TypeTrainingDao
 import com.sinya.projects.sportsdiary.data.database.entity.DataTraining
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
 import com.sinya.projects.sportsdiary.presentation.statistic.TimeMode
+import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseItem
 import com.sinya.projects.sportsdiary.presentation.trainings.Training
 import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingEntity
 import com.sinya.projects.sportsdiary.presentation.trainingPage.toItem
 import com.sinya.projects.sportsdiary.ui.features.diagram.model.ChartPoint
 import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -29,7 +34,8 @@ interface TrainingRepository {
 
     suspend fun getCountOfTrainings(): Int
     suspend fun getSummaryWeightOfTrainings(): Float
-    suspend fun getChartList(mode: TimeMode) : List<ChartPoint>
+    suspend fun getChartList(mode: TimeMode): List<ChartPoint>
+    suspend fun getDataByTypeTraining(id: Int): List<ExerciseItem>
 }
 
 
@@ -39,8 +45,9 @@ class TrainingRepositoryImpl @Inject constructor(
 ) : TrainingRepository {
 
     override suspend fun getById(id: Int?): TrainingEntity {
+        val locale = Locale.current.language
         val training = trainingDao.getById(id)
-        val listData = trainingDao.getExerciseRows(id).map { it.toItem() }
+        val listData = trainingDao.getExerciseRows(id, locale).map { it.toItem() }
 
         return TrainingEntity(
             id = training.id,
@@ -55,7 +62,12 @@ class TrainingRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertDataTraining(items: List<DataTraining>) {
-        return trainingDao.insertDataTraining(items)
+        withContext(Dispatchers.IO) {
+            items.chunked(100).forEach { batch ->
+                trainingDao.insertDataTraining(batch)
+                delay(10) // Теперь delay доступен
+            }
+        }
     }
 
 
@@ -148,6 +160,17 @@ class TrainingRepositoryImpl @Inject constructor(
 
             ChartPoint(label, totalWeight)
         }.sortedBy { it.xLabel }
+    }
+
+    override suspend fun getDataByTypeTraining(id: Int): List<ExerciseItem> {
+        return trainingDao.getDataOfTypeTraining(id, Locale.current.language).map {
+            ExerciseItem(
+                id = it.id,
+                title = it.title,
+                countList = listOf("0", "0", "0", "0"),
+                weightList = listOf("0", "0", "0", "0"),
+            )
+        }
     }
 
 

@@ -4,4 +4,8 @@
     <string name="interface_block">UI</string>
     <string name="language_title">Language</string>
     <string name="theme_title">Theme</string>
+
+    <string name="cm">cm</string>
+    <string name="kg">kg</string>
+    <string name="count">pcs</string>
 </resources>

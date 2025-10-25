@@ -39,7 +39,6 @@ import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingPageView
 import com.sinya.projects.sportsdiary.ui.theme.SportsDiaryTheme
 import com.sinya.projects.sportsdiary.utils.getCurrentRoute
 
-
 val LocalLocale = staticCompositionLocalOf { Locale.current }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -50,7 +49,7 @@ fun MainApp(
 ) {
     val themeMode by viewModel.themeMode.collectAsState()
     val language by viewModel.language.collectAsState()
-
+    updateLocale(language)
     val currentLocale = remember(language) { Locale(language) }
 
     val navController = rememberNavController()
@@ -66,9 +65,6 @@ fun MainApp(
         ScreenRoute.Settings.route
     )
 
-    LaunchedEffect(language) {
-        updateLocale(language)
-    }
 
 
     CompositionLocalProvider(
@@ -127,7 +123,10 @@ fun MainApp(
                         SettingsScreen(
                             onBackClick = { onBack() },
                             toggleTheme = { viewModel.toggleTheme() },
-                            setLanguage = { lang -> viewModel.setLanguage(lang) },
+                            setLanguage = { lang ->
+                                viewModel.setLanguage(lang)
+                                updateLocale(lang)
+                              },
                             language = language,
                             themeMode = themeMode
                         )

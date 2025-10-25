@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.sinya.projects.sportsdiary.data.database.dao.DataMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.ExercisesDao
+import com.sinya.projects.sportsdiary.data.database.dao.PlanMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.ProportionsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TrainingsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TypeTrainingDao
@@ -57,5 +58,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun exercisesDao() : ExercisesDao
     abstract fun proportionsDao() : ProportionsDao
     abstract fun dataMorningDao() : DataMorningDao
+    abstract fun planMorningDao() : PlanMorningDao
 
 }

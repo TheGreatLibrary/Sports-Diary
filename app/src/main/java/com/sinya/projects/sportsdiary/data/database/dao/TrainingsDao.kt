@@ -13,6 +13,8 @@ import com.sinya.projects.sportsdiary.data.database.entity.Trainings
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
 import com.sinya.projects.sportsdiary.presentation.statistic.ChartDataTrainings
 import com.sinya.projects.sportsdiary.presentation.statistic.DataTrainings
+import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseItem
+import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseItemWithoutList
 import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseRow
 import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingEntity
 import com.sinya.projects.sportsdiary.presentation.trainings.Training
@@ -39,15 +41,14 @@ interface TrainingsDao {
         e.id,
         et.name AS title,
         d.count_result,
-        d.weight_result,
-        'кг' AS unitMeasure
+        d.weight_result
       FROM data_training d
       JOIN exercises e ON e.id = d.exercises_id
       JOIN exercise_translations et ON e.id = et.exercise_id
       WHERE d.training_id = :id AND et.language = :lang
       ORDER BY e.id
     """)
-    suspend fun getExerciseRows(id: Int?, lang: String = "en"): List<ExerciseRow>
+    suspend fun getExerciseRows(id: Int?, lang: String): List<ExerciseRow>
 
 
 
@@ -172,4 +173,17 @@ interface TrainingsDao {
         FROM trainings t JOIN data_training d ON t.id = d.training_id
     """)
     suspend fun getChartList() : List<ChartDataTrainings>
+
+    @Query("""
+      SELECT 
+        e.id,
+        et.name AS title,
+        'кг' AS unitMeasure
+      FROM training_type_exercise d
+      JOIN exercises e ON e.id = d.exercise_id
+      JOIN exercise_translations et ON e.id = et.exercise_id
+      WHERE d.type_id = :id AND et.language = :lang
+      ORDER BY e.id
+    """)
+    suspend fun getDataOfTypeTraining(id: Int, lang: String): List<ExerciseItemWithoutList>
 }

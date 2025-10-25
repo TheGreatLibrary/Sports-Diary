@@ -36,7 +36,7 @@ fun CardWithArrow(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 Icon(
-                    painter = painterResource(R.drawable.arrow),
+                    painter = painterResource(R.drawable.ic_arrow),
                     contentDescription = "Arrow",
                     modifier = Modifier.rotate(-90f)
                 )

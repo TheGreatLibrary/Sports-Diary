@@ -11,13 +11,15 @@ sealed class StatisticScreenUiState {
         val exercises: List<ExerciseTranslations> = emptyList(),
         val timeMode: TimeMode = TimeMode.DAYS,
         val chartList: List<ChartPoint>,
-        val chartLoading: Boolean = true
+        val chartLoading: Boolean = true,
+        val dialogState: Boolean = false
     ) : StatisticScreenUiState()
     data class Error(val message: String) : StatisticScreenUiState()
 }
 
 sealed class StatisticScreenUiEvent {
     data class OnSelectTimePeriod(val index: Int) : StatisticScreenUiEvent()
+    data class OnDialogState(val state: Boolean) : StatisticScreenUiEvent()
 }
 
 data class DataTrainings(

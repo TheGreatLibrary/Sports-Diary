@@ -21,7 +21,7 @@ fun DeltaHint(delta: Int?) {
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
-            painter = if (delta > 0) painterResource(R.drawable.arrow_up) else painterResource(R.drawable.arrow_down),
+            painter = if (delta > 0) painterResource(R.drawable.ic_arrow_up) else painterResource(R.drawable.ic_arrow_down),
             contentDescription = null,
             tint = color,
             modifier = Modifier.size(12.dp)

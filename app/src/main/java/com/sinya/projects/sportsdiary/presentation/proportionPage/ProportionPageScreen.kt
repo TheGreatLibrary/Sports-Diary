@@ -15,14 +15,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingPageUiEvent
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.deltaFloat
 import com.sinya.projects.sportsdiary.ui.features.HeaderInfo
+import com.sinya.projects.sportsdiary.ui.features.getDrawableId
 import com.sinya.projects.sportsdiary.ui.features.getString
+import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDescriptionView
+import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDialog
 import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.CompactUnitField
 
 @Composable
@@ -36,11 +43,12 @@ fun ProportionPageScreen(
         is ProportionPageUiState.Loading -> PlaceholderScreen()
         is ProportionPageUiState.Success -> ProportionPage(
             title = state.item.title,
-            onInfoClick = onInfoClick,
             onBackClick = onBackClick,
             proportion = state.item,
+            dialogContent = state.dialogContent,
             onEvent = onEvent
         )
+
         is ProportionPageUiState.Error -> ErrorScreen(state.message)
     }
 }
@@ -48,9 +56,9 @@ fun ProportionPageScreen(
 @Composable
 private fun ProportionPage(
     title: String,
-    onInfoClick: () -> Unit,
     onBackClick: () -> Unit,
     proportion: ProportionItem,
+    dialogContent: ProportionDialogContent?,
     onEvent: (ProportionPageUiEvent) -> Unit,
 ) {
     val context = LocalContext.current
@@ -63,11 +71,14 @@ private fun ProportionPage(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         NavigationTopBar(
-            title = title,
+            title = stringResource(R.string.proportion_number) + title,
             isVisibleBack = true,
             onBackClick = onBackClick,
             isVisibleSave = true,
-            onSaveClick = { onEvent(ProportionPageUiEvent.Save) }
+            onSaveClick = {
+                onEvent(ProportionPageUiEvent.Save)
+                onBackClick()
+            }
         )
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(rows.size) { idx ->
@@ -76,11 +87,18 @@ private fun ProportionPage(
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             HeaderInfo(
                                 title = context.getString(row.headerKey),
-                                onInfoClick = onInfoClick
+                                onInfoClick = { onEvent(ProportionPageUiEvent.OpenDialog(row.item.id)) }
                             )
                             CompactUnitField(
                                 value = row.item.value,
-                                onValueChange = { str -> onEvent(ProportionPageUiEvent.OnChangeValue(row.item.id, str)) },
+                                onValueChange = { str ->
+                                    onEvent(
+                                        ProportionPageUiEvent.OnChangeValue(
+                                            row.item.id,
+                                            str
+                                        )
+                                    )
+                                },
                                 unit = context.getString(row.item.unitMeasure),
                                 modifier = Modifier.fillMaxWidth(),
                                 delta = deltaFloat(row.item.value, null),
@@ -88,16 +106,24 @@ private fun ProportionPage(
                             )
                         }
                     }
+
                     is RowItem.PairRow -> {
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             HeaderInfo(
                                 title = context.getString(row.headerKey),
-                                onInfoClick = onInfoClick
+                                onInfoClick = { onEvent(ProportionPageUiEvent.OpenDialog(row.left.id)) }
                             )
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 CompactUnitField(
                                     value = row.left.value,
-                                    onValueChange = { str -> onEvent(ProportionPageUiEvent.OnChangeValue(row.left.id, str)) },
+                                    onValueChange = { str ->
+                                        onEvent(
+                                            ProportionPageUiEvent.OnChangeValue(
+                                                row.left.id,
+                                                str
+                                            )
+                                        )
+                                    },
                                     unit = context.getString(row.left.unitMeasure),
                                     modifier = Modifier.weight(1f),
                                     delta = deltaFloat(row.left.value, null),
@@ -105,7 +131,14 @@ private fun ProportionPage(
                                 )
                                 CompactUnitField(
                                     value = row.right.value,
-                                    onValueChange = { str -> onEvent(ProportionPageUiEvent.OnChangeValue(row.right.id, str)) },
+                                    onValueChange = { str ->
+                                        onEvent(
+                                            ProportionPageUiEvent.OnChangeValue(
+                                                row.right.id,
+                                                str
+                                            )
+                                        )
+                                    },
                                     unit = context.getString(row.right.unitMeasure),
                                     modifier = Modifier.weight(1f),
                                     delta = deltaFloat(row.right.value, null),
@@ -117,11 +150,27 @@ private fun ProportionPage(
                 }
             }
         }
+
+        dialogContent?.let {
+            GuideDialog(
+                onDismiss = {
+                    onEvent(ProportionPageUiEvent.OpenDialog(null))
+                },
+                content = {
+                    GuideDescriptionView(
+                        title = it.name,
+                        description = it.description,
+                        image = null
+                    )
+                }
+            )
+        }
     }
 }
 
 private fun buildRowsFromKeys(source: List<ProportionRow>): List<RowItem> {
-    val grouped = linkedMapOf<String, MutableMap<Side, ProportionRow>>() // baseKey -> {side -> item}
+    val grouped =
+        linkedMapOf<String, MutableMap<Side, ProportionRow>>() // baseKey -> {side -> item}
     source.forEach { ui ->
         val (base, side) = parseGroup(ui.title)
         grouped.getOrPut(base) { mutableMapOf() }[side] = ui
@@ -129,22 +178,28 @@ private fun buildRowsFromKeys(source: List<ProportionRow>): List<RowItem> {
 
     val rows = mutableListOf<RowItem>()
     for ((base, map) in grouped) {
-        val left  = map[Side.LEFT]
+        val left = map[Side.LEFT]
         val right = map[Side.RIGHT]
         when {
             left != null && right != null -> rows += RowItem.PairRow(base, left, right)
-            map.containsKey(Side.NONE)    -> rows += RowItem.Single(base, map[Side.NONE]!!)
-            left != null                  -> rows += RowItem.Single(base, left)
-            right != null                 -> rows += RowItem.Single(base, right)
+            map.containsKey(Side.NONE) -> rows += RowItem.Single(base, map[Side.NONE]!!)
+            left != null -> rows += RowItem.Single(base, left)
+            right != null -> rows += RowItem.Single(base, right)
         }
     }
     return rows
 }
 
 private fun parseGroup(nameKey: String): Pair<String, Side> = when {
-    nameKey.endsWith("_left")  -> nameKey.removeSuffix("_left")  to Side.LEFT
-    nameKey.endsWith("_right") -> nameKey.removeSuffix("_right") to Side.RIGHT
-    else                       -> nameKey                         to Side.NONE
+    nameKey.endsWith(" Left") -> nameKey.removeSuffix(" Left") to Side.LEFT
+    nameKey.endsWith(" левый") -> nameKey.removeSuffix(" левый") to Side.LEFT
+    nameKey.endsWith(" левая") -> nameKey.removeSuffix(" левая") to Side.LEFT
+    nameKey.endsWith(" левое") -> nameKey.removeSuffix(" левое") to Side.LEFT
+    nameKey.endsWith(" Right") -> nameKey.removeSuffix(" Right") to Side.RIGHT
+    nameKey.endsWith(" правый") -> nameKey.removeSuffix(" правый") to Side.RIGHT
+    nameKey.endsWith(" правая") -> nameKey.removeSuffix(" правая") to Side.RIGHT
+    nameKey.endsWith(" правое") -> nameKey.removeSuffix(" правое") to Side.RIGHT
+    else -> nameKey to Side.NONE
 }
 
 private sealed class RowItem {
@@ -156,6 +211,6 @@ private sealed class RowItem {
     data class PairRow(
         val headerKey: String,        // baseKey: "biceps"
         val left: ProportionRow,
-        val right:ProportionRow
+        val right: ProportionRow
     ) : RowItem()
 }

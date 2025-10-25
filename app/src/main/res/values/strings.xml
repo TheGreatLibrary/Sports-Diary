@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">SportsDiary</string>
+    <string name="calendar_widget_description">Удобная отметка о выполнении зарядок с экрана телефона</string>
+
     <string name="menu_title">Меню</string>
     <string name="training_title">Тренировки</string>
     <string name="list_of_training">Список проведенных тренировок</string>
@@ -39,7 +41,7 @@
     <string name="not_category">Не выбрано</string>
     <string name="add_exercise">Добавить упражнение</string>
     <string name="minus">-</string>
-    <string name="constructor">Конструктор</string>
+    <string name="constructor">Категория</string>
     <string name="new_category">Новая категория</string>
 
     <string name="category_name">Название категории</string>
@@ -56,6 +58,7 @@
     <!-- типы замеров -->
     <string name="cm">см</string>
     <string name="kg">кг</string>
+    <string name="count">шт</string>
 
     <string name="thigh_right">Бедро правое</string>
     <string name="thigh_left">Бедро левое</string>
@@ -96,7 +99,12 @@
     <string name="error_title">Ошибка</string>
     <string name="sport_exercises_title">Упражнения</string>
     <string name="illustration">Иллюстрации</string>
-    <string name="dark_mode">Темная</string>
-    <string name="light_mode">Светлая</string>
+    <string name="dark_mode">темная</string>
+    <string name="light_mode">светлая</string>
     <string name="choose_lang">Выбор языка</string>
+    <string name="not_found_data">Нет данных</string>
+    <string name="note">Памятка</string>
+    <string name="proportion_number">Замер №</string>
+    <string name="notes">Заметки</string>
+    <string name="morning_has_note">Заметка существует</string>
 </resources>

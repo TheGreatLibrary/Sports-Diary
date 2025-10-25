@@ -5,8 +5,10 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.sinya.projects.sportsdiary.data.database.entity.ExerciseMuscles
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
 import com.sinya.projects.sportsdiary.data.database.entity.Exercises
+import com.sinya.projects.sportsdiary.data.database.repository.ExerciseMusclesData
 import com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetCategory.ExerciseUi
 
 @Dao
@@ -19,8 +21,9 @@ interface ExercisesDao {
             0 as checked 
         FROM exercises e
         JOIN exercise_translations et ON e.id = et.exercise_id
+        WHERE language = :locale
     """)
-    suspend fun getExercisesList(): List<ExerciseUi>
+    suspend fun getExercisesList(locale: String): List<ExerciseUi>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExercise(exercise: Exercises): Long
@@ -31,8 +34,8 @@ interface ExercisesDao {
     @Query("SELECT * FROM exercises")
     suspend fun getAllExercises(): List<Exercises>
 
-    @Query("SELECT * FROM exercise_translations WHERE exercise_id = :exerciseId LIMIT 1")
-    suspend fun getExerciseById(exerciseId: Int): ExerciseTranslations
+    @Query("SELECT * FROM exercise_translations WHERE exercise_id = :exerciseId AND language = :language LIMIT 1")
+    suspend fun getExerciseById(exerciseId: Int, language: String): ExerciseTranslations
 //
 //    @Query("SELECT * FROM exercises WHERE name LIKE '%' || :query || '%'")
 //    suspend fun searchByName(query: String): List<Exercises>
@@ -49,15 +52,33 @@ interface ExercisesDao {
     @Transaction
     suspend fun insertExercisesData(
         exercises: List<Exercises>,
-        translations: List<ExerciseTranslations>
+        translations: List<ExerciseTranslations>,
+        exerciseMuscles: List<ExerciseMuscles>
     ) {
         insertExercises(exercises)
+        insertExerciseMuscle(exerciseMuscles)
         insertExerciseTranslations(translations)
     }
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExerciseMuscle(exerciseMuscle: List<ExerciseMuscles>)
 
     @Query("""
         SELECT *
         FROM exercise_translations
+        WHERE language = :language
     """)
-    suspend fun getExercisesTranslations(): List<ExerciseTranslations>
+    suspend fun getExercisesTranslations(language: String): List<ExerciseTranslations>
+
+    @Query("""
+        SELECT 
+            em.muscle_id AS muscleId,
+            exercise_id AS exerciseId,
+            language,
+            name,
+            value
+        FROM exercise_muscles em JOIN muscle_translations mt ON em.muscle_id = mt.muscle_id
+        WHERE exercise_id = :id AND language = :language
+    """)
+    suspend fun getExerciseMuscleById(id: Int, language: String): List<ExerciseMusclesData>
 }

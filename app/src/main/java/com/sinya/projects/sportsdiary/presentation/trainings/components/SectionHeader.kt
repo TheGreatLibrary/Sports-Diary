@@ -42,7 +42,7 @@ fun SectionHeader(
             color = MaterialTheme.colorScheme.onPrimary
         )
         Icon(
-            painter = painterResource(R.drawable.arrow),
+            painter = painterResource(R.drawable.ic_arrow),
             modifier = Modifier.rotate(rotation),
             contentDescription = "arrow",
             tint = MaterialTheme.colorScheme.onPrimary

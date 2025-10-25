@@ -8,6 +8,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.sinya.projects.sportsdiary.data.database.entity.DataProportions
 import com.sinya.projects.sportsdiary.data.database.entity.Proportions
+import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionDialogContent
 import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionItem
 import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionRow
 import com.sinya.projects.sportsdiary.presentation.proportions.Proportion
@@ -37,33 +38,48 @@ interface ProportionsDao {
       JOIN type_proportions t ON t.id = d.type_id
       JOIN units_measurement u ON u.id = t.unit_measure_id
       JOIN type_proportion_translations tpt ON t.id = tpt.type_id
-      WHERE d.proportion_id = :id
+      WHERE d.proportion_id = :id AND language = :locale
       ORDER BY t.id
     """)
-    suspend fun proportionPage(id: Int): List<ProportionRow>
+    suspend fun proportionPage(id: Int, locale: String): List<ProportionRow>
 
     @Query("""
-      SELECT 
-        t.id,
-        tpt.name AS title,
-        0 as value,
-        u.name AS unitMeasure
-      FROM type_proportions t
-      JOIN units_measurement u ON u.id = t.unit_measure_id
-    JOIN type_proportion_translations tpt ON t.id = tpt.type_id
-      ORDER BY t.id
+        SELECT 
+            t.id,
+            tpt.name AS title,
+            0 as value,
+            u.name AS unitMeasure
+        FROM type_proportions t
+        JOIN type_proportion_translations tpt ON t.id = tpt.type_id
+        JOIN units_measurement u ON u.id = t.unit_measure_id
+        WHERE language = :language
+        ORDER BY t.id
     """)
-    suspend fun newProportions(): List<ProportionRow>
+    suspend fun newProportions(language: String): List<ProportionRow>
 
+    @Query("""
+        SELECT 
+            t.id,
+            tpt.name AS title,
+            COALESCE(d.value, 0) as value,
+            u.name AS unitMeasure
+        FROM type_proportions t
+        LEFT JOIN data_proportions d ON t.id = d.type_id AND d.proportion_id IN (SELECT id FROM proportions ORDER BY id DESC LIMIT 1) 
+        JOIN units_measurement u ON u.id = t.unit_measure_id
+        JOIN type_proportion_translations tpt ON t.id = tpt.type_id
+        WHERE  language = :language
+        ORDER BY t.id
+    """)
+    suspend fun newProportionsWithPrevData(language: String): List<ProportionRow>
 
 
     @Query("""
     SELECT
-      COALESCE(:id, (SELECT COALESCE(MAX(p2.id),0)+1 FROM proportions p2)) AS id,
-      strftime('%d/%m/%Y',
-               COALESCE((SELECT p3.date FROM proportions p3 WHERE p3.id = :id),
-                        'now','localtime')
-      ) AS date
+        COALESCE(:id, (SELECT COALESCE(MAX(p2.id),0)+1 FROM proportions p2)) AS id,
+        COALESCE(
+            strftime('%Y-%m-%d', (SELECT p3.date FROM proportions p3 WHERE p3.id = :id)),
+            strftime('%Y-%m-%d', 'now','localtime')
+        ) AS date
     """)
     suspend fun getById(id: Int?): Proportions
 
@@ -94,4 +110,14 @@ interface ProportionsDao {
 
     @Update
     suspend fun updateProportion(item: List<DataProportions>)
+
+    @Query("""
+        SELECT 
+            type_id AS id,
+            name,
+            description
+        FROM type_proportion_translations
+        WHERE type_id = :id AND language = :locale
+    """)
+    suspend fun getProportionById(id: Int, locale: String): ProportionDialogContent
 }

@@ -2,6 +2,7 @@ package com.sinya.projects.sportsdiary.presentation.sportExercises
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.repository.ExercisesRepository
@@ -19,10 +20,10 @@ class SportExercisesViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val list = exerciseRepository.getExerciseTranslations()
+            val list = exerciseRepository.getExerciseTranslations(Locale.current.language)
 
             _state.value = SportExercisesUiState.Success(
-                exercises = list
+                exercises = list,
             )
         }
     }

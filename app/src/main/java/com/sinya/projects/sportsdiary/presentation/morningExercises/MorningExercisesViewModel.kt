@@ -3,29 +3,46 @@ package com.sinya.projects.sportsdiary.presentation.morningExercises
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.sinya.projects.sportsdiary.data.database.repository.MorningRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MorningExercisesViewModel @Inject constructor(
-
+    private val morningRepo: MorningRepository
 ) : ViewModel() {
 
     private val _state = mutableStateOf<MorningExercisesUiState>(MorningExercisesUiState.Loading)
     val state: State<MorningExercisesUiState> = _state
 
     init {
-       _state.value = MorningExercisesUiState.Success(
-           countTraining = 10,
-           seriesScope = 12,
-           listPlan = listOf("бла бла бла", "блаблабла"),
-           listNote = listOf("ОГО ОГО", "гыгы гыгыыгыыг")
-       )
+        viewModelScope.launch {
+            val count = morningRepo.getCount()
+//            val seriesScope = morningRepo.ge
+
+            _state.value = MorningExercisesUiState.Success(
+                countTraining = count,
+                seriesScope = 12
+            )
+        }
     }
 
     fun onEvent(event: MorningExercisesUiEvent) {
+        val currentState = _state.value as? MorningExercisesUiState.Success ?: return
         when(event) {
-          else -> Unit
+            is MorningExercisesUiEvent.OnNoteExpanded -> {
+                _state.value = currentState.copy(
+                    noteExpanded = event.state
+                )
+            }
+            is MorningExercisesUiEvent.OnPlanExpanded -> {
+                _state.value = currentState.copy(
+                    planExpanded = event.state
+                )
+            }
+
         }
     }
 }

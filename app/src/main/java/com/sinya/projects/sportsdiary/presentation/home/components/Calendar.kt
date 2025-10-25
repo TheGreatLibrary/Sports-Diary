@@ -64,16 +64,13 @@ fun Calendar(
     onShift: (Int) -> Unit,
 
     daysTitle: List<String> = listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"),
-    daysNumber: List<DayOfMonth>,   // уже рассчитанный месяц из VM
-    morningState: Boolean,          // true если за сегодня есть отметка
-    expandedCalendar: Boolean,      // развёрнут ли календарь
+    daysNumber: List<DayOfMonth>,
+    morningState: Boolean,
+    expandedCalendar: Boolean,
     year: Int,
     month: Int,
 ) {
     val ym = remember(year, month) { YearMonth.of(year, month) }
-    val today = remember { LocalDate.now() }
-
-    // swipe: листаем месяцы
     val swipeThreshold = with(LocalDensity.current) { 56.dp.toPx() }
     var dragX by remember { mutableFloatStateOf(0f) }
 
@@ -95,59 +92,14 @@ fun Calendar(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Карточка календаря
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = MaterialTheme.shapes.medium
-                )
-                .clip(MaterialTheme.shapes.medium)
-                .padding(top = 50.dp, bottom = 24.dp, start = 16.dp, end = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            CalendarHeader(
-                ym = ym,
-                today = today
-            )
-
-            WeekdayRow(
-                daysTitle = daysTitle,
-                highlightToday = ym == YearMonth.from(today),
-                today = today
-            )
-
-            MonthPager(
-                ym = ym,
-                days = daysNumber,
-                expanded = expandedCalendar,
-                today = today
-            )
-
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .align(Alignment.CenterHorizontally),
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Legend()
-                CustomButton(
-                    onClick = onButtonMorningClick,
-                    containerColor = if (!morningState) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = if (!morningState) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary,
-                    text = if (!morningState)
-                        stringResource(R.string.finish_morning_exercises)
-                    else
-                        stringResource(R.string.finished_morning_exercises)
-                )
-            }
-        }
+        CalendarBody(
+            onButtonMorningClick,
+            daysTitle,
+            daysNumber,
+            morningState,
+            expandedCalendar,
+            ym
+        )
 
         ExpandButton(
             expanded = expandedCalendar,
@@ -157,6 +109,72 @@ fun Calendar(
 }
 
 /* ------------------------- Sub-composables ------------------------- */
+
+@Composable
+private fun CalendarBody(
+    onButtonMorningClick: () -> Unit,
+    daysTitle: List<String>,
+    daysNumber: List<DayOfMonth>,   // уже рассчитанный месяц из VM
+    morningState: Boolean,          // true если за сегодня есть отметка
+    expandedCalendar: Boolean,      // развёрнут ли календарь
+    ym: YearMonth
+) {
+    val today = remember { LocalDate.now() }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shape = MaterialTheme.shapes.medium
+            )
+            .clip(MaterialTheme.shapes.medium)
+            .padding(top = 50.dp, bottom = 24.dp, start = 16.dp, end = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        CalendarHeader(
+            ym = ym,
+            today = today
+        )
+
+        WeekdayRow(
+            daysTitle = daysTitle,
+            highlightToday = ym == YearMonth.from(today),
+            today = today
+        )
+
+        MonthPager(
+            ym = ym,
+            days = daysNumber,
+            expanded = expandedCalendar,
+            today = today
+        )
+
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .align(Alignment.CenterHorizontally),
+            thickness = 2.dp,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Legend()
+            CustomButton(
+                onClick = onButtonMorningClick,
+                containerColor = if (!morningState) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = if (!morningState) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary,
+                text = if (!morningState)
+                    stringResource(R.string.finish_morning_exercises)
+                else
+                    stringResource(R.string.finished_morning_exercises)
+            )
+        }
+    }
+}
 
 @Composable
 private fun CalendarHeader(
@@ -384,7 +402,7 @@ private fun ExpandButton(
     ) {
         Icon(
             contentDescription = if (expanded) "Collapse" else "Expand",
-            painter = painterResource(R.drawable.arrow),
+            painter = painterResource(R.drawable.ic_arrow),
             tint = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.rotate(arrowRotation)
         )

@@ -31,22 +31,20 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MainApp(
-                updateLocale = { lang -> updateLocale(this, lang) }
+                updateLocale = { lang -> updateLocale( lang) }
             )
         }
     }
 
-    private fun updateLocale(context: Context, language: String) {
+    private fun Context.updateLocale( language: String) {
         val locale = Locale(language)
         Locale.setDefault(locale)
 
-        val resources = context.resources
         val configuration = Configuration(resources.configuration)
         configuration.setLocale(locale)
         configuration.setLayoutDirection(locale)
 
         resources.updateConfiguration(configuration, resources.displayMetrics)
     }
-
 }
 

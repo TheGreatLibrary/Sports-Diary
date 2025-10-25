@@ -3,11 +3,11 @@ package com.sinya.projects.sportsdiary.presentation.trainingPage
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
+import com.sinya.projects.sportsdiary.data.database.repository.ExercisesRepository
 import com.sinya.projects.sportsdiary.data.database.repository.TrainingRepository
-import com.sinya.projects.sportsdiary.presentation.trainings.Training
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -15,7 +15,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class TrainingPageViewModel @Inject constructor(
-    private val repo: TrainingRepository
+    private val trainingRepository: TrainingRepository,
+    private val exerciseRepository: ExercisesRepository
 ) : ViewModel() {
 
     private val _state = mutableStateOf<TrainingPageUiState>(TrainingPageUiState.Loading)
@@ -23,9 +24,8 @@ class TrainingPageViewModel @Inject constructor(
 
     fun init(id: Int?) {
         viewModelScope.launch {
-            val entity = repo.getById(id)
-            Log.d("", "${entity}")
-            val categories = repo.categoriesList()
+            val entity = trainingRepository.getById(id)
+            val categories = trainingRepository.categoriesList()
             _state.value = TrainingPageUiState.Success(
                 id = entity.id,
                 title = entity.title,
@@ -42,18 +42,22 @@ class TrainingPageViewModel @Inject constructor(
         when (event) {
             is TrainingPageUiEvent.OnSelectedCategory -> {
                 viewModelScope.launch {
+                    val items = trainingRepository.getDataByTypeTraining(event.name.id)
                     _state.value = s.copy(
                         category = event.name,
-                        title = repo.getSerialNumOfCategory(event.name.id)
+                        title = trainingRepository.getSerialNumOfCategory(event.name.id),
+                        items = items
+
                     )
                 }
             }
 
-            is  TrainingPageUiEvent.UpdateListTraining -> {
+            is TrainingPageUiEvent.UpdateListTraining -> {
                 viewModelScope.launch {
-                    val entity = repo.getById(s.id)
+                    val entity = trainingRepository.getById(s.id)
                     _state.value = s.copy(
-                        items = entity.items
+                        items = entity.items,
+                        bottomSheetTrainingStatus = false
                     )
                 }
             }
@@ -75,9 +79,7 @@ class TrainingPageViewModel @Inject constructor(
             }
 
             is TrainingPageUiEvent.OpenBottomSheetTraining -> {
-                viewModelScope.launch {
-                    save()
-                }
+                save()
                 _state.value = s.copy(bottomSheetTrainingStatus = event.state)
             }
 
@@ -90,6 +92,8 @@ class TrainingPageViewModel @Inject constructor(
                     weightList = listOf("")
                 )
                 _state.value = s.copy(items = newItems)
+                save()
+
             }
 
             is TrainingPageUiEvent.Delete -> {
@@ -97,19 +101,39 @@ class TrainingPageViewModel @Inject constructor(
             }
 
             is TrainingPageUiEvent.Save -> {
-                viewModelScope.launch {
                     save()
-                }
                 event.exit()
             }
+
             is TrainingPageUiEvent.UpdateCategories -> {
                 updateCategoriesList()
+            }
+
+            is TrainingPageUiEvent.OpenDialog -> {
+                viewModelScope.launch {
+                    if (event.id != null) {
+                        val item = s.items.first { it.id == event.id }
+                        val exercise =
+                            exerciseRepository.getExerciseById(event.id, Locale.current.language)
+                        _state.value = s.copy(
+                            dialogContent = ExerciseDialogContent(
+                                id = item.id,
+                                name = exercise.name,
+                                description = exercise.description,
+                            )
+                        )
+                    } else {
+                        _state.value = s.copy(
+                            dialogContent = null
+                        )
+                    }
+                }
             }
         }
     }
 
-    private suspend fun save() {
-        val s = _state.value as? TrainingPageUiState.Success ?: return
+    private fun save() = viewModelScope.launch{
+        val s = _state.value as? TrainingPageUiState.Success ?: return@launch
 
         val item = TrainingEntity(
             id = s.id,
@@ -118,7 +142,7 @@ class TrainingPageViewModel @Inject constructor(
             date = s.date,
             items = s.items
         )
-        repo.insertTraining(item)
+        trainingRepository.insertTraining(item)
     }
 
     private fun addSet(exId: Int) {
@@ -176,7 +200,7 @@ class TrainingPageViewModel @Inject constructor(
 
         viewModelScope.launch {
             _state.value = s.copy(
-                categories = repo.categoriesList()
+                categories = trainingRepository.categoriesList()
             )
         }
     }

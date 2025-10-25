@@ -56,7 +56,7 @@ fun Chart(
             AnimationIcon(
                 onClick = onInfoClick,
                 description = "Info",
-                icon = painterResource(R.drawable.nav_set),
+                icon = painterResource(R.drawable.ic_info),
                 isSelected = true,
                 size = 19.dp,
                 selectedContainerColor = Color.Transparent,
@@ -66,7 +66,7 @@ fun Chart(
             points = points,
             timeMode = timeMode,
             yMin = 0f,
-            yMax = points.maxOf { it.yValue },
+            yMax = if (points.isNotEmpty()) points.maxOf { it.yValue } else 5f,
             yGridLines = 4,
             xStep = 80.dp,
             lineColor = MaterialTheme.colorScheme.secondary,

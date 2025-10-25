@@ -27,7 +27,7 @@ class AppViewModel @Inject constructor(
     val language = dataStoreManager.getLangMode()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(1000),
             initialValue = "ru"
         )
 

@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
@@ -85,7 +84,7 @@ fun CustomDropdownMenu(
                         modifier = Modifier.weight(1f)
                     )
                     Icon(
-                        painter = painterResource(R.drawable.arrow),
+                        painter = painterResource(R.drawable.ic_arrow),
                         modifier = Modifier.rotate(rotation),
                         contentDescription = "arrow",
                         tint = MaterialTheme.colorScheme.onPrimary

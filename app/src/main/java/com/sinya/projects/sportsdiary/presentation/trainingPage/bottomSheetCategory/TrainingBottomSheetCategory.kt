@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -120,28 +121,6 @@ fun TrainingBottomSheetCategoryView(
                         keyboardType = KeyboardType.Text,
                         modifier = Modifier.fillMaxWidth()
                     )
-
-                    val selected = remember(state.items) {
-                        state.items.filter { it.checked }.take(4)
-                    }
-                    AnimatedVisibility(
-                        visible = selected.isNotEmpty()
-                    ) {
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            selected.forEach {
-                                AssistChip(
-                                    onClick = { onEvent(TrainingBottomSheetCategoryUiEvent.Toggle(it.id)) },
-                                    label = {
-                                        Text(
-                                            it.name,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                )
-                            }
-                        }
-                    }
                     Text(
                         text = stringResource(R.string.choose_exercises),
                         style = MaterialTheme.typography.titleMedium
@@ -165,13 +144,13 @@ fun TrainingBottomSheetCategoryView(
                         keyboardType = KeyboardType.Text,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    CustomElementTriCheck(
-                        triState = triState,
-                        onEvent = {
-                                val target = triState != ToggleableState.On
-                                onEvent(TrainingBottomSheetCategoryUiEvent.SetAll(target))
-                        }
-                    )
+//                    CustomElementTriCheck(
+//                        triState = triState,
+//                        onEvent = {
+//                                val target = triState != ToggleableState.On
+//                                onEvent(TrainingBottomSheetCategoryUiEvent.SetAll(target))
+//                        }
+//                    )
 
                     HorizontalDivider()
 
@@ -184,7 +163,7 @@ fun TrainingBottomSheetCategoryView(
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(max = 480.dp)
+                                .fillMaxHeight(0.7f)
                         ) {
                             items(filtered) { ex ->
                                 CustomElementCheckBox(
@@ -203,7 +182,7 @@ fun TrainingBottomSheetCategoryView(
                         Row(
                             Modifier
                                 .fillMaxWidth()
-                                .padding(top = 8.dp, bottom = 20.dp),
+                                .padding(vertical = 8.dp),
                             horizontalArrangement = Arrangement.End
                         ) {
                             TextButton(

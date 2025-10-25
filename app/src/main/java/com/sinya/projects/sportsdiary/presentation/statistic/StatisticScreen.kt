@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,6 +21,8 @@ import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.statistic.components.RadioButtons
 import com.sinya.projects.sportsdiary.presentation.statistic.components.StatCard
 import com.sinya.projects.sportsdiary.ui.features.diagram.Chart
+import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDiagramView
+import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDialog
 
 @Composable
 fun StatisticScreen(
@@ -90,9 +93,21 @@ fun StatisticScreenView(
             )
             Chart(
                 title = stringResource(R.string.effect_of_training),
-                onInfoClick = { },
+                onInfoClick = { onEvent(StatisticScreenUiEvent.OnDialogState(true)) },
                 timeMode = state.timeMode,
                 points = state.chartList
+            )
+        }
+
+        if (state.dialogState) {
+            GuideDialog(
+                onDismiss = { onEvent(StatisticScreenUiEvent.OnDialogState(false)) },
+                content = {
+                    GuideDiagramView(
+                        title = stringResource(R.string.note),
+                        image = painterResource(R.drawable.ic_launcher_background)
+                    )
+                }
             )
         }
     }

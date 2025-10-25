@@ -73,7 +73,8 @@ fun TrainingCard(
                             }
                         }
                     }
-                } else {
+                }
+                else {
                     Text(
                         text = stringResource(R.string.not_entries_of_training),
                         style = MaterialTheme.typography.bodyMedium,

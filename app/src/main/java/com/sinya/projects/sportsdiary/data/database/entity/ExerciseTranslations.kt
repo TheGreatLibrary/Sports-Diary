@@ -22,5 +22,11 @@ data class ExerciseTranslations(
     @ColumnInfo(name = "language") val language: String,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "description") val description: String,
-    @ColumnInfo(name = "rule") val rule: String
+    @ColumnInfo(name = "rule") val rule: String,
+    @ColumnInfo(name = "force") val force: String?,
+    @ColumnInfo(name = "level") val level: String?,
+    @ColumnInfo(name = "mechanic") val mechanic: String?,
+    @ColumnInfo(name = "equipment") val equipment: String?,
+    @ColumnInfo(name = "category") val category: String?
+
 )

@@ -58,7 +58,7 @@ fun ScrollableLineChart(
     formatYLabel: (Float) -> String = { it.roundToInt().toString() }
 ) {
     if (points.isEmpty()) {
-        Box(modifier, contentAlignment = Alignment.Center) {
+        Box(modifier.height(100.dp), contentAlignment = Alignment.Center) {
             Text("Нет данных")
         }
         return

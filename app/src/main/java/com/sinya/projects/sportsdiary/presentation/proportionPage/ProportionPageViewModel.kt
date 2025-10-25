@@ -2,9 +2,11 @@ package com.sinya.projects.sportsdiary.presentation.proportionPage
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.repository.ProportionRepository
+import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseDialogContent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -19,7 +21,7 @@ class ProportionPageViewModel @Inject constructor(
 
     fun init(id: Int?) {
         viewModelScope.launch {
-            val entity = if (id == null) repo.getNewListProportions() else repo.getById(id)
+            val entity = repo.getById(id)
             _state.value = ProportionPageUiState.Success(item = entity)
         }
     }
@@ -39,6 +41,22 @@ class ProportionPageViewModel @Inject constructor(
                     else it
                 }
                 _state.value = currentState.copy(item = currentState.item.copy(items = list))
+            }
+
+            is ProportionPageUiEvent.OpenDialog -> {
+                viewModelScope.launch {
+                    if (event.id!=null) {
+                        val proportion = repo.getProportionData(event.id)
+                        _state.value = currentState.copy(
+                            dialogContent = proportion
+                        )
+                    }
+                    else {
+                        _state.value = currentState.copy(
+                            dialogContent = null
+                        )
+                    }
+                }
             }
         }
     }

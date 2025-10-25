@@ -44,6 +44,10 @@ android {
 }
 
 dependencies {
+    // widget
+    implementation("androidx.glance:glance-appwidget:1.0.0")
+    implementation("androidx.glance:glance-material3:1.0.0")
+
     // room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
