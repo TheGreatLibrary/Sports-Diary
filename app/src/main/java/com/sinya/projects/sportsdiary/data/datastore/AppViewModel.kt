@@ -1,14 +1,10 @@
 package com.sinya.projects.sportsdiary.data.datastore
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -31,6 +27,13 @@ class AppViewModel @Inject constructor(
             initialValue = "ru"
         )
 
+    val planId = dataStoreManager.getPlanMorningId()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            initialValue = 0
+        )
+
     fun toggleTheme() {
         viewModelScope.launch {
             dataStoreManager.setThemeMode(!themeMode.value)
@@ -40,6 +43,12 @@ class AppViewModel @Inject constructor(
     fun setLanguage(lang: String) {
         viewModelScope.launch {
             dataStoreManager.setLangMode(lang)
+        }
+    }
+
+    fun setPlanMorningId(id: Int) {
+        viewModelScope.launch {
+            dataStoreManager.setPlanMorningId(id)
         }
     }
 }

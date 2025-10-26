@@ -107,4 +107,6 @@
     <string name="proportion_number">Замер №</string>
     <string name="notes">Заметки</string>
     <string name="morning_has_note">Заметка существует</string>
+    <string name="save">Сохранить</string>
+    <string name="plans">Планы</string>
 </resources>

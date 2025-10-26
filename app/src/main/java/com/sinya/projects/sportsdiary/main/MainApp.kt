@@ -49,6 +49,8 @@ fun MainApp(
 ) {
     val themeMode by viewModel.themeMode.collectAsState()
     val language by viewModel.language.collectAsState()
+    val selectedPlanId by viewModel.planId.collectAsState()
+
     updateLocale(language)
     val currentLocale = remember(language) { Locale(language) }
 
@@ -64,8 +66,6 @@ fun MainApp(
         ScreenRoute.Statistic.route,
         ScreenRoute.Settings.route
     )
-
-
 
     CompositionLocalProvider(
         LocalLocale provides currentLocale

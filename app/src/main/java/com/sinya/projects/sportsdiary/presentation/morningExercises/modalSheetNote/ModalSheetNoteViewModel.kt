@@ -1,6 +1,5 @@
 package com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetNote
 
-import android.icu.util.LocaleData
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -32,14 +31,20 @@ class ModalSheetNoteViewModel @Inject constructor(
         val currentState = _state.value as? ModalSheetNoteUiState.Success ?: return
 
         when(event) {
-            is ModalSheetNoteEvent.UpdateCurrent -> {
-                
+            is ModalSheetNoteEvent.ClearQuery -> {
+                _state.value = currentState.copy(
+                    query = "",
+                    visibleAddField = false,
+                    visibleEditFieldId = null
+                )
             }
 
             is ModalSheetNoteEvent.OpenAddNoteField -> {
-                    _state.value = currentState.copy(
-                        visibleAddField = true
-                    )
+                _state.value = currentState.copy(
+                    query = "",
+                    visibleAddField = true,
+                    visibleEditFieldId = null
+                )
             }
 
             is ModalSheetNoteEvent.OnQueryChange -> {
@@ -64,6 +69,45 @@ class ModalSheetNoteViewModel @Inject constructor(
                         items = morningRepo.getNotes()
                     )
                 }
+            }
+
+            is ModalSheetNoteEvent.EditNote -> {
+                viewModelScope.launch {
+                    val item = currentState.items.first() { it.id == currentState.visibleEditFieldId }
+                    morningRepo.updateMorning(
+                        item.copy(note = currentState.query)
+                    )
+                    _state.value = currentState.copy(
+                        visibleAddField = false,
+                        visibleEditFieldId = null,
+                        query = "",
+                        items = morningRepo.getNotes()
+                    )
+                }
+            }
+
+            is ModalSheetNoteEvent.OpenEditNoteField -> {
+                _state.value = currentState.copy(
+                    query = currentState.items.first { it.id == event.id }.note.toString(),
+                    visibleAddField = false,
+                    visibleEditFieldId = event.id
+                )
+            }
+
+            is ModalSheetNoteEvent.ClearNote -> {
+                viewModelScope.launch {
+                    val item = currentState.items.first() { it.id == event.id }
+                    morningRepo.updateMorning(
+                        item.copy(note = "")
+                    )
+                    _state.value = currentState.copy(
+                        visibleAddField = false,
+                        visibleEditFieldId = null,
+                        query = "",
+                        items = morningRepo.getNotes()
+                    )
+                }
+
             }
         }
     }

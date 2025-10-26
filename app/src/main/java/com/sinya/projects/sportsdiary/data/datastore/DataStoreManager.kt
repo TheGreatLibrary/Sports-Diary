@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -21,6 +22,7 @@ class DataStoreManager @Inject constructor(
 
     private val THEME_MODE = booleanPreferencesKey("theme_mode")
     private val LANG_MODE = stringPreferencesKey("lang_mode")
+    private val PLAN_MORNING_ID = intPreferencesKey("plan_morning_id")
 
     private suspend fun <T> save(key: Preferences.Key<T>, value: T) {
         context.dataStore.edit { settings ->
@@ -38,4 +40,7 @@ class DataStoreManager @Inject constructor(
 
     suspend fun setLangMode(value: String) = save(LANG_MODE, value)
     fun getLangMode(): Flow<String> = read(LANG_MODE, "ru")
+
+    suspend fun setPlanMorningId(value: Int) = save(PLAN_MORNING_ID, value)
+    fun getPlanMorningId(): Flow<Int> = read(PLAN_MORNING_ID, 0)
 }
