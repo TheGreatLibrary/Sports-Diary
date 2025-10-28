@@ -10,8 +10,3 @@ sealed class MorningExercisesUiState {
     ) : MorningExercisesUiState()
     data class Error(val message: String) : MorningExercisesUiState()
 }
-
-sealed class MorningExercisesUiEvent {
-    data class OnNoteExpanded(val state: Boolean) : MorningExercisesUiEvent()
-    data class OnPlanExpanded(val state: Boolean) : MorningExercisesUiEvent()
-}

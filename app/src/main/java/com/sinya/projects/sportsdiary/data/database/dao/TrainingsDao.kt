@@ -179,7 +179,7 @@ interface TrainingsDao {
         e.id,
         et.name AS title,
         'кг' AS unitMeasure
-      FROM training_type_exercise d
+      FROM data_type_trainings d
       JOIN exercises e ON e.id = d.exercise_id
       JOIN exercise_translations et ON e.id = et.exercise_id
       WHERE d.type_id = :id AND et.language = :lang

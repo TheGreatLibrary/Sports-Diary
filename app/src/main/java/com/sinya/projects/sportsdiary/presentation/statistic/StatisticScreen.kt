@@ -23,31 +23,31 @@ import com.sinya.projects.sportsdiary.presentation.statistic.components.StatCard
 import com.sinya.projects.sportsdiary.ui.features.diagram.Chart
 import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDiagramView
 import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDialog
+import java.util.Locale
 
 @Composable
 fun StatisticScreen(
     onBackClick: () -> Unit,
-    vm: StatisticScreenViewModel = hiltViewModel()
+    vm: StatisticViewModel = hiltViewModel()
 ) {
     when (val state = vm.state.value) {
-        is StatisticScreenUiState.Loading -> PlaceholderScreen()
-        is StatisticScreenUiState.Success -> {
+        is StatisticUiState.Loading -> PlaceholderScreen()
+        is StatisticUiState.Success -> {
             StatisticScreenView(
                 onBackClick = onBackClick,
                 state = state,
                 onEvent = vm::onEvent
             )
         }
-        is StatisticScreenUiState.Error -> ErrorScreen(state.message)
+        is StatisticUiState.Error -> ErrorScreen(state.message)
     }
 }
 
-
 @Composable
-fun StatisticScreenView(
+private fun StatisticScreenView(
     onBackClick: () -> Unit,
-    state: StatisticScreenUiState.Success,
-    onEvent: (StatisticScreenUiEvent) -> Unit,
+    state: StatisticUiState.Success,
+    onEvent: (StatisticEvent) -> Unit,
     radioOptions: List<String> = listOf(
         stringResource(R.string.days),
         stringResource(R.string.months),
@@ -89,11 +89,11 @@ fun StatisticScreenView(
             RadioButtons(
                 radioOptions = radioOptions,
                 selectedOption = state.timeMode.index,
-                onOptionSelected = { index -> onEvent(StatisticScreenUiEvent.OnSelectTimePeriod(index)) }
+                onOptionSelected = { index -> onEvent(StatisticEvent.OnSelectTimePeriod(index)) }
             )
             Chart(
                 title = stringResource(R.string.effect_of_training),
-                onInfoClick = { onEvent(StatisticScreenUiEvent.OnDialogState(true)) },
+                onInfoClick = { onEvent(StatisticEvent.OnDialogState(true)) },
                 timeMode = state.timeMode,
                 points = state.chartList
             )
@@ -101,11 +101,12 @@ fun StatisticScreenView(
 
         if (state.dialogState) {
             GuideDialog(
-                onDismiss = { onEvent(StatisticScreenUiEvent.OnDialogState(false)) },
+                onDismiss = { onEvent(StatisticEvent.OnDialogState(false)) },
                 content = {
                     GuideDiagramView(
                         title = stringResource(R.string.note),
-                        image = painterResource(R.drawable.ic_launcher_background)
+                        image = if (Locale.getDefault().displayName =="ru") painterResource(R.drawable.graph_guide_ru)
+                                else painterResource(R.drawable.graph_guide_en)
                     )
                 }
             )

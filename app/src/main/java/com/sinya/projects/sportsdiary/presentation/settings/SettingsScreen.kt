@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
-import com.sinya.projects.sportsdiary.presentation.settings.sheet.LanguageBottomSheet
+import com.sinya.projects.sportsdiary.presentation.settings.modalSheetLocale.SettingsLanguageSheet
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
 import com.sinya.projects.sportsdiary.ui.features.BlockOfCards
 import com.sinya.projects.sportsdiary.ui.features.ColumnOfCard
@@ -125,7 +125,7 @@ private fun SettingsScreenView(
         }
 
         if (stateBottomSheet) {
-            LanguageBottomSheet(
+            SettingsLanguageSheet(
                 setLanguage = setLanguage,
                 language = language,
                 onDismiss = onLanguageClick

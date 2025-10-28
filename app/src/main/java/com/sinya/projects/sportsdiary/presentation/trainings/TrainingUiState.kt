@@ -9,11 +9,6 @@ sealed class TrainingUiState {
     data class Error(val message: String) : TrainingUiState()
 }
 
-sealed class TrainingUiEvent {
-    data class ModeChange(val mode: SortMode) : TrainingUiEvent()
-    data object ReloadData : TrainingUiEvent()
-}
-
 data class Training(
     val id: Int,
     val name: String,

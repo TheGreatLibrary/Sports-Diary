@@ -26,19 +26,16 @@ fun ProportionsScreen(
         is ProportionsUiState.Loading -> PlaceholderScreen()
         is ProportionsUiState.Success -> ProportionsScreenView(
             state = state,
-            onEvent = vm::onEvent,
             onBackClick = onBackClick,
             onProportionClick = onProportionClick
         )
-
         is ProportionsUiState.Error -> ErrorScreen(state.message)
     }
 }
 
 @Composable
-fun ProportionsScreenView(
+private fun ProportionsScreenView(
     state: ProportionsUiState.Success,
-    onEvent: (ProportionsUiEvent) -> Unit,
     onBackClick: () -> Unit,
     onProportionClick: (Int) -> Unit
 ) {

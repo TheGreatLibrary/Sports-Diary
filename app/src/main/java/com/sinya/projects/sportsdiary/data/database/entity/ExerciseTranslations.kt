@@ -3,6 +3,7 @@ package com.sinya.projects.sportsdiary.data.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 
 @Entity(
@@ -15,6 +16,12 @@ import androidx.room.ForeignKey
             childColumns = ["exercise_id"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["exercise_id"]),
+        Index(value = ["language"]),
+        Index(value = ["exercise_id", "language"]),
+        Index(value = ["name"])
     ]
 )
 data class ExerciseTranslations(

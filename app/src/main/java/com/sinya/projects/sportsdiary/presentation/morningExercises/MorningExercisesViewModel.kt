@@ -20,17 +20,17 @@ class MorningExercisesViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val count = morningRepo.getCount()
-//            val seriesScope = morningRepo.ge
 
             _state.value = MorningExercisesUiState.Success(
                 countTraining = count,
-                seriesScope = 12
+                seriesScope = 0
             )
         }
     }
 
     fun onEvent(event: MorningExercisesUiEvent) {
         val currentState = _state.value as? MorningExercisesUiState.Success ?: return
+
         when(event) {
             is MorningExercisesUiEvent.OnNoteExpanded -> {
                 _state.value = currentState.copy(
@@ -42,7 +42,6 @@ class MorningExercisesViewModel @Inject constructor(
                     planExpanded = event.state
                 )
             }
-
         }
     }
 }

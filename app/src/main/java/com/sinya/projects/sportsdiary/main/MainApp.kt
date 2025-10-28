@@ -1,8 +1,6 @@
 package com.sinya.projects.sportsdiary.main
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,16 +26,15 @@ import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionPage
 import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionPageViewModel
 import com.sinya.projects.sportsdiary.presentation.proportions.ProportionsScreen
 import com.sinya.projects.sportsdiary.presentation.settings.SettingsScreen
-import com.sinya.projects.sportsdiary.presentation.sportExercisePage.SportExercisePageScreen
-import com.sinya.projects.sportsdiary.presentation.sportExercisePage.SportExercisePageViewModel
-import com.sinya.projects.sportsdiary.presentation.sportExercises.SportExercisesScreen
+import com.sinya.projects.sportsdiary.presentation.exercisePage.ExercisePageScreen
+import com.sinya.projects.sportsdiary.presentation.exercisePage.ExercisePageViewModel
+import com.sinya.projects.sportsdiary.presentation.exercises.ExercisesScreen
 import com.sinya.projects.sportsdiary.presentation.statistic.StatisticScreen
 import com.sinya.projects.sportsdiary.presentation.trainings.TrainingsScreen
-import com.sinya.projects.sportsdiary.presentation.trainings.TrainingViewModel
 import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingPageScreen
 import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingPageViewModel
 import com.sinya.projects.sportsdiary.ui.theme.SportsDiaryTheme
-import com.sinya.projects.sportsdiary.utils.getCurrentRoute
+import com.sinya.projects.sportsdiary.ui.features.getCurrentRoute
 
 val LocalLocale = staticCompositionLocalOf { Locale.current }
 
@@ -49,7 +46,7 @@ fun MainApp(
 ) {
     val themeMode by viewModel.themeMode.collectAsState()
     val language by viewModel.language.collectAsState()
-    val selectedPlanId by viewModel.planId.collectAsState()
+    val currentPlanId by viewModel.planId.collectAsState()
 
     updateLocale(language)
     val currentLocale = remember(language) { Locale(language) }
@@ -95,6 +92,7 @@ fun MainApp(
                 ) {
                     composable<ScreenRoute.Home> {
                         HomeScreen(
+                            currentPlanId = currentPlanId,
                             onTrainingClick = { navigate(ScreenRoute.Training) },
                             onTrainingPlusClick = { navigate(ScreenRoute.TrainingPage()) },
                             onTrainingCardClick = { id -> navigate(ScreenRoute.TrainingPage(id)) },
@@ -175,7 +173,9 @@ fun MainApp(
 
                     composable<ScreenRoute.MorningExercises> {
                         MorningExercisesScreen(
-                            onBackClick = { onBack() }
+                            onBackClick = { onBack() },
+                            currentPlanId = currentPlanId,
+                            onPlanClick = viewModel::setPlanMorningId
                         )
                     }
 
@@ -184,18 +184,18 @@ fun MainApp(
                     }
 
                     composable<ScreenRoute.SportExercises> {
-                        SportExercisesScreen(
+                        ExercisesScreen(
                             onBackClick = { onBack() },
                             onExerciseClick = { id -> navigate(ScreenRoute.ExercisePage(id)) }
                         )
                     }
                     composable<ScreenRoute.ExercisePage> { entry ->
                         val args = entry.toRoute<ScreenRoute.ExercisePage>()
-                        val vm: SportExercisePageViewModel = hiltViewModel()
+                        val vm: ExercisePageViewModel = hiltViewModel()
 
                         LaunchedEffect(args.id) { vm.init(args.id) }
 
-                        SportExercisePageScreen(
+                        ExercisePageScreen(
                             state = vm.state.value,
                             onEvent = { event -> vm.onEvent(event) },
                             onBackClick = { onBack() },

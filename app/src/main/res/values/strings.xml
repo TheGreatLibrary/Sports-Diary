@@ -1,6 +1,14 @@
 <resources>
-    <string name="app_name">SportsDiary</string>
+    <string name="app_name">Settr</string>
     <string name="calendar_widget_description">Удобная отметка о выполнении зарядок с экрана телефона</string>
+
+    <string name="monday_short">Пн</string>
+    <string name="tuesday_short">Вт</string>
+    <string name="wednesday_short">Ср</string>
+    <string name="thursday_short">Чт</string>
+    <string name="friday_short">Пт</string>
+    <string name="saturday_short">Сб</string>
+    <string name="sunday_short">Вс</string>
 
     <string name="menu_title">Меню</string>
     <string name="training_title">Тренировки</string>
@@ -109,4 +117,7 @@
     <string name="morning_has_note">Заметка существует</string>
     <string name="save">Сохранить</string>
     <string name="plans">Планы</string>
+    <string name="name">Название</string>
+    <string name="description">Описание</string>
+    <string name="training_number">Тренировка №%1$s</string>
 </resources>

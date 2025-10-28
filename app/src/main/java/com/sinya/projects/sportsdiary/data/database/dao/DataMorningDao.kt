@@ -13,7 +13,7 @@ import com.sinya.projects.sportsdiary.presentation.home.MorningDay
 interface DataMorningDao {
 
     @Query("""
-        SELECT id, date 
+        SELECT id, date
         FROM data_mornings
         WHERE date >= :startDate AND date < :endDate
         ORDER BY date

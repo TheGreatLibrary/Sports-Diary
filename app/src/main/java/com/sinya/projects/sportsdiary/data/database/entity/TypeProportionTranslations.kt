@@ -3,6 +3,7 @@ package com.sinya.projects.sportsdiary.data.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "type_proportion_translations",
@@ -14,6 +15,11 @@ import androidx.room.ForeignKey
             childColumns = ["type_id"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["type_id"]),
+        Index(value = ["language"]),
+        Index(value = ["type_id", "language"])
     ]
 )
 data class TypeProportionTranslations(

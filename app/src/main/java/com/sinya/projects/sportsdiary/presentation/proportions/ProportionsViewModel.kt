@@ -4,9 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.data.database.dao.ProportionsDao
 import com.sinya.projects.sportsdiary.data.database.repository.ProportionRepository
-import com.sinya.projects.sportsdiary.presentation.trainings.TrainingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -23,10 +21,6 @@ class ProportionsViewModel @Inject constructor(
         loadData()
     }
 
-    fun onEvent(event: ProportionsUiEvent) {
-
-    }
-
     private fun loadData() {
         viewModelScope.launch {
             try {
@@ -41,5 +35,4 @@ class ProportionsViewModel @Inject constructor(
             }
         }
     }
-
 }

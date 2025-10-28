@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.presentation.trainings.Training
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
-import com.sinya.projects.sportsdiary.ui.features.getString
+import com.sinya.projects.sportsdiary.utils.getString
 import kotlinx.coroutines.launch
 
 @Composable

@@ -28,7 +28,7 @@ fun StatCard(
     title: String,
     count: String,
     style: TextStyle = MaterialTheme.typography.displayLarge
-    ) {
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

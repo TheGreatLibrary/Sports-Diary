@@ -62,8 +62,15 @@ fun Calendar(
     onExtended: () -> Unit,
     onButtonMorningClick: () -> Unit,
     onShift: (Int) -> Unit,
-
-    daysTitle: List<String> = listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"),
+    daysTitle: List<String> = listOf(
+        stringResource(R.string.monday_short),
+        stringResource(R.string.tuesday_short),
+        stringResource(R.string.wednesday_short),
+        stringResource(R.string.thursday_short),
+        stringResource(R.string.friday_short),
+        stringResource(R.string.saturday_short),
+        stringResource(R.string.sunday_short)
+    ),
     daysNumber: List<DayOfMonth>,
     morningState: Boolean,
     expandedCalendar: Boolean,
@@ -91,7 +98,6 @@ fun Calendar(
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Карточка календаря
         CalendarBody(
             onButtonMorningClick,
             daysTitle,
@@ -108,15 +114,15 @@ fun Calendar(
     }
 }
 
-/* ------------------------- Sub-composables ------------------------- */
+
 
 @Composable
 private fun CalendarBody(
     onButtonMorningClick: () -> Unit,
     daysTitle: List<String>,
-    daysNumber: List<DayOfMonth>,   // уже рассчитанный месяц из VM
-    morningState: Boolean,          // true если за сегодня есть отметка
-    expandedCalendar: Boolean,      // развёрнут ли календарь
+    daysNumber: List<DayOfMonth>,
+    morningState: Boolean,
+    expandedCalendar: Boolean,
     ym: YearMonth
 ) {
     val today = remember { LocalDate.now() }
@@ -181,7 +187,7 @@ private fun CalendarHeader(
     ym: YearMonth,
     today: LocalDate
 ) {
-    val ru = remember { Locale("ru") }
+    val ru = remember { Locale.getDefault() }
     val fullFormatter = remember { DateTimeFormatter.ofPattern("dd MMMM yyyy", ru) }
     val monthFormatter = remember { DateTimeFormatter.ofPattern("LLLL yyyy", ru) }
 
@@ -212,7 +218,8 @@ private fun WeekdayRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        val dayIndex = today.dayOfWeek.value // 1..7
+        val dayIndex = today.dayOfWeek.value
+
         daysTitle.forEachIndexed { i, title ->
             Text(
                 text = title,
@@ -226,10 +233,6 @@ private fun WeekdayRow(
     }
 }
 
-/**
- * MonthPager — отвечает и за анимацию смены месяцев (slide),
- * и за разворачивание/сворачивание (1 неделя vs все недели).
- */
 @SuppressLint("UnusedContentLambdaTargetStateParameter")
 @Composable
 private fun MonthPager(
@@ -238,7 +241,6 @@ private fun MonthPager(
     expanded: Boolean,
     today: LocalDate
 ) {
-    // направление анимации между месяцами
     var lastYm by remember { mutableStateOf(ym) }
     val direction = remember(ym) {
         val dir = if (ym > lastYm) 1 else -1
@@ -249,7 +251,8 @@ private fun MonthPager(
     AnimatedContent(
         targetState = ym,
         transitionSpec = {
-            val offset = if (direction > 0) { { full: Int -> full } } else { { full: Int -> -full } }
+            val offset = if (direction > 0) { { full: Int -> full } }
+                                    else { { full: Int -> -full } }
             slideInHorizontally(
                 animationSpec = tween(220, easing = FastOutSlowInEasing),
                 initialOffsetX = offset
@@ -281,16 +284,12 @@ private fun MonthGrid(
             row.any { it.year == today.year && it.month == today.monthValue && it.day == today.dayOfMonth }
         }.let { if (it == -1) 0 else it }
     }
-
-    // Выбираем отображаемые строки без собственного AnimatedContent:
     val rows = if (expanded) weeks else listOf(weeks[currentWeekIndex])
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize( // <— плавная смена высоты без сброса состояния
-                animationSpec = tween(220, easing = FastOutSlowInEasing)
-            ),
+            .animateContentSize(animationSpec = tween(220, easing = FastOutSlowInEasing)),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         rows.forEach { row ->
@@ -299,9 +298,11 @@ private fun MonthGrid(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 row.forEach { dayCell ->
-                    val isToday = (dayCell.year == today.year &&
+                    val isToday = (
+                            dayCell.year == today.year &&
                             dayCell.month == today.monthValue &&
-                            dayCell.day == today.dayOfMonth)
+                            dayCell.day == today.dayOfMonth
+                    )
 
                     Box(
                         modifier = Modifier
@@ -309,18 +310,18 @@ private fun MonthGrid(
                             .aspectRatio(1f)
                             .background(
                                 shape = MaterialTheme.shapes.extraLarge,
-                                color = if (isToday)
-                                    MaterialTheme.colorScheme.onPrimary
-                                else
-                                    MaterialTheme.colorScheme.secondaryContainer
+                                color = if (isToday) MaterialTheme.colorScheme.onPrimary
+                                        else MaterialTheme.colorScheme.secondaryContainer
                             )
                             .border(
                                 width = 2.dp,
                                 shape = MaterialTheme.shapes.extraLarge,
                                 brush = Brush.linearGradient(
                                     colors = listOf(
-                                        if (dayCell.trainingState) MaterialTheme.colorScheme.secondary else Color.Transparent,
-                                        if (dayCell.morningState) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                        if (dayCell.trainingState) MaterialTheme.colorScheme.secondary
+                                        else Color.Transparent,
+                                        if (dayCell.morningState) MaterialTheme.colorScheme.primary
+                                        else Color.Transparent,
                                     ),
                                     start = Offset(0f, 25f),
                                     end = Offset(0f, 100f),
@@ -360,7 +361,10 @@ private fun Legend() {
 }
 
 @Composable
-private fun LegendDot(text: String, color: Color) {
+private fun LegendDot(
+    text: String,
+    color: Color
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -388,6 +392,7 @@ private fun ExpandButton(
         animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
         label = "arrowRotation"
     )
+
     Box(
         modifier = Modifier
             .width(80.dp)

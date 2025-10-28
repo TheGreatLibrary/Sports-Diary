@@ -10,8 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.presentation.proportions.Proportion
+import com.sinya.projects.sportsdiary.R
+import com.sinya.projects.sportsdiary.data.database.entity.Proportions
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -19,7 +21,7 @@ import java.util.Locale
 
 @Composable
 fun ProportionCard(
-    t: Proportion,
+    item: Proportions,
     rowFill: Float,
     onTrainingClick: () -> Unit
 ) {
@@ -32,12 +34,12 @@ fun ProportionCard(
             colorCard = MaterialTheme.colorScheme.primaryContainer,
         ) {
             val inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-            val outputFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale("ru"))
+            val outputFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.getDefault())
 
             val dateText = try {
-                LocalDate.parse(t.date, inputFormatter)?.format(outputFormatter)
+                LocalDate.parse(item.date, inputFormatter)?.format(outputFormatter)
             } catch (e: Exception) {
-                t.date // в случае ошибки оставляем оригинальную строку
+                item.date
             }
 
             Column(
@@ -48,7 +50,7 @@ fun ProportionCard(
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Text(
-                    text = "Замер ${t.title}",
+                    text = stringResource(R.string.proportion_number, item.id),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onPrimary
                 )

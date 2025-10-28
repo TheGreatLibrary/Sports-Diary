@@ -38,7 +38,7 @@ fun TrainingsScreen(
 @Composable
 private fun TrainingsScreenView(
     state: TrainingUiState.Success,
-    onEvent: (TrainingUiEvent) -> Unit,
+    onEvent: (TrainingEvent) -> Unit,
     onBackClick: () -> Unit,
     onTrainingClick: (Int) -> Unit
 ) {
@@ -54,8 +54,8 @@ private fun TrainingsScreenView(
             onBackClick = onBackClick
         )
         RadioIcons(
-            onMuscleClick = { onEvent(TrainingUiEvent.ModeChange(SortMode.MUSCLE)) },
-            onTimeClick = {  onEvent(TrainingUiEvent.ModeChange(SortMode.TIME)) },
+            onMuscleClick = { onEvent(TrainingEvent.ModeChange(SortMode.MUSCLE)) },
+            onTimeClick = {  onEvent(TrainingEvent.ModeChange(SortMode.TIME)) },
             isSelected = SortMode.TIME == state.mode
         )
         when (state.mode) {

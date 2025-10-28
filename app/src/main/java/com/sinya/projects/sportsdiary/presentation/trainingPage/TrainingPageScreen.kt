@@ -11,7 +11,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
@@ -22,16 +21,15 @@ import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.CustomButton
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.CustomDropdownMenu
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.ExerciseList
-import com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetCategory.TrainingBottomSheetCategory
-import com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetTraining.TrainingBottomSheetTraining
+import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.TrainingCategorySheet
+import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetExercises.TrainingExerciseSheet
 import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDescriptionView
-import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDiagramView
 import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDialog
 
 @Composable
 fun TrainingPageScreen(
     state: TrainingPageUiState,
-    onEvent: (TrainingPageUiEvent) -> Unit,
+    onEvent: (TrainingPageEvent) -> Unit,
     onInfoClick: () -> Unit,
     onBackClick: () -> Unit,
 ) {
@@ -39,7 +37,7 @@ fun TrainingPageScreen(
         is TrainingPageUiState.Loading -> PlaceholderScreen()
         is TrainingPageUiState.Success -> TrainingPage(
             id = state.id,
-            title = "Тренировка №${state.title}",
+            title = stringResource(R.string.training_number, state.title),
             isOpenBottomSheetCategory = state.bottomSheetCategoryStatus,
             isOpenBottomSheetTraining = state.bottomSheetTrainingStatus,
             onInfoClick = onInfoClick,
@@ -59,7 +57,7 @@ fun TrainingPageScreen(
 private fun TrainingPage(
     id: Int?,
     dialogContent: ExerciseDialogContent?,
-    onEvent: (TrainingPageUiEvent) -> Unit,
+    onEvent: (TrainingPageEvent) -> Unit,
     title: String,
     category: TypeTraining,
     isOpenBottomSheetCategory: Boolean,
@@ -81,26 +79,26 @@ private fun TrainingPage(
             isVisibleBack = true,
             onBackClick = onBackClick,
             isVisibleSave = true,
-            onSaveClick = { onEvent(TrainingPageUiEvent.Save(onBackClick)) }
+            onSaveClick = { onEvent(TrainingPageEvent.Save(onBackClick)) }
         )
         CustomDropdownMenu(
             items = categories,
             title = stringResource(R.string.constructor),
             onInfoClick = onInfoClick,
             selectedItem = category,
-            onOpenMenu = { onEvent(TrainingPageUiEvent.UpdateCategories) },
-            onSelectedCategory = { name -> onEvent(TrainingPageUiEvent.OnSelectedCategory(name)) },
-            onPlusClick = { onEvent(TrainingPageUiEvent.OpenBottomSheetCategory(true)) }
+            onOpenMenu = { onEvent(TrainingPageEvent.UpdateCategories) },
+            onSelectedCategory = { name -> onEvent(TrainingPageEvent.OnSelectedCategory(name)) },
+            onPlusClick = { onEvent(TrainingPageEvent.OpenBottomSheetCategory(true)) }
         )
         ExerciseList(
             exercises = exercises,
-            onInfoClick = { id -> onEvent(TrainingPageUiEvent.OpenDialog(id)) },
-            onMinusClick = { id -> onEvent(TrainingPageUiEvent.Delete(id)) },
-            onPlusClick = { id -> onEvent(TrainingPageUiEvent.AddSet(id)) },
-            onDeleteSet = { id, index -> onEvent(TrainingPageUiEvent.DeleteSet(id, index)) },
+            onInfoClick = { id -> onEvent(TrainingPageEvent.OpenDialog(id)) },
+            onMinusClick = { id -> onEvent(TrainingPageEvent.Delete(id)) },
+            onPlusClick = { id -> onEvent(TrainingPageEvent.AddSet(id)) },
+            onDeleteSet = { id, index -> onEvent(TrainingPageEvent.DeleteSet(id, index)) },
             onEditSet = { id, index, value, valState ->
                 onEvent(
-                    TrainingPageUiEvent.EditSet(
+                    TrainingPageEvent.EditSet(
                         id,
                         index,
                         value,
@@ -115,7 +113,7 @@ private fun TrainingPage(
         ) {
             CustomButton(
                 onClick = {
-                    onEvent(TrainingPageUiEvent.OpenBottomSheetTraining(true))
+                    onEvent(TrainingPageEvent.OpenBottomSheetTraining(true))
                 },
                 text = stringResource(R.string.add_exercise)
             )
@@ -124,7 +122,7 @@ private fun TrainingPage(
         dialogContent?.let {
             GuideDialog(
                 onDismiss = {
-                    onEvent(TrainingPageUiEvent.OpenDialog(null))
+                    onEvent(TrainingPageEvent.OpenDialog(null))
                 },
                 content = {
                     GuideDescriptionView(
@@ -137,19 +135,18 @@ private fun TrainingPage(
         }
 
         if (isOpenBottomSheetCategory) {
-            TrainingBottomSheetCategory(
+            TrainingCategorySheet(
                 onDismiss = {
-                    onEvent(TrainingPageUiEvent.OpenBottomSheetCategory(false))
+                    onEvent(TrainingPageEvent.OpenBottomSheetCategory(false))
                 }
             )
         }
 
         if (isOpenBottomSheetTraining) {
-            TrainingBottomSheetTraining(
+            TrainingExerciseSheet(
                 id = id?:0,
                 onDismiss = {
-                    onEvent(TrainingPageUiEvent.UpdateListTraining)
-//                    onEvent(TrainingPageUiEvent.OpenBottomSheetTraining(false))
+                    onEvent(TrainingPageEvent.UpdateListTraining)
                 }
             )
         }

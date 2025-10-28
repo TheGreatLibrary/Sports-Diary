@@ -16,8 +16,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
-import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetNote.ModalSheetNote
-import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetPlan.ModalSheetPlan
+import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetNote.MorningNoteSheet
+import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetPlan.MorningPlanSheet
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.statistic.components.StatCard
 import com.sinya.projects.sportsdiary.ui.features.CardWithArrow
@@ -25,16 +25,19 @@ import com.sinya.projects.sportsdiary.ui.features.CardWithArrow
 @Composable
 fun MorningExercisesScreen(
     vm: MorningExercisesViewModel = hiltViewModel(),
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    currentPlanId: Int,
+    onPlanClick: (Int) -> Unit
 ) {
     when (val state = vm.state.value) {
         is MorningExercisesUiState.Loading -> PlaceholderScreen()
         is MorningExercisesUiState.Success -> MorningExercisesView(
             state = state,
             onEvent = vm::onEvent,
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            currentPlanId = currentPlanId,
+            onPlanClick = onPlanClick
         )
-
         is MorningExercisesUiState.Error -> ErrorScreen(state.message)
     }
 }
@@ -43,7 +46,9 @@ fun MorningExercisesScreen(
 private fun MorningExercisesView(
     state: MorningExercisesUiState.Success,
     onEvent: (MorningExercisesUiEvent) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    currentPlanId: Int,
+    onPlanClick: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -87,13 +92,15 @@ private fun MorningExercisesView(
         )
 
         if (state.noteExpanded) {
-            ModalSheetNote(
+            MorningNoteSheet(
                 onDismiss = { onEvent(MorningExercisesUiEvent.OnNoteExpanded(false))}
             )
         }
 
         if (state.planExpanded) {
-            ModalSheetPlan(
+            MorningPlanSheet(
+                currentPlanId = currentPlanId,
+                onPlanClick = onPlanClick,
                 onDismiss = { onEvent(MorningExercisesUiEvent.OnPlanExpanded(false))}
             )
         }

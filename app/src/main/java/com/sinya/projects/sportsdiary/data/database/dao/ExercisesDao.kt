@@ -9,7 +9,7 @@ import com.sinya.projects.sportsdiary.data.database.entity.ExerciseMuscles
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
 import com.sinya.projects.sportsdiary.data.database.entity.Exercises
 import com.sinya.projects.sportsdiary.data.database.repository.ExerciseMusclesData
-import com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetCategory.ExerciseUi
+import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
 
 @Dao
 interface ExercisesDao {

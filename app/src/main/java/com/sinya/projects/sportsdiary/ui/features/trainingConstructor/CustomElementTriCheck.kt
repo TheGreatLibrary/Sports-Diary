@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetCategory.TrainingBottomSheetCategoryUiEvent
 
 @Composable
 fun CustomElementTriCheck(

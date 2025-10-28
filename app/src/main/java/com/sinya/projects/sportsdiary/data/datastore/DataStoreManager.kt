@@ -36,7 +36,7 @@ class DataStoreManager @Inject constructor(
         }
 
     suspend fun setThemeMode(value: Boolean) = save(THEME_MODE, value)
-    fun getThemeMode(): Flow<Boolean> = read(THEME_MODE, false)
+    fun getThemeMode(): Flow<Boolean> = read(THEME_MODE, true)
 
     suspend fun setLangMode(value: String) = save(LANG_MODE, value)
     fun getLangMode(): Flow<String> = read(LANG_MODE, "ru")

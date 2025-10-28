@@ -18,8 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.presentation.statistic.TimeMode
 import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
-import com.sinya.projects.sportsdiary.ui.features.diagram.components.ScrollableLineChart
-import com.sinya.projects.sportsdiary.ui.features.diagram.model.ChartPoint
 
 @Composable
 fun Chart(

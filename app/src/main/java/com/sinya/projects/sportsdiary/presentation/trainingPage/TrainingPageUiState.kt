@@ -42,12 +42,6 @@ fun ExerciseRow.toItem(): ExerciseItem = ExerciseItem(
     weightList = weightResult.split('/'),
 )
 
-data class ExerciseItemOfList(
-    val id: Int,
-    val name: String
-)
-
-
 data class ExerciseItem(
     val id: Int,
     val title: String,
@@ -60,21 +54,6 @@ data class ExerciseItemWithoutList(
     val title: String,
     val unitMeasure: String = "кг",
 )
-
-sealed interface TrainingPageUiEvent {
-    data class Save(val exit: () -> Unit) : TrainingPageUiEvent
-    data class AddExercise(val title: String) : TrainingPageUiEvent
-    data class OpenBottomSheetCategory(val state: Boolean) : TrainingPageUiEvent
-    data class OpenBottomSheetTraining(val state: Boolean) : TrainingPageUiEvent
-    data class Delete(val id: Int) : TrainingPageUiEvent
-    data class DeleteSet(val id: Int, val index: Int) : TrainingPageUiEvent
-    data class AddSet(val id: Int) : TrainingPageUiEvent
-    data class OnSelectedCategory(val name: TypeTraining) : TrainingPageUiEvent
-    data class EditSet(val exId: Int, val index: Int, val value: String?, val valState: Boolean) : TrainingPageUiEvent
-    data object UpdateCategories : TrainingPageUiEvent
-    data object UpdateListTraining : TrainingPageUiEvent
-    data class OpenDialog(val id: Int?) : TrainingPageUiEvent
-}
 
 data class TrainingEntity(
     val id: Int? = null,

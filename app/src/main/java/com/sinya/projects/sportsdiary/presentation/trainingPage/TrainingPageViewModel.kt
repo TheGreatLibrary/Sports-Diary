@@ -1,6 +1,5 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.intl.Locale
@@ -11,7 +10,6 @@ import com.sinya.projects.sportsdiary.data.database.repository.TrainingRepositor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
-
 
 @HiltViewModel
 class TrainingPageViewModel @Inject constructor(
@@ -37,10 +35,10 @@ class TrainingPageViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: TrainingPageUiEvent) {
+    fun onEvent(event: TrainingPageEvent) {
         val s = _state.value as? TrainingPageUiState.Success ?: return
         when (event) {
-            is TrainingPageUiEvent.OnSelectedCategory -> {
+            is TrainingPageEvent.OnSelectedCategory -> {
                 viewModelScope.launch {
                     val items = trainingRepository.getDataByTypeTraining(event.name.id)
                     _state.value = s.copy(
@@ -52,7 +50,7 @@ class TrainingPageViewModel @Inject constructor(
                 }
             }
 
-            is TrainingPageUiEvent.UpdateListTraining -> {
+            is TrainingPageEvent.UpdateListTraining -> {
                 viewModelScope.launch {
                     val entity = trainingRepository.getById(s.id)
                     _state.value = s.copy(
@@ -62,28 +60,28 @@ class TrainingPageViewModel @Inject constructor(
                 }
             }
 
-            is TrainingPageUiEvent.AddSet -> {
+            is TrainingPageEvent.AddSet -> {
                 addSet(event.id)
             }
 
-            is TrainingPageUiEvent.DeleteSet -> {
+            is TrainingPageEvent.DeleteSet -> {
                 removeSet(event.id, event.index)
             }
 
-            is TrainingPageUiEvent.EditSet -> {
+            is TrainingPageEvent.EditSet -> {
                 editSet(event.exId, event.index, event.value, event.valState)
             }
 
-            is TrainingPageUiEvent.OpenBottomSheetCategory -> {
+            is TrainingPageEvent.OpenBottomSheetCategory -> {
                 _state.value = s.copy(bottomSheetCategoryStatus = event.state)
             }
 
-            is TrainingPageUiEvent.OpenBottomSheetTraining -> {
+            is TrainingPageEvent.OpenBottomSheetTraining -> {
                 save()
                 _state.value = s.copy(bottomSheetTrainingStatus = event.state)
             }
 
-            is TrainingPageUiEvent.AddExercise -> {
+            is TrainingPageEvent.AddExercise -> {
                 val newId = (s.items.maxOfOrNull { it.id } ?: 0) + 1
                 val newItems = s.items + ExerciseItem(
                     id = newId,
@@ -96,20 +94,20 @@ class TrainingPageViewModel @Inject constructor(
 
             }
 
-            is TrainingPageUiEvent.Delete -> {
+            is TrainingPageEvent.Delete -> {
                 _state.value = s.copy(items = s.items.filterNot { it.id == event.id })
             }
 
-            is TrainingPageUiEvent.Save -> {
+            is TrainingPageEvent.Save -> {
                     save()
                 event.exit()
             }
 
-            is TrainingPageUiEvent.UpdateCategories -> {
+            is TrainingPageEvent.UpdateCategories -> {
                 updateCategoriesList()
             }
 
-            is TrainingPageUiEvent.OpenDialog -> {
+            is TrainingPageEvent.OpenDialog -> {
                 viewModelScope.launch {
                     if (event.id != null) {
                         val item = s.items.first { it.id == event.id }
@@ -132,7 +130,7 @@ class TrainingPageViewModel @Inject constructor(
         }
     }
 
-    private fun save() = viewModelScope.launch{
+    private fun save() = viewModelScope.launch {
         val s = _state.value as? TrainingPageUiState.Success ?: return@launch
 
         val item = TrainingEntity(
@@ -173,6 +171,7 @@ class TrainingPageViewModel @Inject constructor(
 
     private fun editSet(exId: Int, index: Int, value: String?, valState: Boolean) {
         val s = _state.value as? TrainingPageUiState.Success ?: return
+
         val newItems = s.items.map { ex ->
             if (ex.id != exId) ex else {
                 if (index !in ex.countList.indices) ex else {

@@ -5,13 +5,10 @@ import com.sinya.projects.sportsdiary.data.database.dao.ProportionsDao
 import com.sinya.projects.sportsdiary.data.database.entity.Proportions
 import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionDialogContent
 import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionItem
-import com.sinya.projects.sportsdiary.presentation.proportions.Proportion
 import jakarta.inject.Inject
-import java.time.LocalDate
-
 
 interface ProportionRepository {
-    suspend fun proportionList() : List<Proportion>
+    suspend fun proportionList() : List<Proportions>
 
     suspend fun getById(id: Int?): ProportionItem
     suspend fun getProportionData(id: Int): ProportionDialogContent
@@ -27,7 +24,7 @@ class ProportionRepositoryImpl @Inject constructor(
     private val proportionsDao: ProportionsDao
 ) : ProportionRepository {
 
-    override suspend fun proportionList(): List<Proportion> {
+    override suspend fun proportionList(): List<Proportions> {
         val list = proportionsDao.getProportionsList()
         return list
     }

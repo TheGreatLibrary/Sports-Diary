@@ -21,17 +21,16 @@ class TrainingViewModel @Inject constructor(
         loadData()
     }
 
-    fun onEvent(event: TrainingUiEvent) {
-        val currentState = _state.value
-        if (currentState !is TrainingUiState.Success) return
+    fun onEvent(event: TrainingEvent) {
+        val currentState = _state.value as? TrainingUiState.Success ?: return
 
         when(event) {
-            is TrainingUiEvent.ModeChange -> {
+            is TrainingEvent.ModeChange -> {
                 _state.value = currentState.copy(
                     mode = event.mode
                 )
             }
-            is TrainingUiEvent.ReloadData -> {
+            is TrainingEvent.ReloadData -> {
                 viewModelScope.launch {
                     _state.value = TrainingUiState.Success(
                         trainings = repo.trainingList()

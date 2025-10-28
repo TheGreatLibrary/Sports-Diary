@@ -28,7 +28,8 @@ import com.sinya.projects.sportsdiary.ui.features.AnimationCard
 
 @Composable
 fun HomeScreen(
-    vm: HomeScreenViewModel = hiltViewModel(),
+    currentPlanId: Int,
+    vm: HomeViewModel = hiltViewModel(),
     onTrainingClick: () -> Unit,
     onTrainingPlusClick: () -> Unit,
     onTrainingCardClick: (Int) -> Unit,
@@ -41,6 +42,7 @@ fun HomeScreen(
         is HomeScreenUiState.Loading -> PlaceholderScreen()
         is HomeScreenUiState.Success -> {
             HomeScreenView(
+                currentPlanId = currentPlanId,
                 state = state,
                 onEvent = vm::onEvent,
                 onTrainingClick = onTrainingClick,
@@ -56,11 +58,11 @@ fun HomeScreen(
     }
 }
 
-
 @Composable
 private fun HomeScreenView(
+    currentPlanId: Int,
     state: HomeScreenUiState.Success,
-    onEvent: (HomeScreenUiEvent) -> Unit,
+    onEvent: (HomeEvent) -> Unit,
     onTrainingClick: () -> Unit,
     onTrainingPlusClick: () -> Unit,
     onTrainingCardClick: (Int) -> Unit,
@@ -78,9 +80,9 @@ private fun HomeScreenView(
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Calendar(
-            onExtended = { onEvent(HomeScreenUiEvent.OnExtended(!state.calendarExpanded)) },
-            onButtonMorningClick = { onEvent(HomeScreenUiEvent.OnButtonMorningClick(true)) },
-            onShift = { ind -> onEvent(HomeScreenUiEvent.OnShift(ind)) },
+            onExtended = { onEvent(HomeEvent.OnExtended(!state.calendarExpanded)) },
+            onButtonMorningClick = { onEvent(HomeEvent.OnButtonMorningClick(true, currentPlanId)) },
+            onShift = { ind -> onEvent(HomeEvent.OnShift(ind)) },
             morningState = state.morningState,
             daysNumber = state.monthDays,
             expandedCalendar = state.calendarExpanded,

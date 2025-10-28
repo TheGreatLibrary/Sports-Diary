@@ -3,6 +3,7 @@ package com.sinya.projects.sportsdiary.data.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -14,6 +15,12 @@ import androidx.room.PrimaryKey
             childColumns = ["type_id"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["type_id"]),
+        Index(value = ["date"], orders = [Index.Order.DESC]),
+        Index(value = ["type_id", "date"]),
+        Index(value = ["date", "serial_num"])
     ]
 )
 data class Trainings(

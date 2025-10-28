@@ -2,11 +2,9 @@ package com.sinya.projects.sportsdiary.presentation.proportionPage
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.repository.ProportionRepository
-import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseDialogContent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch

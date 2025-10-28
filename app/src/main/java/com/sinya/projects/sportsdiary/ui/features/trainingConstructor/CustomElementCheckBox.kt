@@ -12,8 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetCategory.ExerciseUi
-import com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetCategory.TrainingBottomSheetCategoryUiEvent
+import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
 
 @Composable
 fun CustomElementCheckBox(

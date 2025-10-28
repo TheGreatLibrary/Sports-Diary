@@ -9,6 +9,7 @@ import com.sinya.projects.sportsdiary.data.database.dao.ProportionsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TrainingsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TypeTrainingDao
 import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
+import com.sinya.projects.sportsdiary.data.database.entity.DataPlanMorning
 import com.sinya.projects.sportsdiary.data.database.entity.DataProportions
 import com.sinya.projects.sportsdiary.data.database.entity.DataTraining
 import com.sinya.projects.sportsdiary.data.database.entity.DataTypeTrainings
@@ -36,6 +37,7 @@ import com.sinya.projects.sportsdiary.data.database.entity.UnitsMeasurement
 
         DataMorning::class,
         PlanMornings::class,
+        DataPlanMorning::class,
 
         Trainings::class,
         DataTraining::class,

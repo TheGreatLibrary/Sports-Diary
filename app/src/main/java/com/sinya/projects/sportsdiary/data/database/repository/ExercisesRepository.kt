@@ -3,14 +3,12 @@ package com.sinya.projects.sportsdiary.data.database.repository
 import android.content.Context
 import android.util.Log
 import androidx.compose.ui.text.intl.Locale
-import androidx.room.ColumnInfo
-import androidx.room.Query
 
 import com.sinya.projects.sportsdiary.data.database.dao.ExercisesDao
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseMuscles
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
 import com.sinya.projects.sportsdiary.data.database.entity.Exercises
-import com.sinya.projects.sportsdiary.presentation.trainingPage.bottomSheetCategory.ExerciseUi
+import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

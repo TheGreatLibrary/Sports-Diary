@@ -9,20 +9,11 @@ sealed class ProportionPageUiState {
     data class Error(val message: String) : ProportionPageUiState()
 }
 
-
-
-sealed class ProportionPageUiEvent {
-    data object Save : ProportionPageUiEvent()
-    data class OnChangeValue(val id: Int, val value: String) : ProportionPageUiEvent()
-    data class OpenDialog(val id: Int?) : ProportionPageUiEvent()
-}
-
 data class ProportionDialogContent(
     val id: Int,
     val name: String,
     val description: String
 )
-
 
 enum class Side { LEFT, RIGHT, NONE }
 
@@ -35,7 +26,20 @@ data class ProportionRow(
 
 data class ProportionItem(
     val id: Int = 0,
-    val title: String = "",
-    val date: String = "12/23/2024",
+    val title: String,
+    val date: String,
     val items: List<ProportionRow> = emptyList(),
 )
+
+sealed class RowItem {
+    data class Single(
+        val headerKey: String,
+        val item: ProportionRow
+    ) : RowItem()
+
+    data class PairRow(
+        val headerKey: String,
+        val left: ProportionRow,
+        val right: ProportionRow
+    ) : RowItem()
+}

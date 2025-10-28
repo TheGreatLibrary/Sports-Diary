@@ -3,6 +3,7 @@ package com.sinya.projects.sportsdiary.data.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "exercise_muscles",
@@ -20,6 +21,11 @@ import androidx.room.ForeignKey
             childColumns = ["exercise_id"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["muscle_id"]),
+        Index(value = ["exercise_id"]),
+        Index(value = ["exercise_id", "value"])
     ]
 )
 data class ExerciseMuscles(

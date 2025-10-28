@@ -43,26 +43,28 @@ fun CompactUnitField(
     BasicTextField(
         value = value,
         onValueChange = { s ->
-            if (keyboardType == KeyboardType.Decimal) {
-                val norm = s.replace(',', '.')
-                val filtered = buildString {
-                    var dotSeen = false
-                    for (ch in norm) {
-                        when {
-                            ch.isDigit() -> append(ch)
-                            ch == '.' && !dotSeen -> { append(ch); dotSeen = true }
-                            else -> Unit
+            when (keyboardType) {
+                KeyboardType.Decimal -> {
+                    val norm = s.replace(',', '.')
+                    val filtered = buildString {
+                        var dotSeen = false
+                        for (ch in norm) {
+                            when {
+                                ch.isDigit() -> append(ch)
+                                ch == '.' && !dotSeen -> { append(ch); dotSeen = true }
+                                else -> Unit
+                            }
                         }
                     }
+                    onValueChange(filtered)
                 }
-                onValueChange(filtered)
-            }
-            else if (keyboardType == KeyboardType.Number) {
-                val filtered = s.filter { it.isDigit() }
-                onValueChange(filtered)
-            }
-            else {
-                onValueChange(s)
+                KeyboardType.Number -> {
+                    val filtered = s.filter { it.isDigit() }
+                    onValueChange(filtered)
+                }
+                else -> {
+                    onValueChange(s)
+                }
             }
         },
         singleLine = true,

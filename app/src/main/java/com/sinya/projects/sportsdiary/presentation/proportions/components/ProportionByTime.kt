@@ -14,7 +14,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.presentation.proportions.Proportion
+import com.sinya.projects.sportsdiary.data.database.entity.Proportions
 import com.sinya.projects.sportsdiary.presentation.trainings.components.MonthSection
 import com.sinya.projects.sportsdiary.presentation.trainings.components.SectionHeader
 import com.sinya.projects.sportsdiary.presentation.trainings.components.groupByYearMonth
@@ -23,7 +23,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun ProportionByTime(
-    proportions: List<Proportion>,
+    proportions: List<Proportions>,
     onTrainingClick: (Int) -> Unit
 ) {
     val formatter = remember { DateTimeFormatter.ofPattern("dd/MM/yyyy") } // один раз
@@ -76,7 +76,7 @@ fun ProportionByTime(
                                 .sortedBy { runCatching { LocalDate.parse(it.date, formatter) }.getOrNull() }
                                 .forEach { t ->
                                     ProportionCard(
-                                        t = t,
+                                        item = t,
                                         rowFill = 0.95f,
                                         onTrainingClick = { onTrainingClick(t.id) }
                                     )

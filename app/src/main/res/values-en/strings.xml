@@ -1,11 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Settr</string>
+    <string name="calendar_widget_description">Convenient marking of completed exercises from the phone screen</string>
+
+    <string name="monday_short">Mon</string>
+    <string name="tuesday_short">Tue</string>
+    <string name="wednesday_short">Wed</string>
+    <string name="thursday_short">Thu</string>
+    <string name="friday_short">Fri</string>
+    <string name="saturday_short">Sat</string>
+    <string name="sunday_short">Sun</string>
+
+    <string name="menu_title">Menu</string>
+    <string name="training_title">Workouts</string>
+    <string name="list_of_training">List of completed workouts</string>
+    <string name="main_block">Main</string>
+    <string name="other_block">Other</string>
+    <string name="morning_exercises_title">Morning Exercise</string>
+    <string name="statistic_and_note">Statistics and Notes</string>
+    <string name="proportions_title">Body Measurements</string>
+    <string name="list_of_proportions">List of measurements taken</string>
+    <string name="list_of_exercises">List of exercises with descriptions</string>
+    <string name="sports_exercises_title">Exercises</string>
+    <string name="calculate_title">Calculators</string>
+    <string name="calculate_description">Calculators for computing various metrics</string>
     <string name="settings_title">Settings</string>
-    <string name="interface_block">UI</string>
+    <string name="interface_block">Interface</string>
     <string name="language_title">Language</string>
     <string name="theme_title">Theme</string>
+    <string name="morning_exercises_description">Add a note about completed morning exercise?</string>
+    <string name="proportions_description">Time to measure your bicep circumference!</string>
+    <string name="not_entries_of_training">No workout records at the moment</string>
+    <string name="statistic_title">Statistics</string>
+    <string name="count_of_training">Number of workouts</string>
+    <string name="all_weight">Total tonnage</string>
+    <string name="effect_of_training">Workout efficiency</string>
 
+    <string name="days">Days</string>
+    <string name="months">Months</string>
+    <string name="years">Years</string>
+
+    <string name="January">Jan</string>
+    <string name="Februaby">Feb</string>
+    <string name="March">Mar</string>
+    <string name="April">Apr</string>
+    <string name="May">May</string>
+    <string name="June">Jun</string>
+    <string name="sorted_about">Sort by</string>
+    <string name="not_category">Not selected</string>
+    <string name="add_exercise">Add exercise</string>
+    <string name="minus">-</string>
+    <string name="constructor">Category</string>
+    <string name="new_category">New category</string>
+
+    <string name="category_name">Category name</string>
+    <string name="choose_exercises">Choose exercises</string>
+    <string name="chosen_n">Selected: %1$d</string>
+    <string name="search">Search…</string>
+    <string name="select_all">Select all</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="close">Close</string>
+    <string name="cancel">Cancel</string>
+    <string name="create">Create</string>
+    <string name="apply">Apply</string>
+
+    <!-- measurement types -->
     <string name="cm">cm</string>
     <string name="kg">kg</string>
     <string name="count">pcs</string>
+
+    <string name="thigh_right">Right thigh</string>
+    <string name="thigh_left">Left thigh</string>
+    <string name="biceps_left">Left biceps</string>
+    <string name="biceps_right">Right biceps</string>
+    <string name="weight">Weight</string>
+    <string name="calf_left">Left calf</string>
+    <string name="calf_right">Right calf</string>
+    <string name="chest_girth">Chest circumference</string>
+    <string name="shoulder_girth">Shoulder circumference</string>
+    <string name="shoulders_width">Shoulders</string>
+    <string name="forearm_left">Left forearm</string>
+    <string name="forearm_right">Right forearm</string>
+    <string name="height">Height</string>
+    <string name="hips">Hips</string>
+    <string name="waist">Waist</string>
+    <string name="neck">Neck</string>
+    <string name="wrist_left">Left wrist</string>
+    <string name="wrist_right">Right wrist</string>
+    <string name="triceps_left">Left triceps</string>
+    <string name="triceps_right">Right triceps</string>
+    <string name="quadriceps_left">Left quadriceps</string>
+    <string name="quadriceps_right">Right quadriceps</string>
+
+    <string name="biceps">Biceps</string>
+    <string name="triceps">Triceps</string>
+    <string name="quadriceps">Quadriceps</string>
+    <string name="thigh">Thigh</string>
+    <string name="calf">Calf</string>
+    <string name="forearm">Forearm</string>
+    <string name="wrist">Wrist</string>
+    <string name="data_of_morning_exercises">Morning exercise data</string>
+    <string name="note_of_morning_exercises">Morning exercise notes</string>
+    <string name="finish_morning_exercises">Completed morning?</string>
+    <string name="finished_morning_exercises">Morning exercise completed</string>
+    <string name="morning_exercises">- morning exercise</string>
+    <string name="training">- workout</string>
+    <string name="error_title">Error</string>
+    <string name="sport_exercises_title">Exercises</string>
+    <string name="illustration">Illustrations</string>
+    <string name="dark_mode">dark</string>
+    <string name="light_mode">light</string>
+    <string name="choose_lang">Language selection</string>
+    <string name="not_found_data">No data</string>
+    <string name="note">Note</string>
+    <string name="proportion_number">Measurement №</string>
+    <string name="notes">Notes</string>
+    <string name="morning_has_note">Note exists</string>
+    <string name="save">Save</string>
+    <string name="plans">Plans</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
 </resources>

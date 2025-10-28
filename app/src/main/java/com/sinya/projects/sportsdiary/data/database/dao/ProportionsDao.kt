@@ -11,7 +11,6 @@ import com.sinya.projects.sportsdiary.data.database.entity.Proportions
 import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionDialogContent
 import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionItem
 import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionRow
-import com.sinya.projects.sportsdiary.presentation.proportions.Proportion
 
 @Dao
 interface ProportionsDao {
@@ -19,14 +18,13 @@ interface ProportionsDao {
     @Query("""
         SELECT 
             p.id as id,
-            p.id as title,
              COALESCE(
             strftime('%d/%m/%Y', p.date),
             strftime('%d/%m/%Y', 'now','localtime')
           ) AS date
         FROM proportions p
     """)
-    suspend fun getProportionsList() : List<Proportion>
+    suspend fun getProportionsList() : List<Proportions>
 
     @Query("""
       SELECT 

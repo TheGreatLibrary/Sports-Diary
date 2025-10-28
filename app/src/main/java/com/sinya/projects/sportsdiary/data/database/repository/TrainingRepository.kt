@@ -10,13 +10,12 @@ import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseItem
 import com.sinya.projects.sportsdiary.presentation.trainings.Training
 import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingEntity
 import com.sinya.projects.sportsdiary.presentation.trainingPage.toItem
-import com.sinya.projects.sportsdiary.ui.features.diagram.model.ChartPoint
+import com.sinya.projects.sportsdiary.ui.features.diagram.ChartPoint
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 
 interface TrainingRepository {
