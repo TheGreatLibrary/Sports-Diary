@@ -38,14 +38,21 @@ class HomeViewModel @Inject constructor(
 
             is HomeEvent.OnButtonMorningClick -> {
                 viewModelScope.launch {
-                    repoMorning.insertMorning(
-                        DataMorning(
-                            id = 0,
-                            note = null,
-                            date = LocalDate.now().toString(),
-                            planId = event.planId
+                    if (event.morningState) {
+                        repoMorning.insertMorning(
+                            DataMorning(
+                                id = 0,
+                                note = null,
+                                date = LocalDate.now().toString(),
+                                planId = event.planId
+                            )
                         )
-                    )
+                    }
+                    else {
+                        val date = LocalDate.now().toString()
+                        val item = repoMorning.getMorningByDate(date)
+                        item?.let { repoMorning.deleteMorning(item) }
+                    }
                     updateDate()
                 }
             }

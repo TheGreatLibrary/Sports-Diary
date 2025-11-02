@@ -2,6 +2,7 @@ package com.sinya.projects.sportsdiary.data.database.dao
 
 import android.util.Log
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -186,4 +187,7 @@ interface TrainingsDao {
       ORDER BY e.id
     """)
     suspend fun getDataOfTypeTraining(id: Int, lang: String): List<ExerciseItemWithoutList>
+
+    @Delete
+    suspend fun deleteTraining(it: Trainings)
 }

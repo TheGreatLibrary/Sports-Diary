@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.repository.ExercisesRepository
 import com.sinya.projects.sportsdiary.data.database.repository.TrainingRepository
+import com.sinya.projects.sportsdiary.utils.searchByTerms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -65,8 +66,10 @@ class TrainingCategoryViewModel @Inject constructor(
 
     fun filtered() : List<ExerciseUi> {
         val currentState = _state.value as? TrainingCategoryUiState.Success ?: return listOf()
-        return if (currentState.query.isBlank()) currentState.items else currentState.items.filter { it.name.contains(currentState.query, ignoreCase = true) }
+//        return if (currentState.query.isBlank()) currentState.items else currentState.items.filter { it.name.contains(currentState.query, ignoreCase = true) }
+        return currentState.items.searchByTerms(currentState.query) { it.name }
     }
+
     private fun selectedIds(): List<Int> {
         val currentState = _state.value as? TrainingCategoryUiState.Success ?: return listOf()
         return currentState.items.filter { it.checked }.map { it.id }

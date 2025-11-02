@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,8 +24,8 @@ import com.sinya.projects.sportsdiary.presentation.trainingPage.components.Custo
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.ExerciseList
 import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.TrainingCategorySheet
 import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetExercises.TrainingExerciseSheet
-import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDescriptionView
-import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDialog
+import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
+import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
 
 @Composable
 fun TrainingPageScreen(
@@ -79,7 +80,7 @@ private fun TrainingPage(
             isVisibleBack = true,
             onBackClick = onBackClick,
             isVisibleSave = true,
-            onSaveClick = { onEvent(TrainingPageEvent.Save(onBackClick)) }
+            onSecondaryClick = { onEvent(TrainingPageEvent.Save(onBackClick)) }
         )
         CustomDropdownMenu(
             items = categories,
@@ -115,7 +116,8 @@ private fun TrainingPage(
                 onClick = {
                     onEvent(TrainingPageEvent.OpenBottomSheetTraining(true))
                 },
-                text = stringResource(R.string.add_exercise)
+                text = stringResource(R.string.add_exercise),
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
 

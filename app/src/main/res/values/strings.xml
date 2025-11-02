@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Settr</string>
+    <string name="app_name">Gymble</string>
     <string name="calendar_widget_description">Удобная отметка о выполнении зарядок с экрана телефона</string>
 
     <string name="monday_short">Пн</string>
@@ -112,7 +112,7 @@
     <string name="choose_lang">Выбор языка</string>
     <string name="not_found_data">Нет данных</string>
     <string name="note">Памятка</string>
-    <string name="proportion_number">Замер №</string>
+    <string name="proportion_number">Замер №%1$s</string>
     <string name="notes">Заметки</string>
     <string name="morning_has_note">Заметка существует</string>
     <string name="save">Сохранить</string>
@@ -120,4 +120,23 @@
     <string name="name">Название</string>
     <string name="description">Описание</string>
     <string name="training_number">Тренировка №%1$s</string>
+    <string name="workout_type_training">Тренировка на %1$s №%2$s - %3$s</string>
+    <string name="count_completed_mornings">Количество выполненных зарядок</string>
+    <string name="series_of_completed_mornings">Серия выполненных зарядок</string>
+    <string name="enter_delete">Подтвердите удаление</string>
+    <string name="delete_info_description">Вы действительно хотите удалить элемент списка? Восстановить его будет уже невозможно!</string>
+    <string name="delete">Удалить</string>
+    <string name="rules">Инструкции</string>
+    <string name="secondary_muscle">Побочные мышцы</string>
+    <string name="primary_muscle">Главные мышцы</string>
+    <string name="muscle_title">Целевые мышцы</string>
+    <string name="characteristics">Характеристики</string>
+    <string name="level">Уровень</string>
+    <string name="type">Тип</string>
+    <string name="equipment">Экипировка</string>
+    <string name="category">Категория</string>
+    <string name="mechanic">Механика</string>
+
+    <string name="base_plan">Базовый план</string>
+    <string name="base_description">Базовая зарядка</string>
 </resources>

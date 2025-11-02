@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -20,10 +21,11 @@ import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.proportionPage.components.buildRowsFromKeys
 import com.sinya.projects.sportsdiary.ui.features.HeaderInfo
-import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDescriptionView
-import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDialog
+import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
+import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
 import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.CompactUnitField
 import com.sinya.projects.sportsdiary.utils.deltaFloat
+import com.sinya.projects.sportsdiary.utils.getDrawableId
 import com.sinya.projects.sportsdiary.utils.getString
 
 @Composable
@@ -68,7 +70,7 @@ private fun ProportionPageView(
             isVisibleBack = true,
             onBackClick = onBackClick,
             isVisibleSave = true,
-            onSaveClick = {
+            onSecondaryClick = {
                 onEvent(ProportionPageUiEvent.Save)
                 onBackClick()
             }
@@ -104,7 +106,7 @@ private fun ProportionPageView(
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             HeaderInfo(
                                 title = context.getString(row.headerKey),
-                                onInfoClick = { onEvent(ProportionPageUiEvent.OpenDialog(row.left.id)) }
+                                onInfoClick = { onEvent(ProportionPageUiEvent.OpenDialog(row.common?.id ?: row.right.id)) }
                             )
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 CompactUnitField(
@@ -153,7 +155,7 @@ private fun ProportionPageView(
                     GuideDescriptionView(
                         title = it.name,
                         description = it.description,
-                        image = null
+                        image = if (!it.icon.isNullOrEmpty()) painterResource(context.getDrawableId(it.icon)) else null
                     )
                 }
             )

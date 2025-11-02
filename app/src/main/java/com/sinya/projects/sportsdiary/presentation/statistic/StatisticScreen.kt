@@ -21,8 +21,8 @@ import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.statistic.components.RadioButtons
 import com.sinya.projects.sportsdiary.presentation.statistic.components.StatCard
 import com.sinya.projects.sportsdiary.ui.features.diagram.Chart
-import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDiagramView
-import com.sinya.projects.sportsdiary.ui.features.guideDialog.GuideDialog
+import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDiagramView
+import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
 import java.util.Locale
 
 @Composable
@@ -105,7 +105,7 @@ private fun StatisticScreenView(
                 content = {
                     GuideDiagramView(
                         title = stringResource(R.string.note),
-                        image = if (Locale.getDefault().displayName =="ru") painterResource(R.drawable.graph_guide_ru)
+                        image = if (Locale.getDefault().toString() =="ru") painterResource(R.drawable.graph_guide_ru)
                                 else painterResource(R.drawable.graph_guide_en)
                     )
                 }

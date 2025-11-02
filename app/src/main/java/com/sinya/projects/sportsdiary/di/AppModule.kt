@@ -2,6 +2,8 @@ package com.sinya.projects.sportsdiary.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sinya.projects.sportsdiary.data.database.AppDatabase
 import com.sinya.projects.sportsdiary.data.database.dao.DataMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.ExercisesDao
@@ -26,14 +28,21 @@ object AppModule {
     fun provideDatabase(
         @ApplicationContext context: Context
     ): AppDatabase {
+        val MIGRATION_1_2 = object : Migration(1, 2) { override fun migrate(db: SupportSQLiteDatabase) {} }
+
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
             "diary.db"
         )
         .createFromAsset("diary.db")
+        .addMigrations(MIGRATION_1_2)
         .build()
+
+
     }
+
+
 
     @Provides
     fun provideTypeTrainingDao(db: AppDatabase): TypeTrainingDao = db.typeTrainingDao()

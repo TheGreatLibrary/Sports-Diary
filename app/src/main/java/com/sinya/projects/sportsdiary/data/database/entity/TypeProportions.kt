@@ -22,5 +22,6 @@ import androidx.room.PrimaryKey
 )
 data class TypeProportions(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "unit_measure_id") val unitMeasureId: Int
+    @ColumnInfo(name = "unit_measure_id") val unitMeasureId: Int,
+    @ColumnInfo(name = "icon") val icon: String?
 )

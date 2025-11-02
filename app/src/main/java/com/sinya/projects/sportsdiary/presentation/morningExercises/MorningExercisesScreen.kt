@@ -69,12 +69,12 @@ private fun MorningExercisesView(
         ) {
             StatCard(
                 modifier = Modifier.weight(1f),
-                title = stringResource(R.string.count_of_training),
+                title = stringResource(R.string.count_completed_mornings),
                 count = state.countTraining.toString()
             )
             StatCard(
                 modifier = Modifier.weight(1f),
-                title = stringResource(R.string.all_weight),
+                title = stringResource(R.string.series_of_completed_mornings),
                 count = state.seriesScope.toString()
             )
         }

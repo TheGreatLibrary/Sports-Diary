@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
@@ -22,7 +23,8 @@ fun NavigationTopBar(
     isVisibleBack: Boolean = true,
     onBackClick: () -> Unit = {},
     isVisibleSave: Boolean = false,
-    onSaveClick: () -> Unit = {}
+    secondaryIcon: Painter = painterResource(R.drawable.nav_save),
+    onSecondaryClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -42,11 +44,11 @@ fun NavigationTopBar(
             style = MaterialTheme.typography.titleLarge,
         )
         if (isVisibleSave) AnimationIcon(
-            onClick = onSaveClick,
+            onClick = onSecondaryClick,
             description = "Save",
             isSelected = true,
             selectedContainerColor = Color.Transparent,
-            icon = painterResource(R.drawable.nav_save)
+            icon = secondaryIcon
         ) else Spacer(Modifier.size(30.dp))
     }
 }

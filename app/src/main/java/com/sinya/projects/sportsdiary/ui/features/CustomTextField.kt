@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
@@ -40,6 +41,8 @@ fun CustomTextField(
     keyboardType: KeyboardType,
     showTrailingIcon: Boolean = true,
     modifier: Modifier = Modifier,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    containerColor: Color = MaterialTheme.colorScheme.primaryContainer
 ) {
     var focused by remember { mutableStateOf(false) }
     val interaction = remember { MutableInteractionSource() }
@@ -51,7 +54,7 @@ fun CustomTextField(
         },
         singleLine = true,
         textStyle = MaterialTheme.typography.bodyMedium.copy(
-            color = MaterialTheme.colorScheme.onPrimary
+            color = contentColor
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType
@@ -59,7 +62,7 @@ fun CustomTextField(
         cursorBrush = SolidColor(MaterialTheme.colorScheme.onPrimary),
         modifier = modifier
             .height(40.dp)
-            .background(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.small)
+            .background(containerColor, MaterialTheme.shapes.small)
             .onFocusChanged { focused = it.isFocused },
         decorationBox = { inner ->
             if (showTrailingIcon) {
@@ -84,7 +87,7 @@ fun CustomTextField(
                                     Icon(
                                         imageVector = Icons.Default.Clear,
                                         contentDescription = "Clear",
-                                        tint = MaterialTheme.colorScheme.onPrimary
+                                        tint = contentColor
                                     )
                                 }
                             }
@@ -104,6 +107,8 @@ fun CustomTextFieldWithLabel(
     onTrailingClick: () -> Unit,
     keyboardType: KeyboardType,
     modifier: Modifier = Modifier,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    containerColor: Color = MaterialTheme.colorScheme.primaryContainer
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -120,7 +125,9 @@ fun CustomTextFieldWithLabel(
             onValueChange = onValueChange,
             onTrailingClick = onTrailingClick,
             keyboardType = keyboardType,
-            modifier = modifier
+            modifier = modifier,
+            contentColor = contentColor,
+            containerColor = containerColor
         )
     }
 }

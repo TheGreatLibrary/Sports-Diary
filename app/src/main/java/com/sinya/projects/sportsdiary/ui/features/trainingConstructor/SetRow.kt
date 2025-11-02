@@ -62,7 +62,7 @@ fun SetRow(
             contentPadding = PaddingValues(0.dp)
         ) {
             Icon(
-                painter = painterResource(R.drawable.minus),
+                painter = painterResource(R.drawable.ic_minus),
                 contentDescription = "Delete",
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(18.dp)

@@ -20,10 +20,11 @@ class MorningExercisesViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val count = morningRepo.getCount()
+            val series = morningRepo.getSeriesScopeMorning()
 
             _state.value = MorningExercisesUiState.Success(
                 countTraining = count,
-                seriesScope = 0
+                seriesScope = series
             )
         }
     }

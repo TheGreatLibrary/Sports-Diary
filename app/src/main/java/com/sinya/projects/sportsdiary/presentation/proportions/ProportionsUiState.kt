@@ -5,7 +5,8 @@ import com.sinya.projects.sportsdiary.data.database.entity.Proportions
 sealed class ProportionsUiState {
     data object Loading : ProportionsUiState()
     data class Success(
-        val proportions: List<Proportions> = emptyList()
+        val proportions: List<Proportions> = emptyList(),
+        val deleteDialogId: Int? = null
     ) : ProportionsUiState()
     data class Error(val message: String) : ProportionsUiState()
 }

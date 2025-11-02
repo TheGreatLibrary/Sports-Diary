@@ -17,14 +17,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.presentation.trainings.Training
+import com.sinya.projects.sportsdiary.utils.getString
 
 @Composable
 fun TrainingsByMuscle(
     trainings: List<Training>,
-    onTrainingClick: (Int) -> Unit
+    onTrainingClick: (Int) -> Unit,
+    onMinusClick: (Int) -> Unit
 ) {
+    val context = LocalContext.current
     val grouped = remember(trainings) { groupByMuscle(trainings) }
     val expanded = remember { mutableStateMapOf<String, Boolean>() }
 
@@ -35,7 +39,7 @@ fun TrainingsByMuscle(
         grouped.forEach { (category, items) ->
             item {
                 SectionHeader(
-                    title = "$category (${items.size})",
+                    title = "${context.getString(category)} (${items.size})",
                     expanded = expanded[category] ?: false,
                     style = MaterialTheme.typography.titleMedium,
                     rowFill = 1f,
@@ -58,7 +62,10 @@ fun TrainingsByMuscle(
                             TrainingCard(
                                 t = t,
                                 rowFill = 0.95f,
-                                onTrainingClick = { onTrainingClick(t.id) })
+                                onTrainingClick = { onTrainingClick(t.id) },
+                                onMinusClick = onMinusClick,
+                                context = context
+                            )
                         }
                     }
                 }
@@ -68,7 +75,7 @@ fun TrainingsByMuscle(
 }
 
 private fun groupByMuscle(trainings: List<Training>): Map<String, List<Training>> {
-    val order = listOf("Без категории")
+    val order = listOf("not_category")
     val grouped = trainings.groupBy { it.category }
     val comparator = Comparator<String> { a, b ->
         val ia = order.indexOf(a).let { if (it < 0) Int.MAX_VALUE else it }

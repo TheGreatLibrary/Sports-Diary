@@ -7,6 +7,7 @@ import com.sinya.projects.sportsdiary.ui.theme.AppColors.Black
 import com.sinya.projects.sportsdiary.ui.theme.AppColors.Blue700
 import com.sinya.projects.sportsdiary.ui.theme.AppColors.Gray100
 import com.sinya.projects.sportsdiary.ui.theme.AppColors.Gray200
+import com.sinya.projects.sportsdiary.ui.theme.AppColors.Gray400
 import com.sinya.projects.sportsdiary.ui.theme.AppColors.Gray600
 import com.sinya.projects.sportsdiary.ui.theme.AppColors.Gray700
 import com.sinya.projects.sportsdiary.ui.theme.AppColors.Gray800
@@ -20,8 +21,9 @@ object AppColors {
     val Gray800 = Color(0xFF1C1C1C)
     val Gray700 = Color(0xFF242424)
     val Gray600 = Color(0xFF3E3E3E)
+    val Gray400 = Color(0xFF6E6E6E)
     val Gray200 = Color(0xFF959595)
-    val Gray100 = Color(0xFFC9C9C9)
+    val Gray100 = Color(0xFFDCDCDC)
     val White = Color(0xFFFFFFFF)
     val Orange800 = Color(0xFF792E00)
     val Orange700 = Color(0xFFBE4900)
@@ -41,8 +43,15 @@ val DarkColorScheme = darkColorScheme(
     secondaryContainer = Gray600, // серые контейнеры
     tertiaryContainer = Orange800, // оранжевые карточки
 
+    surface = Gray600, // фон
+    surfaceContainer = Gray800, // диалоговое окно
+    onSurface = White, // текст
+
+    inversePrimary = Gray600,
+
     onPrimary = White, // текст
-    onSecondary = Gray200 // вспомогательный текст
+    onSecondary = Gray200, // вспомогательный текст
+    onPrimaryContainer = White // цвет текста для цветных контейнеров
 )
 
 val LightColorScheme = lightColorScheme(
@@ -56,6 +65,13 @@ val LightColorScheme = lightColorScheme(
     secondaryContainer = Gray200, // серые контейнеры
     tertiaryContainer = Orange800, // оранжевые карточки
 
+    surface = White, // фон диалога
+    surfaceContainer = Gray100, // текстовое поле диалогового окна
+    onSurface = Gray400, // текст в текстовом поле диалогового окна
+
+    inversePrimary = White,
+
     onPrimary = Black, // текст
-    onSecondary = Gray600 // вспомогательный текст
+    onSecondary = Gray400, // вспомогательный текст,
+    onPrimaryContainer = White
 )

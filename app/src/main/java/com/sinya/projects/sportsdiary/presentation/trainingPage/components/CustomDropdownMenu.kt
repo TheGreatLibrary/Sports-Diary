@@ -99,7 +99,7 @@ fun CustomDropdownMenu(
                         )
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.plus),
+                            painter = painterResource(R.drawable.ic_plus),
                             contentDescription = "Plus",
                             tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.padding(8.dp)

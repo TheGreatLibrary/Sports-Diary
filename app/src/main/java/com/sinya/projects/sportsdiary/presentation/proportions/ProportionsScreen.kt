@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -14,18 +15,21 @@ import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.proportions.components.ProportionByTime
-import com.sinya.projects.sportsdiary.presentation.trainings.components.TrainingsByTime
+import com.sinya.projects.sportsdiary.presentation.trainings.TrainingEvent
+import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
+import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
 
 @Composable
 fun ProportionsScreen(
     vm: ProportionsViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    onProportionClick: (Int) -> Unit
+    onProportionClick: (Int?) -> Unit
 ) {
     when (val state = vm.state.value) {
         is ProportionsUiState.Loading -> PlaceholderScreen()
         is ProportionsUiState.Success -> ProportionsScreenView(
             state = state,
+            onEvent = vm::onEvent,
             onBackClick = onBackClick,
             onProportionClick = onProportionClick
         )
@@ -37,7 +41,8 @@ fun ProportionsScreen(
 private fun ProportionsScreenView(
     state: ProportionsUiState.Success,
     onBackClick: () -> Unit,
-    onProportionClick: (Int) -> Unit
+    onEvent: (ProportionsEvent) -> Unit,
+    onProportionClick: (Int?) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -48,11 +53,29 @@ private fun ProportionsScreenView(
         NavigationTopBar(
             title = stringResource(R.string.proportions_title),
             isVisibleBack = true,
-            onBackClick = onBackClick
+            isVisibleSave = true,
+            onBackClick = onBackClick,
+            secondaryIcon = painterResource(R.drawable.ic_plus),
+            onSecondaryClick = { onProportionClick(null) }
         )
         ProportionByTime(
             proportions = state.proportions,
-            onTrainingClick = onProportionClick
+            onTrainingClick = onProportionClick,
+            onMinusClick = { id -> onEvent(ProportionsEvent.OpenDialog(id)) }
         )
+
+        state.deleteDialogId?.let {
+            GuideDialog(
+                onDismiss = {
+                    onEvent(ProportionsEvent.OpenDialog(null))
+                },
+                content = {
+                    DeleteDialogView(
+                        onSuccess = { onEvent(ProportionsEvent.DeleteProportion) },
+                        onBack = { onEvent(ProportionsEvent.OpenDialog(null)) }
+                    )
+                }
+            )
+        }
     }
 }

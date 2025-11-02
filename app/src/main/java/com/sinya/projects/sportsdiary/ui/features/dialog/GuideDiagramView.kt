@@ -1,4 +1,4 @@
-package com.sinya.projects.sportsdiary.ui.features.guideDialog
+package com.sinya.projects.sportsdiary.ui.features.dialog
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth

@@ -30,5 +30,5 @@ import androidx.room.Index
 data class DataProportions(
     @ColumnInfo(name = "proportion_id") val proportionId: Int,
     @ColumnInfo(name = "type_id") val typeId: Int,
-    @ColumnInfo(name = "value", defaultValue = "0") val value: Int = 0
+    @ColumnInfo(name = "value", defaultValue = "0") val value: Float = 0f
 )

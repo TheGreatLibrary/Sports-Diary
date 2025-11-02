@@ -1,6 +1,7 @@
 package com.sinya.projects.sportsdiary.data.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -19,6 +20,14 @@ interface DataMorningDao {
         ORDER BY date
     """)
     suspend fun getDataOfMonth(startDate: String, endDate: String) : List<MorningDay>
+
+    @Query("""
+    SELECT id, date
+    FROM data_mornings
+    ORDER BY date DESC
+""")
+    suspend fun getAllMornings(): List<MorningDay>
+
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertMorningComplete(item: DataMorning) : Long
@@ -41,13 +50,10 @@ interface DataMorningDao {
     @Query("SELECT COUNT(*) FROM data_mornings")
     suspend fun getCount(): Int
 
-    @Query("""
-        SELECT COUNT(id)
-        FROM data_mornings
-    """)
-    suspend fun getSeriesScope(): Int
-
     @Query("SELECT * FROM data_mornings")
     suspend fun getNotes(): List<DataMorning>
+
+    @Delete
+    suspend fun deleteMorning(item: DataMorning)
 }
 

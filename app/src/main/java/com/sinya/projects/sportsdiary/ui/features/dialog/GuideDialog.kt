@@ -1,4 +1,4 @@
-package com.sinya.projects.sportsdiary.ui.features.guideDialog
+package com.sinya.projects.sportsdiary.ui.features.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -4,7 +4,8 @@ sealed class TrainingUiState {
     data object Loading : TrainingUiState()
     data class Success(
         val mode: SortMode = SortMode.TIME,
-        val trainings: List<Training> = emptyList()
+        val trainings: List<Training> = emptyList(),
+        val deleteDialogId: Int? = null
     ) : TrainingUiState()
     data class Error(val message: String) : TrainingUiState()
 }

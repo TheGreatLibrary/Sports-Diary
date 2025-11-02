@@ -69,7 +69,7 @@ private fun TrainingExerciseView(
         sheetState = sheetState,
         shape = MaterialTheme.shapes.large,
         contentColor = MaterialTheme.colorScheme.onPrimary,
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = { BottomSheetDefaults.DragHandle() },
         windowInsets = BottomSheetDefaults.windowInsets,
     ) {
@@ -104,7 +104,9 @@ private fun TrainingExerciseView(
                             )
                         },
                         keyboardType = KeyboardType.Text,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        contentColor = MaterialTheme.colorScheme.onSurface
                     )
 //                    CustomElementTriCheck(
 //                        triState = triState,
@@ -113,7 +115,7 @@ private fun TrainingExerciseView(
 //                            onEvent(TrainingBottomSheetTrainingUiEvent.SetAll(target))
 //                        })
 
-                    HorizontalDivider()
+                    HorizontalDivider(color = MaterialTheme.colorScheme.secondaryContainer)
                     if (filtered.isEmpty()) {
                         Text(
                             text = stringResource(R.string.nothing_found),
@@ -164,7 +166,7 @@ private fun TrainingExerciseView(
                         CustomButton(
                             text = stringResource(R.string.create),
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                             onClick = {
                                 onEvent(TrainingExerciseEvent.AddTrainings(
                                     onDone = onDismiss,

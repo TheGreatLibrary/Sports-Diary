@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.presentation.trainings.Training
 import java.time.LocalDate
@@ -29,8 +30,10 @@ fun Training.localDateOrNull(): LocalDate? =
 @Composable
 fun TrainingsByTime(
     trainings: List<Training>,
-    onTrainingClick: (Int) -> Unit
+    onTrainingClick: (Int) -> Unit,
+    onMinusClick: (Int) -> Unit,
 ) {
+    val context = LocalContext.current
     val grouped = remember(trainings) {
         groupByYearMonth(trainings) { training ->
             training.localDateOrNull()
@@ -80,7 +83,9 @@ fun TrainingsByTime(
                                     TrainingCard(
                                         t = t,
                                         rowFill = 0.95f,
-                                        onTrainingClick = { onTrainingClick(t.id) }
+                                        onTrainingClick = { onTrainingClick(t.id) },
+                                        onMinusClick = onMinusClick,
+                                        context = context
                                     )
                                 }
                         }

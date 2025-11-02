@@ -97,7 +97,6 @@ fun MainApp(
                             onTrainingPlusClick = { navigate(ScreenRoute.TrainingPage()) },
                             onTrainingCardClick = { id -> navigate(ScreenRoute.TrainingPage(id)) },
                             onMorningExercisesClick = { navigate(ScreenRoute.MorningExercises) },
-                            onMorningExercisesPlusClick = { navigate(ScreenRoute.MorningExercises) },
                             onProportionsClick = { navigate(ScreenRoute.Proportions) },
                             onProportionsPlusClick = { navigate(ScreenRoute.ProportionPage()) }
                         )
@@ -153,7 +152,7 @@ fun MainApp(
                     composable<ScreenRoute.Proportions> {
                         ProportionsScreen(
                             onBackClick = { onBack() },
-                            onProportionClick = { id -> navigate(ScreenRoute.ProportionPage(id)) }
+                            onProportionClick = { id -> navigate(ScreenRoute.ProportionPage(id)) },
                         )
                     }
                     composable<ScreenRoute.ProportionPage> { entry ->

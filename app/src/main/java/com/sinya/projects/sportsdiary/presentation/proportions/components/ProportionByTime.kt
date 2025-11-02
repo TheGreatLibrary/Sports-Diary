@@ -24,7 +24,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun ProportionByTime(
     proportions: List<Proportions>,
-    onTrainingClick: (Int) -> Unit
+    onTrainingClick: (Int) -> Unit,
+    onMinusClick: (Int) -> Unit
 ) {
     val formatter = remember { DateTimeFormatter.ofPattern("dd/MM/yyyy") } // один раз
 
@@ -78,7 +79,8 @@ fun ProportionByTime(
                                     ProportionCard(
                                         item = t,
                                         rowFill = 0.95f,
-                                        onTrainingClick = { onTrainingClick(t.id) }
+                                        onTrainingClick = { onTrainingClick(t.id) },
+                                        onMinusClick = onMinusClick
                                     )
                                 }
                         }

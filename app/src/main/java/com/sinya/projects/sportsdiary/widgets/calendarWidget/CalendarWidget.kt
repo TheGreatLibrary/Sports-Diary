@@ -12,12 +12,14 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
 import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.updateAll
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -46,6 +48,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -78,19 +81,32 @@ class CalendarWidget : GlanceAppWidget() {
 
     @Composable
     private fun ExerciseWidgetContent(
-        state: CalendarWidgetUiState,
-        daysTitle: List<String> = listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
+        state: CalendarWidgetUiState
     ) {
-        val ru = remember { Locale("ru") }
+        val locale = remember { Locale.getDefault() }
         val today = LocalDate.now()
-
         val context = LocalContext.current
-
+        val localizedContext = remember(locale) {
+            context.createConfigurationContext(
+                context.resources.configuration.apply {
+                    setLocale(locale)
+                }
+            )
+        }
+        val daysTitle = listOf(
+            localizedContext.getString(R.string.monday_short),
+            localizedContext.getString(R.string.tuesday_short),
+            localizedContext.getString(R.string.wednesday_short),
+            localizedContext.getString(R.string.thursday_short),
+            localizedContext.getString(R.string.friday_short),
+            localizedContext.getString(R.string.saturday_short),
+            localizedContext.getString(R.string.sunday_short)
+        )
         val buttonText = remember(state.morningState) {
             if (state.morningState)
-                context.getString(R.string.finished_morning_exercises)
+                localizedContext.getString(R.string.finished_morning_exercises)
             else
-                context.getString(R.string.finish_morning_exercises)
+                localizedContext.getString(R.string.finish_morning_exercises)
         }
 
 
@@ -102,7 +118,7 @@ class CalendarWidget : GlanceAppWidget() {
                 .cornerRadius(16.dp),
         ) {
             CalendarHeader(
-                locale = ru,
+                locale = locale,
                 today = today
             )
 
@@ -121,9 +137,13 @@ class CalendarWidget : GlanceAppWidget() {
 
             Button(
                 text = buttonText,
-                onClick = actionRunCallback<MarkDayMorningExercisesCallback>(),
+                onClick = actionRunCallback<MarkDayMorningExercisesCallback>(
+                    parameters = actionParametersOf(
+                        MarkDayMorningExercisesCallback.KEY_CURRENT_STATE to state.morningState
+                    )
+                ),
                 modifier = GlanceModifier.fillMaxWidth(),
-                enabled = !state.morningState,
+//                enabled = !state.morningState,
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = if (!state.morningState) WidgetColors.colors.primary else WidgetColors.colors.secondaryContainer,
                     contentColor = if (!state.morningState) WidgetColors.colors.onPrimary else WidgetColors.colors.onSecondary,
@@ -257,13 +277,19 @@ class CalendarWidget : GlanceAppWidget() {
 
 
 class MarkDayMorningExercisesCallback : ActionCallback {
+
+    companion object {
+        val KEY_CURRENT_STATE = ActionParameters.Key<Boolean>("current_morning_state")
+    }
+
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
+        val currentMorningState = parameters[KEY_CURRENT_STATE] ?: false
         val appContext = context.applicationContext as App
-        val entryPoint =  EntryPointAccessors.fromApplication(
+        val entryPoint = EntryPointAccessors.fromApplication(
             appContext,
             WidgetEntryPoint::class.java
         )
@@ -271,6 +297,7 @@ class MarkDayMorningExercisesCallback : ActionCallback {
         val currentPlanId = entryPoint.dataStoreManager().getPlanMorningId().first()
 
         markExerciseUseCase(
+            morningState = currentMorningState,
             DataMorning(
                 id = 0,
                 note = null,
@@ -279,7 +306,9 @@ class MarkDayMorningExercisesCallback : ActionCallback {
             )
         )
 
-        CalendarWidget().update(context, glanceId)
+        delay(500)
+
+        CalendarWidget().updateAll(context)
     }
 }
 

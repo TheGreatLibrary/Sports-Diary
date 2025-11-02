@@ -14,9 +14,8 @@ interface ProportionRepository {
     suspend fun getProportionData(id: Int): ProportionDialogContent
 
     suspend fun insertProportions(entity: ProportionItem)
-    suspend fun updateProportions(entity: ProportionItem)
 
-    suspend fun delete(id: Int)
+    suspend fun delete(it: Proportions)
 }
 
 
@@ -50,11 +49,7 @@ class ProportionRepositoryImpl @Inject constructor(
         proportionsDao.insertOrUpdate(entity)
     }
 
-    override suspend fun updateProportions(entity: ProportionItem) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun delete(id: Int) {
-        TODO("Not yet implemented")
+    override suspend fun delete(it: Proportions) {
+        proportionsDao.deleteProportion(it)
     }
 }

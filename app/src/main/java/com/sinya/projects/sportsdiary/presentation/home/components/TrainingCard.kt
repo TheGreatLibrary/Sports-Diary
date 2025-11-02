@@ -62,9 +62,14 @@ fun TrainingCard(
                                 colorCard = MaterialTheme.colorScheme.tertiaryContainer
                             ) {
                                 Text(
-                                    text = "Тренировка на ${if (it.categoryId==1) context.getString(it.category) else it.category} №${it.name} - ${it.date}",
+                                    text = stringResource(
+                                        R.string.workout_type_training,
+                                       context.getString(it.category) ,
+                                        it.name,
+                                        it.date.toString()
+                                    ),
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                                     modifier = Modifier.padding(
                                         horizontal = 8.dp,
                                         vertical = 4.dp
@@ -78,7 +83,7 @@ fun TrainingCard(
                     Text(
                         text = stringResource(R.string.not_entries_of_training),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.padding(horizontal = 30.dp),
                         textAlign = TextAlign.Center
                     )

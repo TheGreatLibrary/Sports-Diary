@@ -56,11 +56,29 @@ fun CompactUnitField(
                             }
                         }
                     }
-                    onValueChange(filtered)
+
+                    // Убираем ведущие нули, кроме случаев "0" и "0."
+                    val cleaned = when {
+                        filtered.isEmpty() -> filtered
+                        filtered == "0" -> filtered
+                        filtered.startsWith("0.") -> filtered
+                        filtered.startsWith("0") -> filtered.trimStart('0').ifEmpty { "0" }
+                        else -> filtered
+                    }
+
+                    onValueChange(cleaned)
                 }
                 KeyboardType.Number -> {
                     val filtered = s.filter { it.isDigit() }
-                    onValueChange(filtered)
+
+                    // Убираем ведущие нули
+                    val cleaned = if (filtered.startsWith("0") && filtered.length > 1) {
+                        filtered.trimStart('0').ifEmpty { "0" }
+                    } else {
+                        filtered
+                    }
+
+                    onValueChange(cleaned)
                 }
                 else -> {
                     onValueChange(s)

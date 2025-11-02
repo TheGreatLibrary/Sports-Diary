@@ -35,4 +35,26 @@ class ProportionsViewModel @Inject constructor(
             }
         }
     }
+
+    fun onEvent(event: ProportionsEvent) {
+        val currentState = _state.value as? ProportionsUiState.Success ?: return
+
+        when(event) {
+            ProportionsEvent.DeleteProportion -> {
+                viewModelScope.launch {
+                    val id = currentState.deleteDialogId
+                    id?.let { repo.delete(currentState.proportions.first {id == it.id }) }
+                    _state.value = ProportionsUiState.Success(
+                        proportions = repo.proportionList(),
+                        deleteDialogId = null
+                    )
+                }
+            }
+            is ProportionsEvent.OpenDialog -> {
+                _state.value = currentState.copy(
+                    deleteDialogId = event.id
+                )
+            }
+        }
+    }
 }

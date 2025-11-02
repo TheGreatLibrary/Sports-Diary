@@ -51,7 +51,7 @@ import com.sinya.projects.sportsdiary.data.database.entity.UnitsMeasurement
 
         UnitsMeasurement::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -61,5 +61,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun proportionsDao() : ProportionsDao
     abstract fun dataMorningDao() : DataMorningDao
     abstract fun planMorningDao() : PlanMorningDao
-
 }
+

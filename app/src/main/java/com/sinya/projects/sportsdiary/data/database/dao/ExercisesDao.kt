@@ -22,6 +22,7 @@ interface ExercisesDao {
         FROM exercises e
         JOIN exercise_translations et ON e.id = et.exercise_id
         WHERE language = :locale
+        ORDER BY name
     """)
     suspend fun getExercisesList(locale: String): List<ExerciseUi>
 
@@ -67,6 +68,7 @@ interface ExercisesDao {
         SELECT *
         FROM exercise_translations
         WHERE language = :language
+        ORDER BY name
     """)
     suspend fun getExercisesTranslations(language: String): List<ExerciseTranslations>
 

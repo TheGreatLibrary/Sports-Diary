@@ -1,4 +1,4 @@
-package com.sinya.projects.sportsdiary.ui.features.guideDialog
+package com.sinya.projects.sportsdiary.ui.features.dialog
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,7 +28,7 @@ fun GuideDescriptionView(
             painter = image,
             contentDescription = null,
             modifier = Modifier
-                .size(64.dp)
+                .size(150.dp)
                 .background(
                     color = MaterialTheme.colorScheme.background,
                     shape = MaterialTheme.shapes.extraLarge

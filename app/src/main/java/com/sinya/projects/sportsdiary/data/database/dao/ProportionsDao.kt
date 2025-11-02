@@ -1,6 +1,7 @@
 package com.sinya.projects.sportsdiary.data.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -94,17 +95,20 @@ interface ProportionsDao {
             insertDataProportions(item.items.map { DataProportions(
                 proportionId = rowId,
                 typeId = it.id,
-                value = it.value.toInt()
+                value = it.value.toFloat()
             ) })
         }
         else updateProportion(item.items.map { DataProportions(
             proportionId = item.id,
             typeId = it.id,
-            value = it.value.toInt()
+            value = it.value.toFloat()
 
         ) }
         )
     }
+
+    @Delete
+    suspend fun deleteProportion(it: Proportions)
 
     @Update
     suspend fun updateProportion(item: List<DataProportions>)
@@ -113,8 +117,9 @@ interface ProportionsDao {
         SELECT 
             type_id AS id,
             name,
-            description
-        FROM type_proportion_translations
+            description,
+            icon
+        FROM type_proportion_translations tpt JOIN type_proportions tp ON tpt.type_id = tp.id
         WHERE type_id = :id AND language = :locale
     """)
     suspend fun getProportionById(id: Int, locale: String): ProportionDialogContent

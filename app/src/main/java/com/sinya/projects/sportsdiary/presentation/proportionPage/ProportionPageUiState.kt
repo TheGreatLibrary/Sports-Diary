@@ -12,7 +12,8 @@ sealed class ProportionPageUiState {
 data class ProportionDialogContent(
     val id: Int,
     val name: String,
-    val description: String
+    val description: String,
+    val icon: String?
 )
 
 enum class Side { LEFT, RIGHT, NONE }
@@ -40,6 +41,7 @@ sealed class RowItem {
     data class PairRow(
         val headerKey: String,
         val left: ProportionRow,
-        val right: ProportionRow
+        val right: ProportionRow,
+        val common: ProportionRow? = null
     ) : RowItem()
 }

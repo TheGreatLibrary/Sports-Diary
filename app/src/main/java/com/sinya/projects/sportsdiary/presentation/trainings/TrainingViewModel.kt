@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sinya.projects.sportsdiary.data.database.entity.Trainings
 import com.sinya.projects.sportsdiary.data.database.repository.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -36,6 +37,31 @@ class TrainingViewModel @Inject constructor(
                         trainings = repo.trainingList()
                     )
                 }
+            }
+
+            TrainingEvent.DeleteTraining -> {
+                viewModelScope.launch {
+                    val id = currentState.deleteDialogId
+                    id?.let {
+                        val item = currentState.trainings.first {id ==  it.id }
+                        repo.delete(Trainings(
+                            id = item.id,
+                            typeId = item.categoryId,
+                            serialNum = item.name.toInt(),
+                            date = item.date.toString()
+                            )
+                        )
+                    }
+                    _state.value = TrainingUiState.Success(
+                        trainings = repo.trainingList(),
+                        deleteDialogId = null
+                    )
+                }
+            }
+            is TrainingEvent.OpenDialog -> {
+                _state.value = currentState.copy(
+                    deleteDialogId = event.id
+                )
             }
         }
     }

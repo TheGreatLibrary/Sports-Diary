@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -115,7 +116,6 @@ fun Calendar(
 }
 
 
-
 @Composable
 private fun CalendarBody(
     onButtonMorningClick: () -> Unit,
@@ -169,10 +169,11 @@ private fun CalendarBody(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Legend()
+            Spacer(Modifier.width(30.dp))
             CustomButton(
                 onClick = onButtonMorningClick,
                 containerColor = if (!morningState) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = if (!morningState) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary,
+                contentColor = if (!morningState) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondary,
                 text = if (!morningState)
                     stringResource(R.string.finish_morning_exercises)
                 else
@@ -221,14 +222,19 @@ private fun WeekdayRow(
         val dayIndex = today.dayOfWeek.value
 
         daysTitle.forEachIndexed { i, title ->
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                color = if (highlightToday && i + 1 == dayIndex)
-                    MaterialTheme.colorScheme.onPrimary
-                else
-                    MaterialTheme.colorScheme.onSecondary
-            )
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = if (highlightToday && i + 1 == dayIndex)
+                        MaterialTheme.colorScheme.onPrimary
+                    else
+                        MaterialTheme.colorScheme.onSecondary
+                )
+            }
         }
     }
 }
@@ -251,8 +257,11 @@ private fun MonthPager(
     AnimatedContent(
         targetState = ym,
         transitionSpec = {
-            val offset = if (direction > 0) { { full: Int -> full } }
-                                    else { { full: Int -> -full } }
+            val offset = if (direction > 0) {
+                { full: Int -> full }
+            } else {
+                { full: Int -> -full }
+            }
             slideInHorizontally(
                 animationSpec = tween(220, easing = FastOutSlowInEasing),
                 initialOffsetX = offset
@@ -263,7 +272,7 @@ private fun MonthPager(
                     ) + fadeOut(tween(160))
         },
         label = "monthSlide"
-    ) {  _ ->
+    ) { _ ->
         MonthGrid(
             days = days,
             expanded = expanded,
@@ -300,45 +309,51 @@ private fun MonthGrid(
                 row.forEach { dayCell ->
                     val isToday = (
                             dayCell.year == today.year &&
-                            dayCell.month == today.monthValue &&
-                            dayCell.day == today.dayOfMonth
-                    )
+                                    dayCell.month == today.monthValue &&
+                                    dayCell.day == today.dayOfMonth
+                            )
 
                     Box(
-                        modifier = Modifier
-                            .size(33.dp)
-                            .aspectRatio(1f)
-                            .background(
-                                shape = MaterialTheme.shapes.extraLarge,
-                                color = if (isToday) MaterialTheme.colorScheme.onPrimary
-                                        else MaterialTheme.colorScheme.secondaryContainer
-                            )
-                            .border(
-                                width = 2.dp,
-                                shape = MaterialTheme.shapes.extraLarge,
-                                brush = Brush.linearGradient(
-                                    colors = listOf(
-                                        if (dayCell.trainingState) MaterialTheme.colorScheme.secondary
-                                        else Color.Transparent,
-                                        if (dayCell.morningState) MaterialTheme.colorScheme.primary
-                                        else Color.Transparent,
-                                    ),
-                                    start = Offset(0f, 25f),
-                                    end = Offset(0f, 100f),
-                                    tileMode = TileMode.Clamp
-                                )
-                            ),
+                        modifier = Modifier.weight(1f),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = dayCell.day.toString(),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = when {
-                                !dayCell.currentMonth -> MaterialTheme.colorScheme.onSecondary
-                                isToday -> MaterialTheme.colorScheme.primaryContainer
-                                else -> MaterialTheme.colorScheme.onPrimary
-                            }
-                        )
+
+                        Box(
+                            modifier = Modifier
+                                .size(33.dp)
+                                .aspectRatio(1f)
+                                .background(
+                                    shape = MaterialTheme.shapes.extraLarge,
+                                    color = if (isToday) MaterialTheme.colorScheme.onPrimary
+                                    else MaterialTheme.colorScheme.secondaryContainer
+                                )
+                                .border(
+                                    width = 2.dp,
+                                    shape = MaterialTheme.shapes.extraLarge,
+                                    brush = Brush.linearGradient(
+                                        colors = listOf(
+                                            if (dayCell.trainingState) MaterialTheme.colorScheme.secondary
+                                            else Color.Transparent,
+                                            if (dayCell.morningState) MaterialTheme.colorScheme.primary
+                                            else Color.Transparent,
+                                        ),
+                                        start = Offset(0f, 25f),
+                                        end = Offset(0f, 100f),
+                                        tileMode = TileMode.Clamp
+                                    )
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = dayCell.day.toString(),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = when {
+                                    !dayCell.currentMonth -> MaterialTheme.colorScheme.onSecondary
+                                    isToday -> MaterialTheme.colorScheme.primaryContainer
+                                    else -> MaterialTheme.colorScheme.onPrimaryContainer
+                                }
+                            )
+                        }
                     }
                 }
             }

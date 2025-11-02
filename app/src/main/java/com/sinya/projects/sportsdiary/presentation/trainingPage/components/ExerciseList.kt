@@ -46,18 +46,20 @@ fun ExerciseList(
             ) {
                 AnimationIcon(
                     onClick = { onPlusClick(it.id)},
-                    icon = painterResource(R.drawable.plus),
+                    icon = painterResource(R.drawable.ic_plus),
                     description = "Delete",
                     isSelected = true,
                     size = 28.dp,
+                    selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 )
                 AnimationIcon(
                     onClick = { onMinusClick(it.id) },
-                    icon = painterResource(R.drawable.minus),
+                    icon = painterResource(R.drawable.ic_minus),
                     description = "Delete",
                     isSelected = true,
                     size = 28.dp,
+                    selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
                 )
             }

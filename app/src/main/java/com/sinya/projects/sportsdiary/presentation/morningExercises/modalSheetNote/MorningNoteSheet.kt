@@ -50,7 +50,7 @@ fun MorningNoteSheet(
         sheetState = sheetState,
         shape = MaterialTheme.shapes.large,
         contentColor = MaterialTheme.colorScheme.onPrimary,
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = { BottomSheetDefaults.DragHandle() },
         windowInsets = BottomSheetDefaults.windowInsets,
     ) {
@@ -136,7 +136,8 @@ private fun MorningNoteView(
                                     isSelected = true,
                                     size = 28.dp,
                                     shape = MaterialTheme.shapes.small,
-                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    selectedContentColor = MaterialTheme.colorScheme.onSurface
                                 )
                                 AnimationIcon(
                                     onClick = { onEvent(ModalSheetNoteEvent.ClearNote(it.id)) },
@@ -145,7 +146,8 @@ private fun MorningNoteView(
                                     isSelected = true,
                                     size = 28.dp,
                                     shape = MaterialTheme.shapes.small,
-                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    selectedContentColor = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                         }
@@ -155,7 +157,9 @@ private fun MorningNoteView(
                                 onValueChange = { s -> onEvent(ModalSheetNoteEvent.OnQueryChange(s)) },
                                 onTrailingClick = { onEvent(ModalSheetNoteEvent.ClearQuery) },
                                 keyboardType = KeyboardType.Text,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                contentColor = MaterialTheme.colorScheme.onSurface
                             )
                         }
                         HorizontalDivider()
@@ -170,7 +174,9 @@ private fun MorningNoteView(
                 onValueChange = { s -> onEvent(ModalSheetNoteEvent.OnQueryChange(s)) },
                 onTrailingClick = { onEvent(ModalSheetNoteEvent.ClearQuery) },
                 keyboardType = KeyboardType.Text,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = MaterialTheme.colorScheme.onSurface
             )
         }
 
@@ -200,7 +206,7 @@ private fun MorningNoteView(
                 onClick = onClickBtn,
                 containerColor = if (hasData || state.visibleEditFieldId != null) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = if (hasData || state.visibleEditFieldId != null) MaterialTheme.colorScheme.onPrimary
+                contentColor = if (hasData || state.visibleEditFieldId != null) MaterialTheme.colorScheme.onPrimaryContainer
                                 else MaterialTheme.colorScheme.onSecondary,
                 text = textBtn
             )

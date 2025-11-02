@@ -9,6 +9,7 @@ import com.sinya.projects.sportsdiary.data.database.entity.DataTraining
 import com.sinya.projects.sportsdiary.data.database.repository.ExercisesRepository
 import com.sinya.projects.sportsdiary.data.database.repository.TrainingRepository
 import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
+import com.sinya.projects.sportsdiary.utils.searchByTerms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -63,7 +64,9 @@ class TrainingExerciseViewModel @Inject constructor(
 
     fun filtered() : List<ExerciseUi> {
         val currentState = _state.value as? TrainingExerciseUiState.Success ?: return listOf()
-        return if (currentState.query.isBlank()) currentState.items else currentState.items.filter { it.name.contains(currentState.query, ignoreCase = true) }
+//        return if (currentState.query.isBlank()) currentState.items else currentState.items.filter { it.name.contains(currentState.query, ignoreCase = true) }
+        return currentState.items.searchByTerms(currentState.query) { it.name }
+
     }
 
     private fun selectedIds(): List<Int> {

@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -37,6 +38,7 @@ import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
 import com.sinya.projects.sportsdiary.ui.features.CustomTextFieldWithLabel
+import com.sinya.projects.sportsdiary.utils.getString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,7 +55,7 @@ fun MorningPlanSheet(
         sheetState = sheetState,
         shape = MaterialTheme.shapes.large,
         contentColor = MaterialTheme.colorScheme.onPrimary,
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = { BottomSheetDefaults.DragHandle() },
         windowInsets = BottomSheetDefaults.windowInsets,
     ) {
@@ -79,6 +81,7 @@ private fun MorningPlanView(
     onEvent: (ModalSheetPlanEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val context = LocalContext.current
     val onClickBtn = {
         if (state.visibleAddField) onEvent(ModalSheetPlanEvent.AddPlan)
         else if (state.visibleEditFieldId != null) onEvent(ModalSheetPlanEvent.EditPlan(state.visibleEditFieldId))
@@ -129,7 +132,7 @@ private fun MorningPlanView(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = it.name,
+                                        text = context.getString(it.name),
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         modifier = Modifier.fillMaxWidth(0.8f)
@@ -141,7 +144,8 @@ private fun MorningPlanView(
                                         isSelected = true,
                                         size = 28.dp,
                                         shape = MaterialTheme.shapes.small,
-                                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        selectedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                        selectedContentColor = MaterialTheme.colorScheme.onSurface
                                     )
 
                                 }
@@ -150,8 +154,7 @@ private fun MorningPlanView(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                 ) {
                                     Text(
-                                        text = it.description
-                                            ?: stringResource(R.string.not_found_data),
+                                        text = context.getString(it.description ?: stringResource(R.string.not_found_data)),
                                         style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         modifier = Modifier.fillMaxWidth(0.8f)
@@ -163,7 +166,8 @@ private fun MorningPlanView(
                                         isSelected = true,
                                         size = 28.dp,
                                         shape = MaterialTheme.shapes.small,
-                                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        selectedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                        selectedContentColor = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             }
@@ -182,7 +186,9 @@ private fun MorningPlanView(
                                     },
                                     onTrailingClick = { onEvent(ModalSheetPlanEvent.ClearQuery) },
                                     keyboardType = KeyboardType.Text,
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    contentColor = MaterialTheme.colorScheme.onSurface
                                 )
                                 CustomTextFieldWithLabel(
                                     label = stringResource(R.string.description),
@@ -196,7 +202,9 @@ private fun MorningPlanView(
                                     },
                                     onTrailingClick = { onEvent(ModalSheetPlanEvent.ClearQuery) },
                                     keyboardType = KeyboardType.Text,
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    contentColor = MaterialTheme.colorScheme.onSurface
                                 )
                             }
                         }
@@ -220,7 +228,9 @@ private fun MorningPlanView(
                     },
                     onTrailingClick = { onEvent(ModalSheetPlanEvent.ClearQuery) },
                     keyboardType = KeyboardType.Text,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    contentColor = MaterialTheme.colorScheme.onSurface
                 )
                 CustomTextFieldWithLabel(
                     label = stringResource(R.string.description),
@@ -234,7 +244,9 @@ private fun MorningPlanView(
                     },
                     onTrailingClick = { onEvent(ModalSheetPlanEvent.ClearQuery) },
                     keyboardType = KeyboardType.Text,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    contentColor = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -264,7 +276,7 @@ private fun MorningPlanView(
             CustomButton(
                 onClick = onClickBtn,
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 text = textBtn
             )
         }

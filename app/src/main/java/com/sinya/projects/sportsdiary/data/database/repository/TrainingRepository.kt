@@ -4,6 +4,7 @@ import androidx.compose.ui.text.intl.Locale
 import com.sinya.projects.sportsdiary.data.database.dao.TrainingsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TypeTrainingDao
 import com.sinya.projects.sportsdiary.data.database.entity.DataTraining
+import com.sinya.projects.sportsdiary.data.database.entity.Trainings
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
 import com.sinya.projects.sportsdiary.presentation.statistic.TimeMode
 import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseItem
@@ -27,7 +28,7 @@ interface TrainingRepository {
     suspend fun trainingList(): List<Training>
     suspend fun insertTraining(entity: TrainingEntity)
     suspend fun updateTraining(entity: TrainingEntity)
-    suspend fun delete(id: Int)
+    suspend fun delete(it: Trainings)
     suspend fun getById(id: Int?): TrainingEntity
     suspend fun insertDataTraining(items: List<DataTraining>)
 
@@ -78,8 +79,8 @@ class TrainingRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun delete(id: Int) {
-        TODO("Not yet implemented")
+    override suspend fun delete(it: Trainings) {
+        trainingDao.deleteTraining(it)
     }
 
     override suspend fun trainingList(): List<Training> {

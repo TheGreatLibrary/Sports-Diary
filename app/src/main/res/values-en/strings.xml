@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Settr</string>
+    <string name="app_name">Gymble</string>
     <string name="calendar_widget_description">Convenient marking of completed exercises from the phone screen</string>
 
     <string name="monday_short">Mon</string>
@@ -102,7 +102,7 @@
     <string name="data_of_morning_exercises">Morning exercise data</string>
     <string name="note_of_morning_exercises">Morning exercise notes</string>
     <string name="finish_morning_exercises">Completed morning?</string>
-    <string name="finished_morning_exercises">Morning exercise completed</string>
+    <string name="finished_morning_exercises">Completed</string>
     <string name="morning_exercises">- morning exercise</string>
     <string name="training">- workout</string>
     <string name="error_title">Error</string>
@@ -113,11 +113,33 @@
     <string name="choose_lang">Language selection</string>
     <string name="not_found_data">No data</string>
     <string name="note">Note</string>
-    <string name="proportion_number">Measurement №</string>
+    <string name="proportion_number">Measurement №%1$s</string>
     <string name="notes">Notes</string>
     <string name="morning_has_note">Note exists</string>
     <string name="save">Save</string>
     <string name="plans">Plans</string>
     <string name="name">Name</string>
     <string name="description">Description</string>
+
+    <string name="training_number">Training №%1$s</string>
+    <string name="workout_type_training">%1$s workout №%2$s - %3$s</string>
+    <string name="count_completed_mornings">Morning exercises completed</string>
+    <string name="series_of_completed_mornings">Morning exercise streak</string>
+
+    <string name="enter_delete">Confirm Deletion</string>
+    <string name="delete_info_description">Are you sure you want to delete this item? It will be impossible to restore it!</string>
+    <string name="delete">Delete</string>
+    <string name="rules">Instructions</string>
+    <string name="secondary_muscle">Secondary Muscles</string>
+    <string name="primary_muscle">Primary Muscles</string>
+    <string name="muscle_title">Target Muscles</string>
+    <string name="characteristics">Characteristics</string>
+    <string name="level">Level</string>
+    <string name="type">Type</string>
+    <string name="equipment">Equipment</string>
+    <string name="category">Category</string>
+    <string name="mechanic">Mechanic</string>
+
+    <string name="base_plan">Basic Plan</string>
+    <string name="base_description">Basic morning exercises</string>
 </resources>

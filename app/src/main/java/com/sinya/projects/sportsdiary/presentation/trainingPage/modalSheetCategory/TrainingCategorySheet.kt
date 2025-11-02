@@ -47,7 +47,7 @@ fun TrainingCategorySheet(
         sheetState = sheetState,
         shape = MaterialTheme.shapes.large,
         contentColor = MaterialTheme.colorScheme.onPrimary,
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = { BottomSheetDefaults.DragHandle() },
         windowInsets = BottomSheetDefaults.windowInsets,
     ) {
@@ -93,7 +93,9 @@ private fun TrainingBottomSheetCategoryView(
             onValueChange = { s -> onEvent(TrainingCategoryEvent.OnNameChange(s)) },
             onTrailingClick = { onEvent(TrainingCategoryEvent.OnNameChange("")) },
             keyboardType = KeyboardType.Text,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = stringResource(R.string.choose_exercises),
@@ -117,7 +119,9 @@ private fun TrainingBottomSheetCategoryView(
                 )
             },
             keyboardType = KeyboardType.Text,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = MaterialTheme.colorScheme.onSurface
         )
 //                    CustomElementTriCheck(
 //                        triState = triState,
@@ -127,7 +131,7 @@ private fun TrainingBottomSheetCategoryView(
 //                        }
 //                    )
 
-        HorizontalDivider()
+        HorizontalDivider(color = MaterialTheme.colorScheme.secondaryContainer)
 
         if (filtered.isEmpty()) {
             Text(
@@ -177,7 +181,7 @@ private fun TrainingBottomSheetCategoryView(
                 CustomButton(
                     text = stringResource(R.string.create),
                     containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     onClick = {
                         onEvent(TrainingCategoryEvent.CreateCategory(
                             onDone = onDismiss,

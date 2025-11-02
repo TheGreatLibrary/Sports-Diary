@@ -34,7 +34,6 @@ fun HomeScreen(
     onTrainingPlusClick: () -> Unit,
     onTrainingCardClick: (Int) -> Unit,
     onMorningExercisesClick: () -> Unit,
-    onMorningExercisesPlusClick: () -> Unit,
     onProportionsClick: () -> Unit,
     onProportionsPlusClick: () -> Unit
 ) {
@@ -49,7 +48,6 @@ fun HomeScreen(
                 onTrainingPlusClick = onTrainingPlusClick,
                 onTrainingCardClick = onTrainingCardClick,
                 onMorningExercisesClick = onMorningExercisesClick,
-                onMorningExercisesPlusClick = onMorningExercisesPlusClick,
                 onProportionsClick = onProportionsClick,
                 onProportionsPlusClick = onProportionsPlusClick
             )
@@ -67,7 +65,6 @@ private fun HomeScreenView(
     onTrainingPlusClick: () -> Unit,
     onTrainingCardClick: (Int) -> Unit,
     onMorningExercisesClick: () -> Unit,
-    onMorningExercisesPlusClick: () -> Unit,
     onProportionsClick: () -> Unit,
     onProportionsPlusClick: () -> Unit
 ) {
@@ -81,7 +78,7 @@ private fun HomeScreenView(
     ) {
         Calendar(
             onExtended = { onEvent(HomeEvent.OnExtended(!state.calendarExpanded)) },
-            onButtonMorningClick = { onEvent(HomeEvent.OnButtonMorningClick(true, currentPlanId)) },
+            onButtonMorningClick = { onEvent(HomeEvent.OnButtonMorningClick(!state.morningState, currentPlanId)) },
             onShift = { ind -> onEvent(HomeEvent.OnShift(ind)) },
             morningState = state.morningState,
             daysNumber = state.monthDays,
@@ -114,12 +111,13 @@ private fun HomeScreenView(
                 ) {
                     CardHome(
                         title = stringResource(R.string.morning_exercises_title),
-                        onPlusClick = onMorningExercisesPlusClick,
+                        onPlusClick = {  },
+                        plusVisible = false,
                         content = {
                             Text(
                                 text = stringResource(R.string.morning_exercises_description),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onPrimary
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
                     )
@@ -138,7 +136,7 @@ private fun HomeScreenView(
                             Text(
                                 text = stringResource(R.string.proportions_description),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onPrimary
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
                     )

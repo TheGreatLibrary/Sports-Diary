@@ -35,7 +35,7 @@ fun NavigationBottomBar(
         Row(
             modifier = Modifier
                 .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    color = MaterialTheme.colorScheme.inversePrimary,
                     shape = MaterialTheme.shapes.extraLarge
                 )
                 .padding(horizontal = 15.dp, vertical = 8.dp),
@@ -53,12 +53,16 @@ fun NavigationBottomBar(
                     onClick = onHomeClick,
                     description = ScreenRoute.Home.route,
                     isSelected = currentRoute == ScreenRoute.Home.route,
+                    selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    unselectedContentColor = MaterialTheme.colorScheme.onPrimary,
                     icon = painterResource(R.drawable.nav_home)
                 )
                 AnimationIcon(
                     onClick = onMenuClick,
                     description = ScreenRoute.Menu.route,
                     isSelected = currentRoute == ScreenRoute.Menu.route,
+                    selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    unselectedContentColor = MaterialTheme.colorScheme.onPrimary,
                     icon = painterResource(R.drawable.nav_menu)
                 )
             }
@@ -70,12 +74,16 @@ fun NavigationBottomBar(
                     onClick = onStatClick,
                     description = ScreenRoute.Statistic.route,
                     isSelected = currentRoute == ScreenRoute.Statistic.route,
+                    selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    unselectedContentColor = MaterialTheme.colorScheme.onPrimary,
                     icon = painterResource(R.drawable.nav_stat)
                 )
                 AnimationIcon(
                     onClick = onSetClick,
                     description = ScreenRoute.Settings.route,
                     isSelected = currentRoute == ScreenRoute.Settings.route,
+                    selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    unselectedContentColor = MaterialTheme.colorScheme.onPrimary,
                     icon = painterResource(R.drawable.nav_set)
                 )
             }
@@ -87,9 +95,11 @@ fun NavigationBottomBar(
             AnimationIcon(
                 onClick = onPlusClick,
                 description = "Plus",
-                icon = painterResource(R.drawable.plus),
+                icon = painterResource(R.drawable.ic_plus),
                 size = 60.dp,
                 isSelected = true,
+                selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                unselectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 selectedContainerColor = MaterialTheme.colorScheme.secondary
             )
         }
