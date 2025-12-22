@@ -95,6 +95,8 @@ fun SetsEditor(
                 ) {
                     itemsIndexed(reps) { index, rep ->
                         val weight = weights.getOrNull(index) ?: "0f"
+//                        val prevReps = prevExercise.countList.getOrNull(index-1)
+//                        val prevWeight = prevExercise.countList.getOrNull(index-1)
                         SetRow(
                             rep = rep,
                             weight = weight,

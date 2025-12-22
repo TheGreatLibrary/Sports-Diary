@@ -43,7 +43,7 @@ val DarkColorScheme = darkColorScheme(
     secondaryContainer = Gray600, // серые контейнеры
     tertiaryContainer = Orange800, // оранжевые карточки
 
-    surface = Gray600, // фон
+    surface = Gray700, // фон диалогового окна
     surfaceContainer = Gray800, // диалоговое окно
     onSurface = White, // текст
 

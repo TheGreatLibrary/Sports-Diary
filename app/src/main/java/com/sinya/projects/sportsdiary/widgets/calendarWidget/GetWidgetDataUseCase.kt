@@ -1,7 +1,7 @@
 package com.sinya.projects.sportsdiary.widgets.calendarWidget
 
-import com.sinya.projects.sportsdiary.data.database.repository.MorningRepository
-import com.sinya.projects.sportsdiary.data.database.repository.TrainingRepository
+import com.sinya.projects.sportsdiary.domain.repository.MorningRepository
+import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
 import com.sinya.projects.sportsdiary.presentation.home.DayOfMonth
 import com.sinya.projects.sportsdiary.presentation.home.MonthCalendarResult
 import jakarta.inject.Inject

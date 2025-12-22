@@ -1,4 +1,4 @@
-package com.sinya.projects.sportsdiary.data.database.repository
+package com.sinya.projects.sportsdiary.domain.repository
 
 import android.content.Context
 import android.util.Log

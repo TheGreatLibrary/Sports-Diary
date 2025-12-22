@@ -29,7 +29,7 @@ fun ExerciseList(
     onDeleteSet: (Int, Int) -> Unit,
     onEditSet: (Int, Int, String?, Boolean) -> Unit,
 ) {
-    exercises.forEach {
+    exercises.forEachIndexed { index, it ->
         var expanded by remember { mutableStateOf(false) }
 
         Row(
@@ -65,15 +65,15 @@ fun ExerciseList(
             }
         }
         SetsEditor(
+            id = it.id,
             expanded = expanded,
             onExpanded = { expanded = it },
-            id = it.id,
             reps =  it.countList,
             weights = it.weightList,
             repsUnit = stringResource(R.string.count),
             weightUnit = stringResource(R.string.kg),
-            onDeleteSet = onDeleteSet,
-            onEditSet = onEditSet
+            onEditSet = onEditSet,
+            onDeleteSet = onDeleteSet
         )
     }
 }

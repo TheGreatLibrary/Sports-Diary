@@ -11,8 +11,8 @@ import com.sinya.projects.sportsdiary.data.database.dao.PlanMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.ProportionsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TrainingsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TypeTrainingDao
-import com.sinya.projects.sportsdiary.data.database.repository.TrainingRepository
-import com.sinya.projects.sportsdiary.data.database.repository.TrainingRepositoryImpl
+import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
+import com.sinya.projects.sportsdiary.domain.repository.TrainingRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,11 +38,7 @@ object AppModule {
         .createFromAsset("diary.db")
         .addMigrations(MIGRATION_1_2)
         .build()
-
-
     }
-
-
 
     @Provides
     fun provideTypeTrainingDao(db: AppDatabase): TypeTrainingDao = db.typeTrainingDao()

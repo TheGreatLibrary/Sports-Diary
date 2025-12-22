@@ -1,8 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage
 
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.room.ColumnInfo
-import com.sinya.projects.sportsdiary.data.database.entity.Trainings
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
 import java.time.LocalDate
 
@@ -17,7 +15,7 @@ sealed class TrainingPageUiState {
         val date: String = LocalDate.now().toString(),
         val items: List<ExerciseItem> = emptyList(),
         val categories: List<TypeTraining> = emptyList(),
-        val dialogContent: ExerciseDialogContent? = null
+        val dialogContent: ExerciseDialogContent? = null,
     ) : TrainingPageUiState()
     data class Error(val message: String) : TrainingPageUiState()
 }

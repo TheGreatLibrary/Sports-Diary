@@ -142,7 +142,7 @@ private fun TrainingBottomSheetCategoryView(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.7f)
+                    .fillMaxHeight(0.32f)
             ) {
                 items(filtered) { ex ->
                     CustomElementCheckBox(

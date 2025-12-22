@@ -126,7 +126,7 @@ private fun TrainingExerciseView(
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .fillMaxHeight(0.7f)
+                                .fillMaxHeight(0.45f)
                         ) {
                             items(filtered) { ex ->
                                 CustomElementCheckBox(

@@ -1,4 +1,4 @@
-package com.sinya.projects.sportsdiary.data.database.repository
+package com.sinya.projects.sportsdiary.domain.repository
 
 import androidx.compose.ui.text.intl.Locale
 import com.sinya.projects.sportsdiary.data.database.dao.ProportionsDao

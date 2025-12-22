@@ -36,8 +36,6 @@ import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingPageView
 import com.sinya.projects.sportsdiary.ui.theme.SportsDiaryTheme
 import com.sinya.projects.sportsdiary.ui.features.getCurrentRoute
 
-val LocalLocale = staticCompositionLocalOf { Locale.current }
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainApp(
@@ -54,21 +52,33 @@ fun MainApp(
     val navController = rememberNavController()
     val currentRoute = getCurrentRoute(navController)
 
-    val onBack = { navController.popBackStack() }
-    val navigate: (ScreenRoute) -> Unit = { route -> navController.navigate(route) }
+    val onBack: () -> Unit = remember(navController) {
+        {
+            when {
+                navController.previousBackStackEntry != null -> {
+                    navController.popBackStack()
+                }
 
-    val withBottomBar = listOf(
-        ScreenRoute.Home.route,
-        ScreenRoute.Menu.route,
-        ScreenRoute.Statistic.route,
-        ScreenRoute.Settings.route
-    )
+                navController.currentDestination?.route != ScreenRoute.Home::class.simpleName -> {
+                    navController.navigate(ScreenRoute.Home) {
 
-    CompositionLocalProvider(
-        LocalLocale provides currentLocale
-    ) {
+                        launchSingleTop = true
+                        popUpTo(ScreenRoute.Home) { inclusive = false }
+                    }
+                }
+            }
+        }
+    }
+    val navigate = remember(navController) {
+        { route: ScreenRoute ->
+            navController.navigate(route) {
+                launchSingleTop = true
+            }
+        }
+    }
+
+    CompositionLocalProvider(LocalLocale provides currentLocale) {
         SportsDiaryTheme(themeMode, dynamicColor = false) {
-
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 bottomBar = {
@@ -213,6 +223,15 @@ fun MainApp(
         }
     }
 }
+
+private val LocalLocale = staticCompositionLocalOf { Locale.current }
+
+private val withBottomBar = listOf(
+    ScreenRoute.Home.route,
+    ScreenRoute.Menu.route,
+    ScreenRoute.Statistic.route,
+    ScreenRoute.Settings.route
+)
 
 
 

@@ -14,7 +14,6 @@ import com.sinya.projects.sportsdiary.data.database.entity.Trainings
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
 import com.sinya.projects.sportsdiary.presentation.statistic.ChartDataTrainings
 import com.sinya.projects.sportsdiary.presentation.statistic.DataTrainings
-import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseItem
 import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseItemWithoutList
 import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseRow
 import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingEntity
@@ -36,6 +35,28 @@ interface TrainingsDao {
         FROM trainings t JOIN type_training tt ON t.type_id = tt.id
     """)
     suspend fun getList() : List<Training>
+
+    @Query("""
+      SELECT 
+        e.id,
+        et.name AS title,
+        d.count_result,
+        d.weight_result
+      FROM data_training d
+      JOIN exercises e ON e.id = d.exercises_id
+      JOIN exercise_translations et ON e.id = et.exercise_id
+      JOIN trainings t ON t.id = d.training_id
+      WHERE t.type_id = :categoryId 
+        AND et.language = :lang
+        AND t.id = (
+          SELECT id FROM trainings 
+          WHERE type_id = :categoryId 
+          ORDER BY date DESC, serial_num DESC 
+          LIMIT 1
+        )
+      ORDER BY e.id
+    """)
+    suspend fun getLastTrainingExercises(categoryId: Int, lang: String): List<ExerciseRow>
 
     @Query("""
       SELECT 
@@ -190,4 +211,8 @@ interface TrainingsDao {
 
     @Delete
     suspend fun deleteTraining(it: Trainings)
+
+
+
+
 }

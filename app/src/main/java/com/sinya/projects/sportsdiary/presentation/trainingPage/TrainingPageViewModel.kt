@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.data.database.repository.ExercisesRepository
-import com.sinya.projects.sportsdiary.data.database.repository.TrainingRepository
+import com.sinya.projects.sportsdiary.domain.repository.ExercisesRepository
+import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -44,8 +44,7 @@ class TrainingPageViewModel @Inject constructor(
                     _state.value = s.copy(
                         category = event.name,
                         title = trainingRepository.getSerialNumOfCategory(event.name.id),
-                        items = items
-
+                        items = items,
                     )
                 }
             }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,13 +13,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sinya.projects.sportsdiary.R
+import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetExercises.TrainingExerciseEvent
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
+import com.sinya.projects.sportsdiary.ui.features.CustomTextField
 
 @Composable
 fun ExercisesScreen(
@@ -29,7 +34,8 @@ fun ExercisesScreen(
     when (val state = vm.state.value) {
         is ExercisesUiState.Loading -> PlaceholderScreen()
         is ExercisesUiState.Success -> ExercisesView(
-            state = state,
+            query = state.query,
+            exercises = vm.filtered(),
             onEvent = vm::onEvent,
             onBackClick = onBackClick,
             onExerciseClick = onExerciseClick
@@ -41,7 +47,8 @@ fun ExercisesScreen(
 
 @Composable
 private fun ExercisesView(
-    state: ExercisesUiState.Success,
+    query: String,
+    exercises: List<ExerciseTranslations>,
     onEvent: (ExercisesEvent) -> Unit,
     onBackClick: () -> Unit,
     onExerciseClick: (Int) -> Unit
@@ -57,21 +64,54 @@ private fun ExercisesView(
             isVisibleBack = true,
             onBackClick = onBackClick
         )
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(state.exercises) {
-                AnimationCard(
-                    onClick = { onExerciseClick(it.exerciseId) }
-                ) {
-                    Box(
-                        modifier = Modifier.padding(20.dp)
+        Text(
+            text = stringResource(R.string.search),
+            style = MaterialTheme.typography.titleMedium
+        )
+        CustomTextField(
+            value = query,
+            onValueChange = { s ->
+                onEvent(
+                    ExercisesEvent.OnQueryChange(
+                        s
+                    )
+                )
+            },
+            onTrailingClick = {
+                onEvent(
+                    ExercisesEvent.OnQueryChange(
+                        ""
+                    )
+                )
+            },
+            keyboardType = KeyboardType.Text,
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
+        if (exercises.isEmpty()) {
+            Text(
+                text = stringResource(R.string.nothing_found),
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+        else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(exercises) {
+                    AnimationCard(
+                        onClick = { onExerciseClick(it.exerciseId) }
                     ) {
-                        Text(
-                            text = it.name,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
+                        Box(
+                            modifier = Modifier.padding(20.dp)
+                        ) {
+                            Text(
+                                text = it.name,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     }
                 }
             }

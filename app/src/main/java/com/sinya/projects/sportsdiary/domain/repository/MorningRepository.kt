@@ -1,4 +1,4 @@
-package com.sinya.projects.sportsdiary.data.database.repository
+package com.sinya.projects.sportsdiary.domain.repository
 
 import com.sinya.projects.sportsdiary.data.database.dao.DataMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.PlanMorningDao

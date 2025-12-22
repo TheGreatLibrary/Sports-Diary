@@ -56,7 +56,7 @@
     <string name="category_name">Category name</string>
     <string name="choose_exercises">Choose exercises</string>
     <string name="chosen_n">Selected: %1$d</string>
-    <string name="search">Search…</string>
+    <string name="search">Search</string>
     <string name="select_all">Select all</string>
     <string name="nothing_found">Nothing found</string>
     <string name="close">Close</string>

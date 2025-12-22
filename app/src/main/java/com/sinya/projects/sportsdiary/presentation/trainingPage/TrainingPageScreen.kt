@@ -38,16 +38,16 @@ fun TrainingPageScreen(
         is TrainingPageUiState.Loading -> PlaceholderScreen()
         is TrainingPageUiState.Success -> TrainingPage(
             id = state.id,
+            dialogContent = state.dialogContent,
+            onEvent = onEvent,
             title = stringResource(R.string.training_number, state.title),
+            category = state.category,
             isOpenBottomSheetCategory = state.bottomSheetCategoryStatus,
             isOpenBottomSheetTraining = state.bottomSheetTrainingStatus,
             onInfoClick = onInfoClick,
             onBackClick = onBackClick,
             categories = state.categories,
             exercises = state.items,
-            category = state.category,
-            dialogContent = state.dialogContent,
-            onEvent = onEvent,
         )
 
         is TrainingPageUiState.Error -> ErrorScreen(state.message)

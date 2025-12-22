@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.data.database.dao
 
+import android.util.Log
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -19,6 +20,9 @@ interface TypeTrainingDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCrossRefs(refs: List<DataTypeTrainings>)
+
+
+
 
     @Transaction
     suspend fun createTypeWithExercises(name: String, exerciseIds: List<Int>) {

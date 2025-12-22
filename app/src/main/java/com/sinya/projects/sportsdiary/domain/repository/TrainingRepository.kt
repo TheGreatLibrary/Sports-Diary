@@ -1,4 +1,4 @@
-package com.sinya.projects.sportsdiary.data.database.repository
+package com.sinya.projects.sportsdiary.domain.repository
 
 import androidx.compose.ui.text.intl.Locale
 import com.sinya.projects.sportsdiary.data.database.dao.TrainingsDao
@@ -47,7 +47,13 @@ class TrainingRepositoryImpl @Inject constructor(
     override suspend fun getById(id: Int?): TrainingEntity {
         val locale = Locale.current.language
         val training = trainingDao.getById(id)
-        val listData = trainingDao.getExerciseRows(id, locale).map { it.toItem() }
+        val listData = if (id == null) {
+            trainingDao.getLastTrainingExercises(training.categoryId, locale)
+                .map { it.toItem() }
+        } else {
+            trainingDao.getExerciseRows(id, locale)
+                .map { it.toItem() }
+        }
 
         return TrainingEntity(
             id = training.id,
@@ -163,15 +169,21 @@ class TrainingRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getDataByTypeTraining(id: Int): List<ExerciseItem> {
-        return trainingDao.getDataOfTypeTraining(id, Locale.current.language).map {
-            ExerciseItem(
-                id = it.id,
-                title = it.title,
-                countList = listOf("0", "0", "0", "0"),
-                weightList = listOf("0", "0", "0", "0"),
-            )
+        val locale = Locale.current.language
+        val lastTrainingItems = trainingDao.getLastTrainingExercises(id, locale)
+
+        return if (lastTrainingItems.isNotEmpty()) {
+            lastTrainingItems.map { it.toItem() }
+        } else {
+            trainingDao.getDataOfTypeTraining(id, locale).map {
+                ExerciseItem(
+                    id = it.id,
+                    title = it.title,
+                    countList = listOf("0", "0", "0", "0"),
+                    weightList = listOf("0", "0", "0", "0"),
+                )
+            }
         }
     }
-
 
 }

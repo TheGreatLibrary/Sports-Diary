@@ -1,6 +1,5 @@
 package com.sinya.projects.sportsdiary
 
-import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -17,20 +16,17 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            MainApp(
-                updateLocale = { lang -> updateLocale( lang) }
-            )
+            MainApp(updateLocale = { lang -> updateLocale(lang) })
         }
     }
 
-    private fun Context.updateLocale( language: String) {
+    private fun updateLocale( language: String) {
         val locale = Locale(language)
         Locale.setDefault(locale)
-
         val configuration = Configuration(resources.configuration)
         configuration.setLocale(locale)
         configuration.setLayoutDirection(locale)
-
+        @Suppress("DEPRECATION")
         resources.updateConfiguration(configuration, resources.displayMetrics)
     }
 }

@@ -2,7 +2,7 @@ package com.sinya.projects.sportsdiary.widgets.calendarWidget
 
 import android.util.Log
 import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
-import com.sinya.projects.sportsdiary.data.database.repository.MorningRepository
+import com.sinya.projects.sportsdiary.domain.repository.MorningRepository
 import jakarta.inject.Inject
 import java.time.LocalDate
 
