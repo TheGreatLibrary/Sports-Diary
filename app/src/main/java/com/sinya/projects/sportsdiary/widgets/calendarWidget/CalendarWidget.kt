@@ -2,9 +2,12 @@ package com.sinya.projects.sportsdiary.widgets.calendarWidget
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastFirstOrNull
 import androidx.glance.Button
 import androidx.glance.ButtonDefaults
 import androidx.glance.GlanceId
@@ -40,7 +43,7 @@ import com.sinya.projects.sportsdiary.App
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
 import com.sinya.projects.sportsdiary.data.datastore.DataStoreManager
-import com.sinya.projects.sportsdiary.presentation.home.DayOfMonth
+import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
 import com.sinya.projects.sportsdiary.ui.themeWidget.WidgetColors
 import com.sinya.projects.sportsdiary.ui.themeWidget.WidgetType
 import dagger.hilt.EntryPoint
@@ -102,8 +105,13 @@ class CalendarWidget : GlanceAppWidget() {
             localizedContext.getString(R.string.saturday_short),
             localizedContext.getString(R.string.sunday_short)
         )
-        val buttonText = remember(state.morningState) {
-            if (state.morningState)
+        val morningState by remember(state.monthDays, state.date) {
+            derivedStateOf {
+                state.monthDays.fastFirstOrNull { it.date == state.date }?.morningState ?: false
+            }
+        }
+        val buttonText = remember(morningState) {
+            if (morningState)
                 localizedContext.getString(R.string.finished_morning_exercises)
             else
                 localizedContext.getString(R.string.finish_morning_exercises)
@@ -139,14 +147,14 @@ class CalendarWidget : GlanceAppWidget() {
                 text = buttonText,
                 onClick = actionRunCallback<MarkDayMorningExercisesCallback>(
                     parameters = actionParametersOf(
-                        MarkDayMorningExercisesCallback.KEY_CURRENT_STATE to state.morningState
+                        MarkDayMorningExercisesCallback.KEY_CURRENT_STATE to morningState
                     )
                 ),
                 modifier = GlanceModifier.fillMaxWidth(),
 //                enabled = !state.morningState,
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (!state.morningState) WidgetColors.colors.primary else WidgetColors.colors.secondaryContainer,
-                    contentColor = if (!state.morningState) WidgetColors.colors.onPrimary else WidgetColors.colors.onSecondary,
+                    backgroundColor = if (!morningState) WidgetColors.colors.primary else WidgetColors.colors.secondaryContainer,
+                    contentColor = if (!morningState) WidgetColors.colors.onPrimary else WidgetColors.colors.onSecondary,
 
                     ),
                 style = WidgetType.bodyMedium
@@ -206,11 +214,7 @@ class CalendarWidget : GlanceAppWidget() {
     private fun CalendarRow(days: List<DayOfMonth>, today: LocalDate) {
         Row(modifier = GlanceModifier.fillMaxWidth()) {
             days.forEach { day ->
-                val isToday = (
-                        day.year == today.year &&
-                                day.month == today.monthValue &&
-                                day.day == today.dayOfMonth
-                        )
+                val isToday = (day.date == today)
 
                 Box(
                     modifier = GlanceModifier.defaultWeight(),
@@ -257,7 +261,7 @@ class CalendarWidget : GlanceAppWidget() {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = day.day.toString(),
+                            text = day.date.dayOfMonth.toString(),
                             style = WidgetType.bodyLarge.copy(
                                 color = when {
                                     !day.currentMonth -> WidgetColors.colors.onSecondary

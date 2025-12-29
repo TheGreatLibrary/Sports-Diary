@@ -2,8 +2,8 @@ package com.sinya.projects.sportsdiary.widgets.calendarWidget
 
 import com.sinya.projects.sportsdiary.domain.repository.MorningRepository
 import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
-import com.sinya.projects.sportsdiary.presentation.home.DayOfMonth
-import com.sinya.projects.sportsdiary.presentation.home.MonthCalendarResult
+import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
+import com.sinya.projects.sportsdiary.domain.model.MonthCalendarResult
 import jakarta.inject.Inject
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -14,43 +14,31 @@ class GetWidgetDataUseCase @Inject constructor(
     private val morningRepository: MorningRepository,
     private val trainingRepository: TrainingRepository
 ) {
-    private suspend fun getMonthCalendarWithInfo(year: Int, month: Int): MonthCalendarResult {
+    private suspend fun getMonthCalendarWithInfo(date: LocalDate): MonthCalendarResult {
         val firstOfMonth = LocalDate.now()
         val start = firstOfMonth.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
         val daysCount = 7
         val endExclusive = start.plusDays(daysCount.toLong())
 
-        val morningList = morningRepository.getList(start.toString(), endExclusive.toString())
-        val trainingList = trainingRepository.getList(start.toString(), endExclusive.toString())
+        val morningList = morningRepository.getList(start.toString(), endExclusive.toString()).getOrElse { emptyList() }
+        val trainingList = trainingRepository.getList(start.toString(), endExclusive.toString()).getOrElse { emptyList() }
 
         val morningDates = morningList.map { it.date }.toHashSet()
         val trainingDates = trainingList.map { it.date }.toHashSet()
         val result = ArrayList<DayOfMonth>(daysCount)
         var d = start
 
-        var todayIndex = -1
-        var todayMorning = false
-        var todayTraining = false
-
         repeat(daysCount) { idx ->
             val iso = d.toString()
-            val isToday = d == firstOfMonth
-            val isCurrentMonthCell = d.monthValue == month && d.year == year
+            val isCurrentMonthCell = d.monthValue == date.monthValue && d.year == date.year
             val hasMorning = iso in morningDates
             val hasTraining = iso in trainingDates
 
-            if (isToday) {
-                todayIndex = idx
-                todayMorning = hasMorning
-                todayTraining = hasTraining
-            }
 
             result += DayOfMonth(
                 currentMonth = isCurrentMonthCell,
-                day = d.dayOfMonth,
-                month = d.monthValue,
-                year = d.year,
+                date = d,
                 trainingState = hasTraining,
                 morningState = hasMorning
             )
@@ -59,23 +47,17 @@ class GetWidgetDataUseCase @Inject constructor(
 
         return MonthCalendarResult(
             days = result,
-            todayMorning = todayMorning,
-            todayTraining = todayTraining,
-            todayIndex = todayIndex
         )
     }
 
     suspend operator fun invoke(): CalendarWidgetUiState {
-        val ym = YearMonth.now()
+        val date = LocalDate.now()
 
-        val result = getMonthCalendarWithInfo(ym.year, ym.monthValue)
+        val result = getMonthCalendarWithInfo(date)
 
         return CalendarWidgetUiState(
-            year = ym.year,
-            month = ym.monthValue,
-            monthDays = result.days,
-            trainingState = result.todayTraining,
-            morningState = result.todayMorning,
+            date = date,
+            monthDays = result.days
         )
     }
 }

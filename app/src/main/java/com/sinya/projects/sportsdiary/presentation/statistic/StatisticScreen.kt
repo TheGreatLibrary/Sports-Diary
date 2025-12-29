@@ -4,17 +4,27 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
@@ -22,6 +32,7 @@ import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.statistic.components.RadioButtons
 import com.sinya.projects.sportsdiary.presentation.statistic.components.StatCard
+import com.sinya.projects.sportsdiary.ui.features.StatisticCard
 import com.sinya.projects.sportsdiary.ui.features.diagram.Chart
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDiagramView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
@@ -74,15 +85,30 @@ private fun StatisticScreenView(
                 .height(IntrinsicSize.Max),
             horizontalArrangement = Arrangement.spacedBy(17.dp)
         ) {
-            StatCard(
-                modifier = Modifier.weight(1f),
+            val fontStyle = MaterialTheme.typography.displayLarge
+            var fontSize by remember { mutableStateOf(fontStyle.fontSize) }
+
+            val onTextLayout: (TextLayoutResult) -> Unit = remember { { result ->
+                    if (result.didOverflowWidth) {
+                        fontSize = (fontSize.value * 0.9f).sp.value
+                            .coerceAtLeast(12.sp.value).sp
+                    }
+                }
+            }
+
+            StatisticCard(
+                modifier = Modifier.weight(1f).fillMaxHeight(),
                 title = stringResource(R.string.count_of_training),
-                count = state.countTrain.toString()
+                count = state.countTrain.toString(),
+                fontSize = fontSize,
+                onTextLayout = onTextLayout
             )
-            StatCard(
-                modifier = Modifier.weight(1f),
+            StatisticCard(
+                modifier = Modifier.weight(1f).fillMaxHeight(),
                 title = stringResource(R.string.all_weight),
-                count = state.countWeight.toString()
+                count = state.countWeight.toString(),
+                fontSize = fontSize,
+                onTextLayout = onTextLayout
             )
         }
         Column(

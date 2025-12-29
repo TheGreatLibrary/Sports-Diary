@@ -8,7 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
-import com.sinya.projects.sportsdiary.presentation.home.MorningDay
+import com.sinya.projects.sportsdiary.domain.model.MorningDay
 
 @Dao
 interface DataMorningDao {

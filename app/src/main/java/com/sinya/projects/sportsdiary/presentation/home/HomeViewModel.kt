@@ -1,186 +1,186 @@
 package com.sinya.projects.sportsdiary.presentation.home
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
-import com.sinya.projects.sportsdiary.domain.repository.MorningRepository
-import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
+import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
+import com.sinya.projects.sportsdiary.domain.useCase.GetMorningListUseCase
+import com.sinya.projects.sportsdiary.domain.useCase.GetTrainingListUseCase
+import com.sinya.projects.sportsdiary.domain.useCase.MarkDayMorningExerciseUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repoTraining: TrainingRepository,
-    private val repoMorning: MorningRepository
+    private val markDayMorningExerciseUseCase: MarkDayMorningExerciseUseCase,
+    private val getMorningListUseCase: GetMorningListUseCase,
+    private val getTrainingListUseCase: GetTrainingListUseCase
 ) : ViewModel() {
 
-    private val _state = mutableStateOf<HomeScreenUiState>(HomeScreenUiState.Loading)
-    val state: State<HomeScreenUiState> = _state
+    private val _state = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
+    val state: StateFlow<HomeUiState> = _state
 
     init {
-        loadMonth(YearMonth.now())
+        loadMonth()
     }
 
     fun onEvent(event: HomeEvent) {
-        val currentState = _state.value as? HomeScreenUiState.Success ?: return
-
         when (event) {
-            is HomeEvent.OnExtended -> {
-                _state.value = currentState.copy(calendarExpanded = event.extended)
-            }
+            is HomeEvent.OnExtended -> updateIfSuccess { it.copy(calendarExpanded = event.extended) }
 
-            is HomeEvent.OnButtonMorningClick -> {
-                viewModelScope.launch {
-                    if (event.morningState) {
-                        repoMorning.insertMorning(
-                            DataMorning(
-                                id = 0,
-                                note = null,
-                                date = LocalDate.now().toString(),
-                                planId = event.planId
-                            )
-                        )
-                    }
-                    else {
-                        val date = LocalDate.now().toString()
-                        val item = repoMorning.getMorningByDate(date)
-                        item?.let { repoMorning.deleteMorning(item) }
-                    }
-                    updateDate()
+            is HomeEvent.OnButtonMorningClick -> morningExercisesButtonClick(
+                event.morningState,
+                event.date,
+                event.planId
+            )
+
+            is HomeEvent.OnShift -> shiftMonth(event.index)
+
+            is HomeEvent.PickDay -> viewModelScope.launch {
+                val currentState = state.value as? HomeUiState.Success ?: return@launch
+                if (event.date.monthValue != currentState.date.monthValue) {
+                    val index = (event.date.monthValue - currentState.date.monthValue).toLong()
+                    updateIfSuccess { it.copy(date = event.date.plusMonths(-index)) }
+                    shiftMonth(index)
+                } else {
+                    updateIfSuccess { it.copy(date = event.date) }
                 }
+                loadTrainingsForDate(event.date)
             }
 
-            is HomeEvent.UpdateTrainingCard -> {
-                updateTrainingCard()
-            }
-
-            is HomeEvent.OnShift -> {
-                shiftMonth(event.index)
-            }
+            HomeEvent.OnErrorShown -> updateIfSuccess { it.copy(errorMessage = null) }
         }
     }
 
-    private suspend fun updateDate() {
-        val currentState = _state.value as? HomeScreenUiState.Success ?: return
+    private fun morningExercisesButtonClick(morningState: Boolean, date: LocalDate, planId: Int) {
+        viewModelScope.launch {
+            markDayMorningExerciseUseCase(
+                morningState = morningState,
+                item = DataMorning(
+                    id = 0,
+                    note = null,
+                    date = date.toString(),
+                    planId = planId
+                )
+            ).fold(
+                onSuccess = {
+                    updateIfSuccess { state ->
+                        val updatedMonthDays = state.monthDays.map { day ->
+                            if (day.date == date) day.copy(morningState = morningState)
+                            else day
+                        }
+                        state.copy(monthDays = updatedMonthDays)
+                    }
+                },
+                onFailure = { error ->
+                    updateIfSuccess {
+                        it.copy(errorMessage = error.toString())
+                    }
+                }
+            )
+        }
+    }
 
-        val date = LocalDate.now()
-        val list = getMonthCalendarWithInfo(date.year, date.monthValue)
+    private fun loadMonth(date: LocalDate = LocalDate.now()) = viewModelScope.launch {
+        loadMonthCalendar(date)
+        loadTrainingsForDate(date)
+    }
 
-        _state.value = currentState.copy(
-            monthDays = list.days,
-            morningState = list.todayMorning
+    private suspend fun loadTrainingsForDate(date: LocalDate) {
+        getTrainingListUseCase(
+            start = date.toString(),
+            end = date.plusDays(1).toString()
+        ).fold(
+            onSuccess = { trainings ->
+                updateIfSuccess { it.copy(trainingList = trainings) }
+            },
+            onFailure = { error ->
+                updateIfSuccess {
+                    it.copy(errorMessage = error.localizedMessage ?: "Failed to load trainings")
+                }
+            }
         )
     }
 
-    private suspend fun getMonthCalendarWithInfo(year: Int, month: Int): MonthCalendarResult {
-        val firstOfMonth = LocalDate.of(year, month, 1)
+    private suspend fun loadMonthCalendar(date: LocalDate) {
+        val firstOfMonth = LocalDate.of(date.year, date.monthValue, 1)
         val start = firstOfMonth.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
         val daysCount = 35
         val endExclusive = start.plusDays(daysCount.toLong())
 
-        val today = LocalDate.now()
-
-        val morningList = repoMorning.getList(start.toString(), endExclusive.toString())
-        val trainingList = repoTraining.getList(start.toString(), endExclusive.toString())
+        val morningList = getMorningListUseCase(
+            start.toString(),
+            endExclusive.toString()
+        ).getOrElse { emptyList() }
+        val trainingList = getTrainingListUseCase(
+            start.toString(),
+            endExclusive.toString()
+        ).getOrElse { emptyList() }
 
         val morningDates = morningList.map { it.date }.toHashSet()
         val trainingDates = trainingList.map { it.date }.toHashSet()
+
         val result = ArrayList<DayOfMonth>(daysCount)
         var d = start
 
-        var todayIndex = -1
-        var todayMorning = false
-        var todayTraining = false
-
-        repeat(daysCount) { idx ->
+        repeat(daysCount) { _ ->
             val iso = d.toString() // yyyy-MM-dd
-            val isToday = d == today
-            val isCurrentMonthCell = d.monthValue == month && d.year == year
+            val isCurrentMonthCell = d.monthValue == date.monthValue && d.year == date.year
             val hasMorning = iso in morningDates
             val hasTraining = iso in trainingDates
 
-            if (isToday) {
-                todayIndex = idx
-                todayMorning = hasMorning
-                todayTraining = hasTraining
-            }
 
             result += DayOfMonth(
                 currentMonth = isCurrentMonthCell,
-                day = d.dayOfMonth,
-                month = d.monthValue,
-                year = d.year,
+                date = d,
                 trainingState = hasTraining,
                 morningState = hasMorning
             )
             d = d.plusDays(1)
         }
 
-        return MonthCalendarResult(
-            days = result,
-            todayMorning = todayMorning,
-            todayTraining = todayTraining,
-            todayIndex = todayIndex
-        )
+        if (_state.value is HomeUiState.Success) {
+            updateIfSuccess {
+                it.copy(
+                    date = date,
+                    monthDays = result
+                )
+            }
+        } else {
+            _state.value = HomeUiState.Success(
+                date = date,
+                trainingList = emptyList(),
+                monthDays = result,
+                calendarExpanded = false,
+                errorMessage = null
+            )
+        }
     }
 
-    private fun shiftMonth(delta: Int) {
-        val currentState = _state.value as? HomeScreenUiState.Success ?: return
+    private fun shiftMonth(delta: Long) {
+        val currentState = _state.value as? HomeUiState.Success ?: return
 
-        val next = currentState.currentMonth.plusMonths(delta.toLong())
-        if (next == currentState.currentMonth) return
+        val next = currentState.date.plusMonths(delta)
+        if (next == currentState.date) return
 
-        _state.value = currentState.copy(currentMonth = next)
         loadMonth(next)
     }
 
-    private fun updateTrainingCard(date: LocalDate = LocalDate.now()) = viewModelScope.launch {
-        val currentState = _state.value as? HomeScreenUiState.Success ?: return@launch
-
-        val trainingCards = repoTraining.getList(
-            start = date.toString(),
-            end = date.plusDays(1).toString()
-        )
-
-        _state.value = currentState.copy(
-            trainingList = trainingCards,
-        )
-    }
-
-    private fun loadMonth(ym: YearMonth) = viewModelScope.launch {
-        val date = LocalDate.now()
-
-        val trainingCards = repoTraining.getList(
-            start = date.toString(),
-            end = date.plusDays(1).toString()
-        )
-        val result = getMonthCalendarWithInfo(ym.year, ym.monthValue)
-
-        _state.value = if (_state.value is HomeScreenUiState.Success) {
-            val currentState = _state.value as HomeScreenUiState.Success
-            currentState.copy(
-                year = ym.year,
-                month = ym.monthValue,
-                trainingList = trainingCards,
-                monthDays = result.days,
-            )
-        } else {
-            HomeScreenUiState.Success(
-                year = ym.year,
-                month = ym.monthValue,
-                trainingList = trainingCards,
-                monthDays = result.days,
-                trainingState = result.todayTraining,
-                morningState = result.todayMorning,
-            )
+    private fun updateIfSuccess(transform: (HomeUiState.Success) -> HomeUiState.Success) {
+        _state.update { currentState ->
+            if (currentState is HomeUiState.Success) {
+                transform(currentState)
+            } else {
+                currentState
+            }
         }
     }
 }

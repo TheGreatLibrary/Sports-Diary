@@ -1,0 +1,101 @@
+package com.sinya.projects.sportsdiary.presentation.home.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.sinya.projects.sportsdiary.R
+import com.sinya.projects.sportsdiary.main.ScreenRoute
+import com.sinya.projects.sportsdiary.presentation.trainings.Training
+import com.sinya.projects.sportsdiary.ui.features.AnimationCard
+import com.sinya.projects.sportsdiary.utils.getString
+import kotlinx.coroutines.launch
+
+@Composable
+fun TrainingHomeCard(
+    list: List<Training>,
+    onCardClick: (ScreenRoute) -> Unit,
+    onPlusClick: () -> Unit,
+    onItemClick: (Int) -> Unit
+) {
+    HomeCard(
+        title = stringResource(R.string.training_title),
+        onCardClick = onCardClick,
+        onPlusClick = onPlusClick,
+        colorCard = MaterialTheme.colorScheme.secondary
+    ) {
+        if (list.isNotEmpty()) {
+            val listState = rememberLazyListState()
+            val coroutineScope = rememberCoroutineScope()
+
+            LaunchedEffect(list.size) {
+                coroutineScope.launch {
+                    listState.scrollToItem(list.lastIndex)
+                }
+            }
+
+            LazyColumn(
+                state = listState,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                items(list) { item ->
+                    TrainingItem(
+                        item = item,
+                        onClick = { onItemClick(item.id) }
+                    )
+                }
+
+            }
+        }
+        else {
+            Text(
+                text = stringResource(R.string.not_entries_of_training),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+    }
+}
+
+@Composable
+private fun TrainingItem(
+    item: Training,
+    onClick: (Int) -> Unit
+) {
+    val context = LocalContext.current
+
+    AnimationCard(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = { onClick(item.id) },
+        shapeCard = MaterialTheme.shapes.extraSmall,
+        colorCard = MaterialTheme.colorScheme.tertiaryContainer
+    ) {
+        Text(
+            text = stringResource(
+                R.string.workout_type_training,
+                context.getString(item.category),
+                item.name,
+                item.date.toString()
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.padding(
+                horizontal = 8.dp,
+                vertical = 4.dp
+            ),
+        )
+    }
+}

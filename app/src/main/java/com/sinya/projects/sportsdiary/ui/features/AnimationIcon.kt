@@ -30,9 +30,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun AnimationIcon(
     onClick: () -> Unit,
-    description: String,
+    description: String = "",
     icon: Painter,
-    isSelected: Boolean,
+    isSelected: Boolean = true,
     size: Dp = 35.dp,
     shape: Shape =  MaterialTheme.shapes.extraLarge,
     selectedContainerColor: Color = MaterialTheme.colorScheme.primary,

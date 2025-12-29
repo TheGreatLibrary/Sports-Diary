@@ -24,7 +24,7 @@ interface TrainingRepository {
     suspend fun insertCategory(name: String, exercises: List<Int>)
     suspend fun getSerialNumOfCategory(typeTraining: Int?): String
 
-    suspend fun getList(start: String, end: String): List<Training>
+    suspend fun getList(start: String, end: String): Result<List<Training>>
     suspend fun trainingList(): List<Training>
     suspend fun insertTraining(entity: TrainingEntity)
     suspend fun updateTraining(entity: TrainingEntity)
@@ -108,8 +108,12 @@ class TrainingRepositoryImpl @Inject constructor(
         return trainingDao.getSerialNumOfCategory(typeTraining)
     }
 
-    override suspend fun getList(start: String, end: String): List<Training> {
-        return trainingDao.getDataOfMonth(start, end)
+    override suspend fun getList(start: String, end: String): Result<List<Training>> {
+        return try {
+            Result.success(trainingDao.getDataOfMonth(start, end))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
 
