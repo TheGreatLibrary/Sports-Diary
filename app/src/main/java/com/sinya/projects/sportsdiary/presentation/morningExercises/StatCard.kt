@@ -1,4 +1,4 @@
-package com.sinya.projects.sportsdiary.presentation.statistic.components
+package com.sinya.projects.sportsdiary.presentation.morningExercises
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

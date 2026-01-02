@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
+import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.settings.modalSheetLocale.SettingsLanguageSheet
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
@@ -71,10 +72,12 @@ private fun SettingsScreenView(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         NavigationTopBar(
-            title = stringResource(R.string.settings_title),
-            isVisibleBack = true,
-            onBackClick = onBackClick
+            type = TypeAppTopNavigation.WithoutIcon(
+                onBackClick = onBackClick,
+                title = stringResource(R.string.settings_title)
+            )
         )
+
 //        BlockOfCards(
 //            title = stringResource(R.string.main_block)
 //        ) {

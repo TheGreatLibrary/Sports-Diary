@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
+import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
@@ -66,15 +67,17 @@ private fun ProportionPageView(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         NavigationTopBar(
-            title = stringResource(R.string.proportion_number, title),
-            isVisibleBack = true,
-            onBackClick = onBackClick,
-            isVisibleSave = true,
-            onSecondaryClick = {
-                onEvent(ProportionPageUiEvent.Save)
-                onBackClick()
-            }
+            type = TypeAppTopNavigation.WithIcon(
+                onBackClick = onBackClick,
+                title = stringResource(R.string.proportion_number, title),
+                painter = R.drawable.nav_save,
+                onClick = {
+                    onEvent(ProportionPageUiEvent.Save)
+                    onBackClick()
+                }
+            )
         )
+
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(rows.size) { idx ->
                 when (val row = rows[idx]) {

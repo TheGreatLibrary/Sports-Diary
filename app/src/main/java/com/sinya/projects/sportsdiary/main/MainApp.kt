@@ -131,12 +131,8 @@ private fun NavGraph(
         }
         composable<ScreenRoute.Menu> {
             MenuScreen(
-                onBackClick = { onBack() },
-                onTrainingClick = { navigateTo(ScreenRoute.Training) },
-                onMorningExercisesClick = { navigateTo(ScreenRoute.MorningExercises) },
-                onProportionsClick = { navigateTo(ScreenRoute.Proportions) },
-                onCalculateClick = { navigateTo(ScreenRoute.Calculate) },
-                onSportsExercisesClick = { navigateTo(ScreenRoute.SportExercises) }
+                onBackClick = onBack,
+                navigateTo = navigateTo
             )
         }
         composable<ScreenRoute.Statistic> {

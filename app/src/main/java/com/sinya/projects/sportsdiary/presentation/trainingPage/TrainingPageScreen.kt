@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
+import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
@@ -76,12 +77,14 @@ private fun TrainingPage(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         NavigationTopBar(
-            title = title,
-            isVisibleBack = true,
-            onBackClick = onBackClick,
-            isVisibleSave = true,
-            onSecondaryClick = { onEvent(TrainingPageEvent.Save(onBackClick)) }
+            type = TypeAppTopNavigation.WithIcon(
+                onBackClick = onBackClick,
+                title = title,
+                painter = R.drawable.nav_save,
+                onClick = { onEvent(TrainingPageEvent.Save(onBackClick)) }
+            )
         )
+
         CustomDropdownMenu(
             items = categories,
             title = stringResource(R.string.constructor),

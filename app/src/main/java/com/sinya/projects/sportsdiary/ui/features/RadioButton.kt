@@ -1,6 +1,7 @@
 package com.sinya.projects.sportsdiary.ui.features
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -17,12 +18,13 @@ fun RadioButton(
     text: String,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    shape: CornerBasedShape = MaterialTheme.shapes.extraLarge,
     onClick: () -> Unit
 ) {
     Button(
         onClick = onClick,
         modifier = modifier,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = shape,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = contentColor,

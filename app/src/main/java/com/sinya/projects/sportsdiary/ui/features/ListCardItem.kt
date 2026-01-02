@@ -21,9 +21,25 @@ import com.sinya.projects.sportsdiary.domain.model.SwitchItem
 
 @Composable
 fun ListCardItem(
+    onClick: () -> Unit,
     title: String,
     description: String,
-    state: SwitchItem?
+    state: SwitchItem? = null
+) {
+    AnimationCard(onClick = onClick) {
+        CardItemContent(
+            title = title,
+            description = description,
+            state = state
+        )
+    }
+}
+
+@Composable
+private fun CardItemContent(
+    title: String,
+    description: String,
+    state: SwitchItem? = null
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 18.dp),

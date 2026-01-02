@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.main.ScreenRoute
 
-enum class TypeAppNavigation(
+enum class TypeAppBottomNavigation(
     val route: ScreenRoute,
     @DrawableRes val icon: Int
 ) {
@@ -15,10 +15,10 @@ enum class TypeAppNavigation(
     PLUS(ScreenRoute.TrainingPage(), R.drawable.ic_plus);
 
     companion object {
-        fun getFirstPartList(): List<TypeAppNavigation> = listOf(HOME, MENU)
+        fun getFirstPartList(): List<TypeAppBottomNavigation> = listOf(HOME, MENU)
 
-        fun getSecondPartList(): List<TypeAppNavigation> = listOf(STAT, SETT)
+        fun getSecondPartList(): List<TypeAppBottomNavigation> = listOf(STAT, SETT)
 
-        fun getPlus(): TypeAppNavigation = PLUS
+        fun getPlus(): TypeAppBottomNavigation = PLUS
     }
 }

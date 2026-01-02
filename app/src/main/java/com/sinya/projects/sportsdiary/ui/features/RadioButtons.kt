@@ -1,13 +1,11 @@
-package com.sinya.projects.sportsdiary.presentation.statistic.components
+package com.sinya.projects.sportsdiary.ui.features
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +15,8 @@ import androidx.compose.ui.unit.dp
 fun RadioButtons(
     radioOptions: List<String>,
     selectedOption: Int,
-    onOptionSelected: (Int) -> Unit
+    onOptionSelected: (Int) -> Unit,
+    shape: CornerBasedShape
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -37,21 +36,14 @@ fun RadioButtons(
                 MaterialTheme.colorScheme.primaryContainer
             }
 
-            Button(
+            RadioButton(
                 modifier = Modifier.weight(1f),
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = backgroundColor,
-                    contentColor = contentColor,
-                ),
-                contentPadding = PaddingValues(vertical = 3.dp, horizontal = 1.dp),
+                text = it,
+                containerColor = backgroundColor,
+                contentColor = contentColor,
+                shape = shape,
                 onClick = { onOptionSelected(index) }
-                ) {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            )
         }
     }
 }

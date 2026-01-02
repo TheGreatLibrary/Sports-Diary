@@ -38,6 +38,10 @@ fun HomeScreen(
     navigateTo: (ScreenRoute) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(true) {
+        viewModel.loadMonth()
+    }
+
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (val currentState = state) {
@@ -100,7 +104,7 @@ private fun HomeScreenView(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(vertical = 16.dp, horizontal = 24.dp),
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 TrainingHomeCard(

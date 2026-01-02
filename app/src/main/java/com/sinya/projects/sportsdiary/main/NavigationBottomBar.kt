@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.domain.enums.TypeAppNavigation
+import com.sinya.projects.sportsdiary.domain.enums.TypeAppBottomNavigation
 import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
 
 @Composable
@@ -22,9 +22,9 @@ fun NavigationBottomBar(
     currentRoute: String?,
     navigateTo: (ScreenRoute) -> Unit
 ) {
-    val firstPart = remember { TypeAppNavigation.getFirstPartList() }
-    val secondPart = remember { TypeAppNavigation.getSecondPartList() }
-    val plusBtn = remember { TypeAppNavigation.getPlus() }
+    val firstPart = remember { TypeAppBottomNavigation.getFirstPartList() }
+    val secondPart = remember { TypeAppBottomNavigation.getSecondPartList() }
+    val plusBtn = remember { TypeAppBottomNavigation.getPlus() }
 
     Box(
         modifier = Modifier
@@ -77,7 +77,7 @@ fun NavigationBottomBar(
 
 @Composable
 private fun SubNavRow(
-    navList: List<TypeAppNavigation>,
+    navList: List<TypeAppBottomNavigation>,
     currentRoute: String?,
     navigateTo: (ScreenRoute) -> Unit
 ) {

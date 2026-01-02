@@ -16,12 +16,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sinya.projects.sportsdiary.R
+import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetNote.MorningNoteSheet
 import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetPlan.MorningPlanSheet
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
-import com.sinya.projects.sportsdiary.presentation.statistic.components.StatCard
 import com.sinya.projects.sportsdiary.ui.features.CardWithArrow
 
 @Composable
@@ -60,10 +60,12 @@ private fun MorningExercisesView(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         NavigationTopBar(
-            title = stringResource(R.string.morning_exercises_title),
-            isVisibleBack = true,
-            onBackClick = onBackClick
+            type = TypeAppTopNavigation.WithoutIcon(
+                onBackClick = onBackClick,
+                title = stringResource(R.string.morning_exercises_title)
+            )
         )
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()

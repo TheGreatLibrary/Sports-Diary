@@ -37,7 +37,7 @@ val Typography = Typography(
     titleLarge = TextStyle(
         fontFamily = Unbounded,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 18.sp,
+        fontSize = 15.sp,
     ), // заголовок страниц
     titleMedium = TextStyle(
         fontFamily = Unbounded,

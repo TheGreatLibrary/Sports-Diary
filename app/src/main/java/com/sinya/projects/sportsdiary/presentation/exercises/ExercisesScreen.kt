@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
+import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
@@ -60,10 +61,12 @@ private fun ExercisesView(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         NavigationTopBar(
-            title = stringResource(R.string.sport_exercises_title),
-            isVisibleBack = true,
-            onBackClick = onBackClick
+            type = TypeAppTopNavigation.WithoutIcon(
+                onBackClick = onBackClick,
+                title = stringResource(R.string.sport_exercises_title)
+            )
         )
+
         Text(
             text = stringResource(R.string.search),
             style = MaterialTheme.typography.titleMedium
@@ -94,8 +97,7 @@ private fun ExercisesView(
                 text = stringResource(R.string.nothing_found),
                 modifier = Modifier.padding(16.dp)
             )
-        }
-        else {
+        } else {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {

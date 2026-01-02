@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
+import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.domain.repository.ExerciseMusclesData
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
@@ -62,11 +63,7 @@ private fun ExercisePageView(
             .padding(start = 16.dp, top = 50.dp, end = 16.dp, bottom = 40.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        NavigationTopBar(
-            title = "",
-            isVisibleBack = true,
-            onBackClick = onBackClick
-        )
+        NavigationTopBar(type = TypeAppTopNavigation.OnlyBackIcon(onBackClick = onBackClick))
 
         // Заголовок
         Text(

@@ -16,15 +16,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.presentation.statistic.TimeMode
+import com.sinya.projects.sportsdiary.domain.enums.TypeTime
+import com.sinya.projects.sportsdiary.domain.model.ChartState
 import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
 
 @Composable
 fun Chart(
-    onInfoClick: () -> Unit,
     title: String,
-    timeMode: TimeMode,
+    timeMode: TypeTime,
     points: List<ChartPoint>,
+    onInfoClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -33,7 +34,7 @@ fun Chart(
                 shape = MaterialTheme.shapes.small,
                 color = MaterialTheme.colorScheme.primaryContainer
             )
-            .padding(start = 21.dp, bottom = 21.dp, top = 13.dp, end = 30.dp),
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -41,7 +42,7 @@ fun Chart(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
-                space = 13.dp,
+                space = 5.dp,
                 alignment = Alignment.CenterHorizontally
             )
         ) {
@@ -49,26 +50,29 @@ fun Chart(
                 text = title,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onPrimary,
-                textAlign = TextAlign.Center
             )
+
             AnimationIcon(
                 onClick = onInfoClick,
                 description = "Info",
                 icon = painterResource(R.drawable.ic_info),
                 isSelected = true,
-                size = 19.dp,
+                size = 16.dp,
                 selectedContainerColor = Color.Transparent,
             )
         }
+
         ScrollableLineChart(
             points = points,
             timeMode = timeMode,
-            yMin = 0f,
-            yMax = if (points.isNotEmpty()) points.maxOf { it.yValue } else 5f,
-            yGridLines = 4,
-            xStep = 80.dp,
+            state = ChartState(
+                yMin = 0f,
+                yMax = if (points.isNotEmpty()) points.maxOf { it.yValue } else 5f,
+                yGridLines = 5,
+                xStep = 80.dp,
+            ),
             lineColor = MaterialTheme.colorScheme.secondary,
-            gridColor = MaterialTheme.colorScheme.onPrimary.copy(0.3f)
+            gridColor = MaterialTheme.colorScheme.onSecondary
         )
     }
 }

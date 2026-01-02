@@ -27,10 +27,6 @@ class HomeViewModel @Inject constructor(
     private val _state = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val state: StateFlow<HomeUiState> = _state
 
-    init {
-        loadMonth()
-    }
-
     fun onEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.OnExtended -> updateIfSuccess { it.copy(calendarExpanded = event.extended) }
@@ -88,7 +84,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun loadMonth(date: LocalDate = LocalDate.now()) = viewModelScope.launch {
+    fun loadMonth(date: LocalDate = LocalDate.now()) = viewModelScope.launch {
         loadMonthCalendar(date)
         loadTrainingsForDate(date)
     }

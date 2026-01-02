@@ -11,9 +11,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sinya.projects.sportsdiary.R
+import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionPageUiEvent
 import com.sinya.projects.sportsdiary.presentation.proportions.components.ProportionByTime
 import com.sinya.projects.sportsdiary.presentation.trainings.TrainingEvent
 import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
@@ -51,13 +53,14 @@ private fun ProportionsScreenView(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         NavigationTopBar(
-            title = stringResource(R.string.proportions_title),
-            isVisibleBack = true,
-            isVisibleSave = true,
-            onBackClick = onBackClick,
-            secondaryIcon = painterResource(R.drawable.ic_plus),
-            onSecondaryClick = { onProportionClick(null) }
+            type = TypeAppTopNavigation.WithIcon(
+                onBackClick = onBackClick,
+                title = stringResource(R.string.proportions_title),
+                painter = R.drawable.ic_plus,
+                onClick = { onProportionClick(null) }
+            )
         )
+
         ProportionByTime(
             proportions = state.proportions,
             onTrainingClick = onProportionClick,

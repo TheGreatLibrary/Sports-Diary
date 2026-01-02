@@ -6,7 +6,7 @@ import com.sinya.projects.sportsdiary.data.database.dao.TypeTrainingDao
 import com.sinya.projects.sportsdiary.data.database.entity.DataTraining
 import com.sinya.projects.sportsdiary.data.database.entity.Trainings
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
-import com.sinya.projects.sportsdiary.presentation.statistic.TimeMode
+import com.sinya.projects.sportsdiary.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseItem
 import com.sinya.projects.sportsdiary.presentation.trainings.Training
 import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingEntity
@@ -32,9 +32,10 @@ interface TrainingRepository {
     suspend fun getById(id: Int?): TrainingEntity
     suspend fun insertDataTraining(items: List<DataTraining>)
 
-    suspend fun getCountOfTrainings(): Int
-    suspend fun getSummaryWeightOfTrainings(): Float
-    suspend fun getChartList(mode: TimeMode): List<ChartPoint>
+    suspend fun getCountOfTrainings(): Result<Int>
+    suspend fun getSummaryWeightOfTrainings(): Result<Float>
+    suspend fun getChartList(mode: TypeTime): Result<List<ChartPoint>>
+
     suspend fun getDataByTypeTraining(id: Int): List<ExerciseItem>
 }
 
@@ -119,58 +120,81 @@ class TrainingRepositoryImpl @Inject constructor(
 
     // StatisticScreen
 
-    override suspend fun getCountOfTrainings(): Int {
-        return trainingDao.getCount()
+    override suspend fun getCountOfTrainings(): Result<Int> {
+        return try {
+            val count = trainingDao.getCount()
+            Result.success(count)
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-    override suspend fun getSummaryWeightOfTrainings(): Float {
-        val data = trainingDao.getDataOfTraining()
-        var weight = 0f
+    override suspend fun getSummaryWeightOfTrainings(): Result<Float> {
+        return try {
+            val data = trainingDao.getDataOfTraining()
+            var weight = 0f
 
-        data.forEach {
-            val countArr = it.count.split('/')
-            val weightArr = it.weight.split('/')
-
-            for (i in countArr.indices) {
-                weight += countArr[i].toInt() * weightArr[i].toFloat()
-            }
-        }
-
-        return weight / 1000
-    }
-
-    override suspend fun getChartList(mode: TimeMode): List<ChartPoint> {
-        val raw = trainingDao.getChartList()
-
-        val grouped = when (mode) {
-            TimeMode.MONTHS -> raw.groupBy { it.date.substring(0, 7) } // yyyy-MM
-            TimeMode.YEARS -> raw.groupBy { it.date.substring(0, 4) }  // yyyy
-            else -> raw.groupBy { it.date } // yyyy-MM-dd
-        }
-
-        return grouped.map { (key, entries) ->
-            var totalWeight = 0f
-
-            entries.forEach { item ->
-                val countArr = item.count.split('/')
-                val weightArr = item.weight.split('/')
+            data.forEach {
+                val countArr = it.count.split('/')
+                val weightArr = it.weight.split('/')
 
                 for (i in countArr.indices) {
-                    totalWeight += countArr[i].toInt() * weightArr[i].toFloat()
+                    weight += countArr[i].toInt() * weightArr[i].toFloat()
                 }
             }
 
-            totalWeight /= 1000f
+            val result = weight / 1000
 
-            val label = when (mode) {
-                TimeMode.MONTHS -> LocalDate.parse("$key-01").toString()
-                TimeMode.YEARS -> LocalDate.parse("$key-01-01").toString()
-                else -> LocalDate.parse(key).toString()
+            Result.success(result)
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+        }
+
+    }
+
+    override suspend fun getChartList(mode: TypeTime): Result<List<ChartPoint>> {
+        return try {
+            val raw = trainingDao.getChartList()
+
+            val grouped = when (mode) {
+                TypeTime.DAYS -> raw.groupBy { it.date } // yyyy-MM-dd
+                TypeTime.MONTHS -> raw.groupBy { it.date.substring(0, 7) } // yyyy-MM
+                TypeTime.YEARS -> raw.groupBy { it.date.substring(0, 4) }  // yyyy
             }
 
-            ChartPoint(label, totalWeight)
-        }.sortedBy { it.xLabel }
+            val result = grouped.map { (key, entries) ->
+                var totalWeight = 0f
+
+                entries.forEach { item ->
+                    val countArr = item.count.split('/')
+                    val weightArr = item.weight.split('/')
+
+                    for (i in countArr.indices) {
+                        totalWeight += countArr[i].toInt() * weightArr[i].toFloat()
+                    }
+                }
+
+                totalWeight /= 1000f
+
+                val label = when (mode) {
+                    TypeTime.DAYS -> LocalDate.parse(key).toString()
+                    TypeTime.MONTHS -> LocalDate.parse("$key-01").toString()
+                    TypeTime.YEARS -> LocalDate.parse("$key-01-01").toString()
+                }
+
+                ChartPoint(label, totalWeight)
+            }.sortedBy { it.xDate }
+
+            Result.success(result)
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+        }
     }
+
+
 
     override suspend fun getDataByTypeTraining(id: Int): List<ExerciseItem> {
         val locale = Locale.current.language

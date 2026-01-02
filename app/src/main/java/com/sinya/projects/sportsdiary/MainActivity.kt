@@ -31,3 +31,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+//val client = OkHttpClient()
+//
+//val request = Request.Builder()
+//    .url("https://exercisedb-api1.p.rapidapi.com/api/v1/exercises/search?search=strength%20exercises")
+//    .get()
+//    .addHeader("x-rapidapi-key", "e98b21dd7fmshf921a8d7f08ce5cp1243bcjsn79a6aa3682cb")
+//    .addHeader("x-rapidapi-host", "exercisedb-api1.p.rapidapi.com")
+//    .build()
+//
+//val response = client.newCall(request).execute()
