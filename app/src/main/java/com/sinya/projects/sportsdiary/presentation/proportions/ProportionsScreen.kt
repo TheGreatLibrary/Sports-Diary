@@ -34,7 +34,6 @@ import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.domain.model.RadioItem
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
-import com.sinya.projects.sportsdiary.presentation.trainings.TrainingEvent
 import com.sinya.projects.sportsdiary.presentation.trainings.dateFmt
 import com.sinya.projects.sportsdiary.ui.features.SortedRow
 import com.sinya.projects.sportsdiary.ui.features.TrainingCard
@@ -124,7 +123,7 @@ private fun ProportionsScreenView(
 
             item {
                 SortedRow(
-                    modifierItem = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     title = stringResource(R.string.year),
                     radioOptions = years,
                     selectedOption = state.selectedMode.year,
@@ -135,7 +134,7 @@ private fun ProportionsScreenView(
                 )
                 Spacer(Modifier.height(20.dp))
                 SortedRow(
-                    modifierItem = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     title = stringResource(R.string.month),
                     radioOptions = months,
                     selectedOption = state.selectedMode.month,

@@ -142,4 +142,11 @@
 
     <string name="base_plan">Basic Plan</string>
     <string name="base_description">Basic morning exercises</string>
+
+    <string name="sorted_by">Sort by</string>
+    <string name="categories">Categories</string>
+    <string name="year">Year</string>
+    <string name="month">Month</string>
+    <string name="all">All</string>
+    <string name="training_num">Training №%1$s</string>
 </resources>

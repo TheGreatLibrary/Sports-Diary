@@ -134,7 +134,7 @@ private fun TrainingsScreenView(
 
             item {
                 SortedRow(
-                    modifierItem = Modifier.padding(4.dp),
+                    modifier = Modifier.padding(4.dp),
                     title = stringResource(R.string.sorted_by),
                     radioOptions = SortMode.entries.map {
                        it.radioItem.copy(
@@ -164,7 +164,7 @@ private fun TrainingsScreenView(
                         }
 
                         SortedRow(
-                            modifierItem = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             title = stringResource(R.string.year),
                             radioOptions = years,
                             selectedOption = (state.selectedMode as ModeOfSorting.TimeMode).year,
@@ -175,7 +175,7 @@ private fun TrainingsScreenView(
                         )
                         Spacer(Modifier.height(20.dp))
                         SortedRow(
-                            modifierItem = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             title = stringResource(R.string.month),
                             radioOptions = months,
                             selectedOption = state.selectedMode.month,
@@ -194,7 +194,7 @@ private fun TrainingsScreenView(
                         }
 
                         SortedRow(
-                            modifierItem = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             title = stringResource(R.string.categories),
                             radioOptions = categories,
                             selectedOption = (state.selectedMode as ModeOfSorting.MuscleMode).category,

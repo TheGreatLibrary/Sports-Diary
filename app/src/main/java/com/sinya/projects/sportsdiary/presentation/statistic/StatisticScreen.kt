@@ -37,7 +37,6 @@ import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.domain.model.RadioItem
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
-import com.sinya.projects.sportsdiary.presentation.home.HomeEvent
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.ui.features.RadioButtons
 import com.sinya.projects.sportsdiary.ui.features.StatisticCard
@@ -144,7 +143,7 @@ private fun StatisticScreenView(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                RadioButtons<TypeTime>(
+                RadioButtons(
                     radioOptions = radioOptions,
                     selectedOption = state.timeMode,
                     onOptionSelected = { mode -> onEvent(StatisticEvent.OnSelectTimePeriod(mode)) },

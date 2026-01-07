@@ -16,7 +16,7 @@ import com.sinya.projects.sportsdiary.domain.model.RadioItem
 
 @Composable
 fun <T> SortedRow(
-    modifierItem: Modifier?,
+    modifier: Modifier?,
     title: String,
     selectedOption: T?,
     radioOptions: List<RadioItem<T>>,
@@ -36,7 +36,7 @@ fun <T> SortedRow(
             color = MaterialTheme.colorScheme.onPrimary
         )
         RadioButtons(
-            modifierItem = modifierItem,
+            modifier = modifier,
             radioOptions = radioOptions,
             selectedOption = selectedOption,
             onOptionSelected = onOptionSelected,

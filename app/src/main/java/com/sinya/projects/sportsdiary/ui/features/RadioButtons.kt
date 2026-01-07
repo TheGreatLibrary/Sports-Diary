@@ -15,7 +15,7 @@ import com.sinya.projects.sportsdiary.domain.model.RadioItem
 
 @Composable
 fun <T> RadioButtons(
-    modifierItem: Modifier? = null,
+    modifier: Modifier? = null,
     radioOptions: List<RadioItem<T>>,
     selectedOption: T?,
     onOptionSelected: (T) -> Unit,
@@ -42,7 +42,7 @@ fun <T> RadioButtons(
             }
 
             RadioButton(
-                modifier = modifierItem?: Modifier.weight(1f).padding(vertical = 4.dp, horizontal = 4.dp),
+                modifier = modifier?: Modifier.weight(1f).padding(vertical = 4.dp, horizontal = 4.dp),
                 text = item.text,
                 painter = item.icon?.let { painterResource(it) },
                 containerColor = backgroundColor,

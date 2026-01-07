@@ -144,5 +144,5 @@
     <string name="year">Года</string>
     <string name="month">Мес.</string>
     <string name="all">Все</string>
-    <string name="training_num">Тренировка %1$s</string>
+    <string name="training_num">Тренировка №%1$s</string>
 </resources>
