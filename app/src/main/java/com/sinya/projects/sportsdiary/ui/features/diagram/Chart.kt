@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.domain.enums.TypeTime
@@ -27,6 +27,18 @@ fun Chart(
     points: List<ChartPoint>,
     onInfoClick: () -> Unit
 ) {
+    val state = remember {
+        ChartState(
+            yMin = 0f,
+            yMax = 5f,
+            yGridLines = 5,
+            xStep = 80.dp,
+        )
+    }
+    val chartState = remember(points) {
+        state.copy(yMax = points.maxOf { it.yValue } )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -62,15 +74,12 @@ fun Chart(
             )
         }
 
+
+
         ScrollableLineChart(
             points = points,
             timeMode = timeMode,
-            state = ChartState(
-                yMin = 0f,
-                yMax = if (points.isNotEmpty()) points.maxOf { it.yValue } else 5f,
-                yGridLines = 5,
-                xStep = 80.dp,
-            ),
+            state = chartState,
             lineColor = MaterialTheme.colorScheme.secondary,
             gridColor = MaterialTheme.colorScheme.onSecondary
         )

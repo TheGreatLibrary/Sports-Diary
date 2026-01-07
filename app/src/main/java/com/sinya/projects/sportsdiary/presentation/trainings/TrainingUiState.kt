@@ -1,21 +1,17 @@
 package com.sinya.projects.sportsdiary.presentation.trainings
 
-sealed class TrainingUiState {
-    data object Loading : TrainingUiState()
+import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
+import com.sinya.projects.sportsdiary.domain.model.Training
+
+sealed interface TrainingUiState {
+    data object Loading : TrainingUiState
+
     data class Success(
-        val mode: SortMode = SortMode.TIME,
         val trainings: List<Training> = emptyList(),
-        val deleteDialogId: Int? = null
-    ) : TrainingUiState()
-    data class Error(val message: String) : TrainingUiState()
+        val selectedMode: ModeOfSorting = ModeOfSorting.TimeMode(),
+        val deleteDialogId: Int? = null,
+        val errorMessage: String? = null,
+        val isRefreshing: Boolean = false
+    ) : TrainingUiState
 }
 
-data class Training(
-    val id: Int,
-    val name: String,
-    val categoryId: Int,
-    val category: String,
-    val date: String?
-)
-
-enum class SortMode { TIME, MUSCLE }

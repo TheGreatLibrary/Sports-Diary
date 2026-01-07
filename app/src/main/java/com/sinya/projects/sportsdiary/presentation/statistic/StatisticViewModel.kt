@@ -3,7 +3,6 @@ package com.sinya.projects.sportsdiary.presentation.statistic
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.domain.enums.TypeTime
-import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
 import com.sinya.projects.sportsdiary.domain.useCase.GetCountTrainingUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetSummaryWeightTrainingUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetTrainingChartUseCase
@@ -53,40 +52,6 @@ class StatisticViewModel @Inject constructor(
         )
     }
 
-//    private fun loadCountTraining() = viewModelScope.launch {
-//        getCountTrainingUseCase().fold(
-//            onSuccess = { count ->
-//                if (_state.value is StatisticUiState.Success) {
-//                    updateIfSuccess { it.copy(countTrain = count) }
-//                }
-//                else _state.value = StatisticUiState.Success(countTrain = count)
-//            },
-//            onFailure = { error ->
-//                if (_state.value is StatisticUiState.Success) {
-//                    updateIfSuccess { it.copy(errorMessage = error.toString()) }
-//                }
-//                else _state.value = StatisticUiState.Success(errorMessage = error.toString())
-//            }
-//        )
-//    }
-//
-//    private fun loadWeightTraining() = viewModelScope.launch {
-//        getSummaryWeightTrainingUseCase().fold(
-//            onSuccess = { weight ->
-//                if (_state.value is StatisticUiState.Success) {
-//                    updateIfSuccess { it.copy(countWeight = weight) }
-//                }
-//                else _state.value = StatisticUiState.Success(countWeight = weight)
-//            },
-//            onFailure = { error ->
-//                if (_state.value is StatisticUiState.Success) {
-//                    updateIfSuccess { it.copy(errorMessage = error.toString()) }
-//                }
-//                else _state.value = StatisticUiState.Success(errorMessage = error.toString())
-//            }
-//        )
-//    }
-
     private fun loadChart(type: TypeTime = TypeTime.DAYS) = viewModelScope.launch {
         getTrainingChartUseCase(type).fold(
             onSuccess = { chart ->
@@ -105,7 +70,7 @@ class StatisticViewModel @Inject constructor(
 
     fun onEvent(event: StatisticEvent) {
          when (event) {
-            is StatisticEvent.OnSelectTimePeriod -> loadChart(type = TypeTime.fromIndex(event.index))
+            is StatisticEvent.OnSelectTimePeriod -> loadChart(type = event.mode)
 
             is StatisticEvent.OnDialogState -> updateIfSuccess {
                 it.copy(dialogState = event.state)

@@ -12,12 +12,12 @@ import com.sinya.projects.sportsdiary.data.database.entity.DataTraining
 import com.sinya.projects.sportsdiary.data.database.entity.Exercises
 import com.sinya.projects.sportsdiary.data.database.entity.Trainings
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
-import com.sinya.projects.sportsdiary.presentation.statistic.ChartDataTrainings
-import com.sinya.projects.sportsdiary.presentation.statistic.DataTrainings
+import com.sinya.projects.sportsdiary.domain.model.ChartDataTrainings
+import com.sinya.projects.sportsdiary.domain.model.DataTrainings
 import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseItemWithoutList
 import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseRow
 import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingEntity
-import com.sinya.projects.sportsdiary.presentation.trainings.Training
+import com.sinya.projects.sportsdiary.domain.model.Training
 
 @Dao
 interface TrainingsDao {
@@ -210,7 +210,7 @@ interface TrainingsDao {
     suspend fun getDataOfTypeTraining(id: Int, lang: String): List<ExerciseItemWithoutList>
 
     @Delete
-    suspend fun deleteTraining(it: Trainings)
+    suspend fun deleteTraining(it: Trainings): Int
 
 
 

@@ -20,9 +20,9 @@ interface ProportionsDao {
         SELECT 
             p.id as id,
              COALESCE(
-            strftime('%d/%m/%Y', p.date),
-            strftime('%d/%m/%Y', 'now','localtime')
-          ) AS date
+            strftime('%Y-%m-%d', p.date),
+            strftime('%Y-%m-%d', 'now','localtime')
+        ) AS date
         FROM proportions p
     """)
     suspend fun getProportionsList() : List<Proportions>
@@ -108,7 +108,7 @@ interface ProportionsDao {
     }
 
     @Delete
-    suspend fun deleteProportion(it: Proportions)
+    suspend fun deleteProportion(it: Proportions): Int
 
     @Update
     suspend fun updateProportion(item: List<DataProportions>)

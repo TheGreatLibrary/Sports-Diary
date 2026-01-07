@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
 import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
 import com.sinya.projects.sportsdiary.domain.useCase.GetMorningListUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetTrainingListUseCase
+import com.sinya.projects.sportsdiary.domain.useCase.GetTrainingRangeListUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.MarkDayMorningExerciseUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -21,7 +21,7 @@ import java.time.temporal.TemporalAdjusters
 class HomeViewModel @Inject constructor(
     private val markDayMorningExerciseUseCase: MarkDayMorningExerciseUseCase,
     private val getMorningListUseCase: GetMorningListUseCase,
-    private val getTrainingListUseCase: GetTrainingListUseCase
+    private val getTrainingListUseCase: GetTrainingRangeListUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<HomeUiState>(HomeUiState.Loading)

@@ -34,9 +34,6 @@ import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.domain.model.ChartState
-import java.time.LocalDate
-import java.time.format.TextStyle
-import java.util.Locale
 import kotlin.math.roundToInt
 
 @Composable
@@ -47,7 +44,6 @@ fun ScrollableLineChart(
     state: ChartState = ChartState(),
     lineColor: Color,
     gridColor: Color,
-
     formatYLabel: (Float) -> String = { it.roundToInt().toString() }
 ) {
     if (points.isEmpty()) {
@@ -65,24 +61,34 @@ fun ScrollableLineChart(
 
     val scrollState = rememberScrollState()
     val chartHeight = remember { 180.dp }
-    val yRange = remember { (state.yMax - state.yMin).takeIf { it != 0f } ?: 1f }
+    val yRange = remember(points, timeMode) { (state.yMax - state.yMin).takeIf { it != 0f } ?: 1f }
+
+    val yLabels = remember(points, timeMode) {
+        (state.yGridLines downTo 0).map { i ->
+            val v = state.yMin + (yRange / state.yGridLines) * i
+            formatYLabel(v)
+        }
+    }
+    val groupedLabels = remember(points, timeMode) {
+        points.groupPointsByTimeMode(timeMode)
+    }
+    val labels = remember(points, timeMode) {
+        points.parseDateByMode(timeMode)
+    }
 
     BoxWithConstraints(modifier) {
         val desiredContentWidthPx = remember { points.size * xStepPx + paddingPx * 2 }
         val minCanvasWidthPx = remember { constraints.maxWidth.toFloat().coerceAtLeast(0f) }
-        val contentWidthPx =  remember { desiredContentWidthPx.coerceAtLeast(minCanvasWidthPx) }
+        val contentWidthPx = remember { desiredContentWidthPx.coerceAtLeast(minCanvasWidthPx) }
 
         val contentWidthDp = with(density) { contentWidthPx.toDp() }
 
-        val dash = remember  {PathEffect.dashPathEffect(floatArrayOf(8f, 8f), 0f) }
+        val dash = remember { PathEffect.dashPathEffect(floatArrayOf(8f, 8f), 0f) }
 
         Row(modifier = Modifier.fillMaxWidth()) {
             YLabelColumn(
                 height = chartHeight,
-                labels = (state.yGridLines downTo 0).map { i ->
-                    val v = state.yMin + (yRange / state.yGridLines) * i
-                    formatYLabel(v)
-                }
+                labels = yLabels
             )
 
             Column(
@@ -164,9 +170,14 @@ fun ScrollableLineChart(
 
                 XLabelRow(
                     state = state,
-                    points = points,
-                    scrollState = scrollState,
-                    timeMode = timeMode
+                    points = labels,
+                    scrollState = scrollState
+                )
+
+                XLabelMainRow(
+                    state = state,
+                    points = groupedLabels,
+                    scrollState = scrollState
                 )
             }
         }
@@ -199,50 +210,46 @@ private fun YLabelColumn(
 @Composable
 private fun XLabelRow(
     state: ChartState,
-    points: List<ChartPoint>,
-    scrollState: ScrollState,
-    timeMode: TypeTime
+    points: List<String>,
+    scrollState: ScrollState
 ) {
-    val groupedLabels = remember(points, timeMode) {
-        points.groupPointsByTimeMode(timeMode)
-    }
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 5.dp, start = state.contentPadding, end = state.contentPadding)
-                .horizontalScroll(scrollState)
-        ) {
-            points.forEach { p ->
-                Box(modifier = Modifier
-                    .width(state.xStep)
-                    .padding(vertical = 2.dp)) {
-                    Text(
-                        text = p.parseDateByMode(mode = timeMode),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = state.contentPadding)
+            .horizontalScroll(scrollState)
+    ) {
+        points.forEach { item ->
+            Box(modifier = Modifier.width(state.xStep)) {
+                Text(
+                    text = item,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 5.dp, start = state.contentPadding, end = state.contentPadding)
-                .horizontalScroll(scrollState)
-        ) {
-            groupedLabels.forEach { (commonPart, count) ->
-                Box(
-                    modifier = Modifier
-                        .width(state.xStep * count)
-                        .padding(vertical = 2.dp)
-                ) {
-                    Text(
-                        text = commonPart,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
+    }
+}
+
+@Composable
+private fun XLabelMainRow(
+    state: ChartState,
+    points: List<Pair<String, Int>>,
+    scrollState: ScrollState
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = state.contentPadding)
+            .horizontalScroll(scrollState)
+    ) {
+        points.forEach { (commonPart, count) ->
+            Box(modifier = Modifier.width(state.xStep*count)) {
+                Text(
+                    text = commonPart,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
     }

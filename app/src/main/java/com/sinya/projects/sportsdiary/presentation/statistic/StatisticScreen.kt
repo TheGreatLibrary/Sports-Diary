@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,6 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.domain.enums.TypeTime
+import com.sinya.projects.sportsdiary.domain.model.RadioItem
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.home.HomeEvent
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
@@ -68,10 +71,10 @@ private fun StatisticScreenView(
     onBackClick: () -> Unit,
     state: StatisticUiState.Success,
     onEvent: (StatisticEvent) -> Unit,
-    radioOptions: List<String> = listOf(
-        stringResource(R.string.days),
-        stringResource(R.string.months),
-        stringResource(R.string.years)
+    radioOptions: List<RadioItem<TypeTime>> = listOf(
+        RadioItem(stringResource(R.string.days), null, TypeTime.DAYS),
+        RadioItem( stringResource(R.string.months), null, TypeTime.MONTHS),
+        RadioItem(stringResource(R.string.years), null, TypeTime.YEARS)
     ),
     fontStyle: TextStyle = MaterialTheme.typography.displayLarge
 ) {
@@ -141,10 +144,10 @@ private fun StatisticScreenView(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                RadioButtons(
+                RadioButtons<TypeTime>(
                     radioOptions = radioOptions,
-                    selectedOption = state.timeMode.index,
-                    onOptionSelected = { index -> onEvent(StatisticEvent.OnSelectTimePeriod(index)) },
+                    selectedOption = state.timeMode,
+                    onOptionSelected = { mode -> onEvent(StatisticEvent.OnSelectTimePeriod(mode)) },
                     shape = MaterialTheme.shapes.extraLarge
                 )
                 Chart(
@@ -173,6 +176,8 @@ private fun StatisticScreenView(
 
         SnackbarHost(
             hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.Center)
         )
     }
 

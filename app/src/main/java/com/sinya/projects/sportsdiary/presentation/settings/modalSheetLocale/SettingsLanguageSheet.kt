@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -44,29 +45,33 @@ fun SettingsLanguageSheet(
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 40.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 text = stringResource(R.string.choose_lang),
                 style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
-            repeat(optionsLang.size) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().clickable { setLanguage(optionsLang[it]) },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    RadioButton(
-                        selected = optionsLang[it] == language,
-                        onClick = { setLanguage(optionsLang[it]) }
-                    )
-                    Text(
-                        text = Locale(optionsLang[it]).displayName.lowercase(Locale.getDefault()),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                optionsLang.forEach {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().clickable { setLanguage(it) },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        RadioButton(
+                            modifier = Modifier.size(30.dp),
+                            selected = it == language,
+                            onClick = { setLanguage(it) }
+                        )
+                        Text(
+                            text = Locale(it).displayName.lowercase(Locale.getDefault()),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
                 }
             }
         }

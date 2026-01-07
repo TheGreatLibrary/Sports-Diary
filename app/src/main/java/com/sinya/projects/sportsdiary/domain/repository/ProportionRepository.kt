@@ -8,26 +8,43 @@ import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionItem
 import jakarta.inject.Inject
 
 interface ProportionRepository {
-    suspend fun proportionList() : List<Proportions>
+    // Proportions
+    suspend fun getProportionList() : Result<List<Proportions>>
+    suspend fun deleteProportion(it: Proportions) : Result<Int>
 
+    suspend fun insertProportion(entity: ProportionItem)
+
+    // ProportionPage
     suspend fun getById(id: Int?): ProportionItem
     suspend fun getProportionData(id: Int): ProportionDialogContent
-
-    suspend fun insertProportions(entity: ProportionItem)
-
-    suspend fun delete(it: Proportions)
 }
-
 
 class ProportionRepositoryImpl @Inject constructor(
     private val proportionsDao: ProportionsDao
 ) : ProportionRepository {
 
-    override suspend fun proportionList(): List<Proportions> {
-        val list = proportionsDao.getProportionsList()
-        return list
+    // Proportions
+    override suspend fun getProportionList(): Result<List<Proportions>> {
+        return try {
+            val list = proportionsDao.getProportionsList()
+            Result.success(list)
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
+    override suspend fun deleteProportion(it: Proportions): Result<Int> {
+        return try {
+            val result =  proportionsDao.deleteProportion(it)
+            Result.success(result)
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // ProportionPage
     override suspend fun getById(id: Int?): ProportionItem {
         val page = proportionsDao.getById(id)
         val locale = Locale.current.language
@@ -45,11 +62,8 @@ class ProportionRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun insertProportions(entity: ProportionItem) {
+    override suspend fun insertProportion(entity: ProportionItem) {
         proportionsDao.insertOrUpdate(entity)
     }
 
-    override suspend fun delete(it: Proportions) {
-        proportionsDao.deleteProportion(it)
-    }
 }

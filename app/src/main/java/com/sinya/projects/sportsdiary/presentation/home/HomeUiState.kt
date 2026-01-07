@@ -1,7 +1,7 @@
 package com.sinya.projects.sportsdiary.presentation.home
 
 import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
-import com.sinya.projects.sportsdiary.presentation.trainings.Training
+import com.sinya.projects.sportsdiary.domain.model.Training
 import java.time.LocalDate
 
 sealed interface HomeUiState {

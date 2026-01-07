@@ -23,7 +23,7 @@ class TrainingPageViewModel @Inject constructor(
     fun init(id: Int?) {
         viewModelScope.launch {
             val entity = trainingRepository.getById(id)
-            val categories = trainingRepository.categoriesList()
+            val categories = trainingRepository.getCategoriesList().getOrElse { listOf() }
             _state.value = TrainingPageUiState.Success(
                 id = entity.id,
                 title = entity.title,
@@ -198,7 +198,7 @@ class TrainingPageViewModel @Inject constructor(
 
         viewModelScope.launch {
             _state.value = s.copy(
-                categories = trainingRepository.categoriesList()
+                categories = trainingRepository.getCategoriesList().getOrElse { listOf() }
             )
         }
     }

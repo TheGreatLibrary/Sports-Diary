@@ -30,7 +30,7 @@ class ProportionPageViewModel @Inject constructor(
         when (event) {
             is ProportionPageUiEvent.Save -> {
                 viewModelScope.launch {
-                    repo.insertProportions(currentState.item)
+                    repo.insertProportion(currentState.item)
                 }
             }
             is ProportionPageUiEvent.OnChangeValue -> {

@@ -18,15 +18,3 @@ sealed interface StatisticUiState {
         val errorMessage: String? = null
     ) : StatisticUiState
 }
-
-data class DataTrainings(
-    val count: String,
-    val weight: String
-)
-
-data class ChartDataTrainings(
-    val count: String,
-    val weight: String,
-    val date: String
-)
-

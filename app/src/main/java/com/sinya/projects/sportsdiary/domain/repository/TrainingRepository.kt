@@ -8,7 +8,7 @@ import com.sinya.projects.sportsdiary.data.database.entity.Trainings
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
 import com.sinya.projects.sportsdiary.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.presentation.trainingPage.ExerciseItem
-import com.sinya.projects.sportsdiary.presentation.trainings.Training
+import com.sinya.projects.sportsdiary.domain.model.Training
 import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingEntity
 import com.sinya.projects.sportsdiary.presentation.trainingPage.toItem
 import com.sinya.projects.sportsdiary.ui.features.diagram.ChartPoint
@@ -20,22 +20,26 @@ import java.time.LocalDate
 
 
 interface TrainingRepository {
-    suspend fun categoriesList(): List<TypeTraining>
     suspend fun insertCategory(name: String, exercises: List<Int>)
     suspend fun getSerialNumOfCategory(typeTraining: Int?): String
 
     suspend fun getList(start: String, end: String): Result<List<Training>>
-    suspend fun trainingList(): List<Training>
     suspend fun insertTraining(entity: TrainingEntity)
     suspend fun updateTraining(entity: TrainingEntity)
-    suspend fun delete(it: Trainings)
     suspend fun getById(id: Int?): TrainingEntity
     suspend fun insertDataTraining(items: List<DataTraining>)
 
+    // Statistic
     suspend fun getCountOfTrainings(): Result<Int>
     suspend fun getSummaryWeightOfTrainings(): Result<Float>
     suspend fun getChartList(mode: TypeTime): Result<List<ChartPoint>>
 
+    // Training
+    suspend fun getTrainingList(): Result<List<Training>>
+    suspend fun deleteTraining(it: Trainings): Result<Int>
+    suspend fun getCategoriesList(): Result<List<TypeTraining>>
+
+    // TrainingPage
     suspend fun getDataByTypeTraining(id: Int): List<ExerciseItem>
 }
 
@@ -86,20 +90,12 @@ class TrainingRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun delete(it: Trainings) {
-        trainingDao.deleteTraining(it)
-    }
-
-    override suspend fun trainingList(): List<Training> {
-        val db = trainingDao.getList()
-        return db
-    }
 
 
-    override suspend fun categoriesList(): List<TypeTraining> {
-        val db = typeTrainingDao.getList()
-        return db
-    }
+
+
+
+
 
     override suspend fun insertCategory(name: String, exercises: List<Int>) {
         return typeTrainingDao.createTypeWithExercises(name, exercises)
@@ -118,7 +114,7 @@ class TrainingRepositoryImpl @Inject constructor(
     }
 
 
-    // StatisticScreen
+    // Statistic
 
     override suspend fun getCountOfTrainings(): Result<Int> {
         return try {
@@ -146,12 +142,13 @@ class TrainingRepositoryImpl @Inject constructor(
 
             val result = weight / 1000
 
-            Result.success(result)
+            val roundedResult  = String.format(java.util.Locale.ENGLISH, "%.1f", result).toFloat()
+
+            Result.success(roundedResult)
         }
         catch (e: Exception) {
             Result.failure(e)
         }
-
     }
 
     override suspend fun getChartList(mode: TypeTime): Result<List<ChartPoint>> {
@@ -194,7 +191,39 @@ class TrainingRepositoryImpl @Inject constructor(
         }
     }
 
+    // Training
 
+    override suspend fun getTrainingList(): Result<List<Training>> {
+        return try {
+            val list = trainingDao.getList()
+            Result.success(list)
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun deleteTraining(it: Trainings) : Result<Int> {
+        return try {
+            val result = trainingDao.deleteTraining(it)
+            Result.success(result)
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getCategoriesList(): Result<List<TypeTraining>> {
+        return try {
+            val list = typeTrainingDao.getList()
+            Result.success(list)
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // TrainingPage
 
     override suspend fun getDataByTypeTraining(id: Int): List<ExerciseItem> {
         val locale = Locale.current.language

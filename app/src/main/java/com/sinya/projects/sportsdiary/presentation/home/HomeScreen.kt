@@ -144,8 +144,11 @@ private fun HomeScreenView(
                 }
             }
         }
+
         SnackbarHost(
             hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.Center)
         )
     }
 }

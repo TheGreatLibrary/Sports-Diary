@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.main.ScreenRoute
-import com.sinya.projects.sportsdiary.presentation.trainings.Training
+import com.sinya.projects.sportsdiary.domain.model.Training
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
 import com.sinya.projects.sportsdiary.utils.getString
 import kotlinx.coroutines.launch

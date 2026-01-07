@@ -139,4 +139,10 @@
 
     <string name="base_plan">Базовый план</string>
     <string name="base_description">Базовая зарядка</string>
+    <string name="sorted_by">Сортировать по</string>
+    <string name="categories">Категории</string>
+    <string name="year">Года</string>
+    <string name="month">Мес.</string>
+    <string name="all">Все</string>
+    <string name="training_num">Тренировка %1$s</string>
 </resources>
