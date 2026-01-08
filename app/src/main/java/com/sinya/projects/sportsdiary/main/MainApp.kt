@@ -14,6 +14,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.intl.Locale
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -181,15 +182,10 @@ private fun NavGraph(
         }
         composable<ScreenRoute.ProportionPage> { entry ->
             val args = entry.toRoute<ScreenRoute.ProportionPage>()
-            val vm: ProportionPageViewModel = hiltViewModel()
-
-            LaunchedEffect(args.id) { vm.init(args.id) }
 
             ProportionPageScreen(
-                state = vm.state.value,
-                onEvent = { event -> vm.onEvent(event) },
+                id = args.id,
                 onBackClick = { onBack() },
-                onInfoClick = { },
             )
 
         }

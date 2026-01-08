@@ -1,7 +1,10 @@
 package com.sinya.projects.sportsdiary.presentation.proportionPage
 
-sealed class ProportionPageUiEvent {
-    data object Save : ProportionPageUiEvent()
-    data class OnChangeValue(val id: Int, val value: String) : ProportionPageUiEvent()
-    data class OpenDialog(val id: Int?) : ProportionPageUiEvent()
+sealed interface ProportionPageEvent {
+    data object Save : ProportionPageEvent
+    data object OnErrorShown : ProportionPageEvent
+    data class OnChangeValue(val id: Int, val value: String) : ProportionPageEvent
+    data class OpenDialog(val id: Int?) : ProportionPageEvent
+    data class CalendarState(val state: Boolean) : ProportionPageEvent
+    data class OnPickDate(val millis: Long?) : ProportionPageEvent
 }

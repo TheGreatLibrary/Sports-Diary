@@ -1,167 +1,161 @@
 package com.sinya.projects.sportsdiary.presentation.proportionPage
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.domain.model.buildMeasureItemsFromKeys
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
-import com.sinya.projects.sportsdiary.presentation.proportionPage.components.buildRowsFromKeys
-import com.sinya.projects.sportsdiary.ui.features.HeaderInfo
+import com.sinya.projects.sportsdiary.presentation.proportionPage.components.MeasureCard
+import com.sinya.projects.sportsdiary.ui.features.DateCard
+import com.sinya.projects.sportsdiary.ui.features.DatePickerModal
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
-import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.CompactUnitField
-import com.sinya.projects.sportsdiary.utils.deltaFloat
 import com.sinya.projects.sportsdiary.utils.getDrawableId
 import com.sinya.projects.sportsdiary.utils.getString
 
 @Composable
 fun ProportionPageScreen(
-    state: ProportionPageUiState,
-    onEvent: (ProportionPageUiEvent) -> Unit,
-    onInfoClick: () -> Unit,
+    id: Int?,
     onBackClick: () -> Unit,
 ) {
+    val viewModel = hiltViewModel(
+        creationCallback = { factory: ProportionPageViewModel.Factory ->
+            factory.create(id = id)
+        }
+    )
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     when (state) {
-        is ProportionPageUiState.Loading -> PlaceholderScreen()
+        ProportionPageUiState.Loading -> PlaceholderScreen()
+
         is ProportionPageUiState.Success -> ProportionPageView(
-            title = state.item.title,
             onBackClick = onBackClick,
-            proportion = state.item,
-            dialogContent = state.dialogContent,
-            onEvent = onEvent
+            state = state as ProportionPageUiState.Success,
+            onEvent = viewModel::onEvent
         )
-        is ProportionPageUiState.Error -> ErrorScreen(state.message)
+
+        is ProportionPageUiState.Error -> ErrorScreen((state as ProportionPageUiState.Error).errorMessage)
     }
 }
 
 @Composable
 private fun ProportionPageView(
-    title: String,
+    state: ProportionPageUiState.Success,
     onBackClick: () -> Unit,
-    proportion: ProportionItem,
-    dialogContent: ProportionDialogContent?,
-    onEvent: (ProportionPageUiEvent) -> Unit,
+    onEvent: (ProportionPageEvent) -> Unit,
 ) {
     val context = LocalContext.current
-    val rows = remember(proportion) { buildRowsFromKeys(proportion.items) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val rows = remember(state.item) { state.item.items.buildMeasureItemsFromKeys() }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 16.dp, top = 50.dp, end = 16.dp, bottom = 40.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        NavigationTopBar(
-            type = TypeAppTopNavigation.WithIcon(
-                onBackClick = onBackClick,
-                title = stringResource(R.string.proportion_number, title),
-                painter = R.drawable.nav_save,
-                onClick = {
-                    onEvent(ProportionPageUiEvent.Save)
-                    onBackClick()
-                }
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let { message ->
+            snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short
             )
-        )
+            onEvent(ProportionPageEvent.OnErrorShown)
+        }
+    }
 
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(rows.size) { idx ->
-                when (val row = rows[idx]) {
-                    is RowItem.Single -> {
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            HeaderInfo(
-                                title = context.getString(row.headerKey),
-                                onInfoClick = { onEvent(ProportionPageUiEvent.OpenDialog(row.item.id)) }
-                            )
-                            CompactUnitField(
-                                value = row.item.value,
-                                onValueChange = { str ->
-                                    onEvent(
-                                        ProportionPageUiEvent.OnChangeValue(
-                                            row.item.id,
-                                            str
-                                        )
-                                    )
-                                },
-                                unit = context.getString(row.item.unitMeasure),
-                                modifier = Modifier.fillMaxWidth(),
-                                delta = deltaFloat(row.item.value, null),
-                                keyboardType = KeyboardType.Decimal
-                            )
+    Box {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 16.dp, top = 50.dp, end = 16.dp),
+        ) {
+            item {
+                NavigationTopBar(
+                    type = TypeAppTopNavigation.WithIcon(
+                        onBackClick = onBackClick,
+                        title = if (state.item.title.isNotEmpty()) stringResource(R.string.proportion_number, state.item.title)
+                                else stringResource(R.string.measurement),
+                        painter = R.drawable.nav_save,
+                        onClick = {
+                            onEvent(ProportionPageEvent.Save)
+                            onBackClick()
                         }
-                    }
+                    )
+                )
+                Spacer(Modifier.height(20.dp))
+                DateCard(
+                    onDateClick = { onEvent(ProportionPageEvent.CalendarState(true)) },
+                    date = state.item.date
+                )
+                Spacer(Modifier.height(20.dp))
+            }
 
-                    is RowItem.PairRow -> {
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            HeaderInfo(
-                                title = context.getString(row.headerKey),
-                                onInfoClick = { onEvent(ProportionPageUiEvent.OpenDialog(row.common?.id ?: row.right.id)) }
-                            )
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                CompactUnitField(
-                                    value = row.left.value,
-                                    onValueChange = { str ->
-                                        onEvent(
-                                            ProportionPageUiEvent.OnChangeValue(
-                                                row.left.id,
-                                                str
-                                            )
-                                        )
-                                    },
-                                    unit = context.getString(row.left.unitMeasure),
-                                    modifier = Modifier.weight(1f),
-                                    delta = deltaFloat(row.left.value, null),
-                                    keyboardType = KeyboardType.Decimal
-                                )
-                                CompactUnitField(
-                                    value = row.right.value,
-                                    onValueChange = { str ->
-                                        onEvent(
-                                            ProportionPageUiEvent.OnChangeValue(
-                                                row.right.id,
-                                                str
-                                            )
-                                        )
-                                    },
-                                    unit = context.getString(row.right.unitMeasure),
-                                    modifier = Modifier.weight(1f),
-                                    delta = deltaFloat(row.right.value, null),
-                                    keyboardType = KeyboardType.Decimal
-                                )
-                            }
-                        }
-                    }
-                }
+            items(
+                items = rows,
+                key = { it.headerKey }
+            ) { item ->
+                MeasureCard(
+                    title = context.getString(item.headerKey),
+                    onInfoClick = { onEvent(ProportionPageEvent.OpenDialog(item.infoId)) },
+                    items = item.items,
+                    onValueChange = { id, str -> onEvent(ProportionPageEvent.OnChangeValue(id, str)) },
+                    context = context
+                )
+            }
+
+            item {
+                Spacer(Modifier.height(80.dp))
             }
         }
 
-        dialogContent?.let {
+        state.dialogContent?.let {
             GuideDialog(
                 onDismiss = {
-                    onEvent(ProportionPageUiEvent.OpenDialog(null))
+                    onEvent(ProportionPageEvent.OpenDialog(null))
                 },
                 content = {
                     GuideDescriptionView(
                         title = it.name,
                         description = it.description,
-                        image = if (!it.icon.isNullOrEmpty()) painterResource(context.getDrawableId(it.icon)) else null
+                        image = if (!it.icon.isNullOrEmpty()) painterResource(
+                            context.getDrawableId(
+                                it.icon
+                            )
+                        ) else null
                     )
                 }
             )
         }
+
+        if (state.calendarVisible) {
+            DatePickerModal(
+                onDateSelected = { date -> onEvent(ProportionPageEvent.OnPickDate(date)) },
+                onDismiss = { onEvent(ProportionPageEvent.CalendarState(false)) }
+            )
+        }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+        )
     }
 }

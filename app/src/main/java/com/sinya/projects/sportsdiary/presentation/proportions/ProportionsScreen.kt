@@ -36,7 +36,7 @@ import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.trainings.dateFmt
 import com.sinya.projects.sportsdiary.ui.features.SortedRow
-import com.sinya.projects.sportsdiary.ui.features.TrainingCard
+import com.sinya.projects.sportsdiary.ui.features.SwipeCard
 import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
 
@@ -132,7 +132,7 @@ private fun ProportionsScreenView(
                     },
                     shape = MaterialTheme.shapes.extraLarge,
                 )
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(15.dp))
                 SortedRow(
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     title = stringResource(R.string.month),
@@ -152,7 +152,7 @@ private fun ProportionsScreenView(
             ) {
                 val dateText = it.localDateOrNull()?.format(dateFmt) ?: it.date
 
-                TrainingCard(
+                SwipeCard(
                     modifier = Modifier.padding(bottom = 8.dp),
                     id = it.id,
                     title = stringResource(R.string.proportion_number, it.id),

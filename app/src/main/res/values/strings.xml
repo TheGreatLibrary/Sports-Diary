@@ -145,4 +145,6 @@
     <string name="month">Мес.</string>
     <string name="all">Все</string>
     <string name="training_num">Тренировка №%1$s</string>
+    <string name="date">Дата</string>
+    <string name="measurement">Замер</string>
 </resources>

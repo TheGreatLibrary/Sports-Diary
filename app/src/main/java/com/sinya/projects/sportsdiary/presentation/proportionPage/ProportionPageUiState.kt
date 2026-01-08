@@ -1,47 +1,17 @@
 package com.sinya.projects.sportsdiary.presentation.proportionPage
 
-sealed class ProportionPageUiState {
-    data object Loading : ProportionPageUiState()
+import com.sinya.projects.sportsdiary.domain.model.ProportionDialogContent
+import com.sinya.projects.sportsdiary.domain.model.ProportionItem
+
+sealed interface ProportionPageUiState {
+    data object Loading : ProportionPageUiState
+
     data class Success(
         val item: ProportionItem,
-        val dialogContent: ProportionDialogContent? = null
-    ) : ProportionPageUiState()
-    data class Error(val message: String) : ProportionPageUiState()
-}
+        val dialogContent: ProportionDialogContent? = null,
+        val calendarVisible: Boolean = false,
+        val errorMessage: String? = null
+    ) : ProportionPageUiState
 
-data class ProportionDialogContent(
-    val id: Int,
-    val name: String,
-    val description: String,
-    val icon: String?
-)
-
-enum class Side { LEFT, RIGHT, NONE }
-
-data class ProportionRow(
-    val id: Int,
-    val title: String,
-    val value: String,
-    val unitMeasure: String
-)
-
-data class ProportionItem(
-    val id: Int = 0,
-    val title: String,
-    val date: String,
-    val items: List<ProportionRow> = emptyList(),
-)
-
-sealed class RowItem {
-    data class Single(
-        val headerKey: String,
-        val item: ProportionRow
-    ) : RowItem()
-
-    data class PairRow(
-        val headerKey: String,
-        val left: ProportionRow,
-        val right: ProportionRow,
-        val common: ProportionRow? = null
-    ) : RowItem()
+    data class Error(val errorMessage: String) : ProportionPageUiState
 }

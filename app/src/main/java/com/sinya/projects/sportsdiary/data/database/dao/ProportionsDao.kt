@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.data.database.dao
 
+import android.util.Log
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -7,16 +8,20 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import androidx.room.Upsert
 import com.sinya.projects.sportsdiary.data.database.entity.DataProportions
 import com.sinya.projects.sportsdiary.data.database.entity.Proportions
-import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionDialogContent
-import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionItem
-import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionRow
+import com.sinya.projects.sportsdiary.domain.model.ProportionDialogContent
+import com.sinya.projects.sportsdiary.domain.model.ProportionItem
+import com.sinya.projects.sportsdiary.domain.model.ProportionRow
 
 @Dao
 interface ProportionsDao {
 
-    @Query("""
+    // Proportions
+
+    @Query(
+        """
         SELECT 
             p.id as id,
              COALESCE(
@@ -24,96 +29,111 @@ interface ProportionsDao {
             strftime('%Y-%m-%d', 'now','localtime')
         ) AS date
         FROM proportions p
-    """)
-    suspend fun getProportionsList() : List<Proportions>
+    """
+    )
+    suspend fun getProportionsList(): List<Proportions>
 
-    @Query("""
+    @Delete
+    suspend fun deleteProportion(it: Proportions): Int
+
+    // ProportionPage
+
+    @Query(
+        """
       SELECT 
         t.id,
         tpt.name AS title,
         COALESCE(d.value, 0) as value,
-        u.name AS unitMeasure
+        u.name AS unitMeasure,
+        d_prev.value AS delta
       FROM data_proportions d
       JOIN type_proportions t ON t.id = d.type_id
       JOIN units_measurement u ON u.id = t.unit_measure_id
       JOIN type_proportion_translations tpt ON t.id = tpt.type_id
+        LEFT JOIN data_proportions d_prev
+        ON d_prev.type_id = d.type_id
+       AND d_prev.proportion_id = (
+            SELECT id
+            FROM proportions
+            WHERE id < :id
+            ORDER BY id DESC
+            LIMIT 1
+       )
       WHERE d.proportion_id = :id AND language = :locale
       ORDER BY t.id
-    """)
+    """
+    )
     suspend fun proportionPage(id: Int, locale: String): List<ProportionRow>
 
-    @Query("""
-        SELECT 
-            t.id,
-            tpt.name AS title,
-            0 as value,
-            u.name AS unitMeasure
-        FROM type_proportions t
-        JOIN type_proportion_translations tpt ON t.id = tpt.type_id
-        JOIN units_measurement u ON u.id = t.unit_measure_id
-        WHERE language = :language
-        ORDER BY t.id
-    """)
-    suspend fun newProportions(language: String): List<ProportionRow>
-
-    @Query("""
+    @Query(
+        """
         SELECT 
             t.id,
             tpt.name AS title,
             COALESCE(d.value, 0) as value,
-            u.name AS unitMeasure
+            u.name AS unitMeasure,
+            d.value as delta
         FROM type_proportions t
         LEFT JOIN data_proportions d ON t.id = d.type_id AND d.proportion_id IN (SELECT id FROM proportions ORDER BY id DESC LIMIT 1) 
         JOIN units_measurement u ON u.id = t.unit_measure_id
         JOIN type_proportion_translations tpt ON t.id = tpt.type_id
         WHERE  language = :language
         ORDER BY t.id
-    """)
+    """
+    )
     suspend fun newProportionsWithPrevData(language: String): List<ProportionRow>
 
-
-    @Query("""
-    SELECT
-        COALESCE(:id, (SELECT COALESCE(MAX(p2.id),0)+1 FROM proportions p2)) AS id,
-        COALESCE(
-            strftime('%Y-%m-%d', (SELECT p3.date FROM proportions p3 WHERE p3.id = :id)),
-            strftime('%Y-%m-%d', 'now','localtime')
-        ) AS date
-    """)
-    suspend fun getById(id: Int?): Proportions
-
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insertProportion(item: Proportions) : Long
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertDataProportions(item: List<DataProportions>)
+    @Query("SELECT * FROM proportions WHERE id = :id")
+    suspend fun getById(id: Int): Proportions?
 
     @Transaction
-    suspend fun insertOrUpdate(item: ProportionItem) {
-        if (getById(item.id).id==item.id) {
-            val rowId = insertProportion(Proportions(item.id, item.date)).toInt()
-            insertDataProportions(item.items.map { DataProportions(
-                proportionId = rowId,
-                typeId = it.id,
-                value = it.value.toFloat()
-            ) })
-        }
-        else updateProportion(item.items.map { DataProportions(
-            proportionId = item.id,
-            typeId = it.id,
-            value = it.value.toFloat()
+    suspend fun insertOrUpdate(item: ProportionItem): Int {
+        return if (item.id == null) {
+            val newId = upsertProportion(
+                Proportions(date = item.date)
+            ).toInt()
 
-        ) }
-        )
+            insertDataProportions(
+                item.items.map {
+                    DataProportions(
+                        proportionId = newId,
+                        typeId = it.id,
+                        value = it.value.toFloat()
+                    )
+                }
+            )
+
+            newId
+        } else {
+            upsertProportion(
+                Proportions(id = item.id, date = item.date)
+            ).toInt()
+
+            updateProportion(
+                item.items.map {
+                    DataProportions(
+                        proportionId = item.id,
+                        typeId = it.id,
+                        value = (it.value.ifEmpty { "0" }).toFloat()
+                    )
+                }
+            )
+
+            item.id
+        }
     }
 
-    @Delete
-    suspend fun deleteProportion(it: Proportions): Int
+    @Upsert
+    suspend fun upsertProportion(item: Proportions): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertDataProportions(item: List<DataProportions>): List<Long>
 
     @Update
-    suspend fun updateProportion(item: List<DataProportions>)
+    suspend fun updateProportion(item: List<DataProportions>): Int
 
-    @Query("""
+    @Query(
+        """
         SELECT 
             type_id AS id,
             name,
@@ -121,6 +141,7 @@ interface ProportionsDao {
             icon
         FROM type_proportion_translations tpt JOIN type_proportions tp ON tpt.type_id = tp.id
         WHERE type_id = :id AND language = :locale
-    """)
-    suspend fun getProportionById(id: Int, locale: String): ProportionDialogContent
+    """
+    )
+    suspend fun getMeasurementDataById(id: Int, locale: String): ProportionDialogContent
 }
