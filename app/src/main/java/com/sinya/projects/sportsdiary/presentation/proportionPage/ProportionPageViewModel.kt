@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.domain.useCase.GetMeasurementDataUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetProportionItemUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.InsertOrUpdateProportionUseCase
+import com.sinya.projects.sportsdiary.domain.useCase.UpsertProportionUseCase
 import com.sinya.projects.sportsdiary.utils.parseMillisToDateTime
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -21,7 +21,7 @@ class ProportionPageViewModel @AssistedInject constructor(
     @Assisted("id") private val id: Int?,
 
     private val getProportionItemUseCase: GetProportionItemUseCase,
-    private val insertOrUpdateProportionUseCase: InsertOrUpdateProportionUseCase,
+    private val insertOrUpdateProportionUseCase: UpsertProportionUseCase,
     private val getMeasurementDataUseCase: GetMeasurementDataUseCase
 ) : ViewModel() {
 
@@ -47,9 +47,9 @@ class ProportionPageViewModel @AssistedInject constructor(
 
             is ProportionPageEvent.OpenDialog -> openDialog(event.id)
 
-            ProportionPageEvent.OnErrorShown -> updateIfSuccess { it.copy(errorMessage = null) }
+            ProportionPageEvent.OnErrorShown -> updateIfForm { it.copy(errorMessage = null) }
 
-            is ProportionPageEvent.CalendarState -> updateIfSuccess { it.copy(calendarVisible = event.state) }
+            is ProportionPageEvent.CalendarState -> updateIfForm { it.copy(calendarVisible = event.state) }
 
             is ProportionPageEvent.OnPickDate -> onPickDate(event.millis)
         }
@@ -58,7 +58,7 @@ class ProportionPageViewModel @AssistedInject constructor(
     private fun loadData(id: Int?) = viewModelScope.launch {
         getProportionItemUseCase(id).fold(
             onSuccess = { item ->
-                _state.value = ProportionPageUiState.Success(item = item)
+                _state.value = ProportionPageUiState.ProportionForm(item = item)
             },
             onFailure = { error ->
                 _state.value = ProportionPageUiState.Error(error.toString())
@@ -67,26 +67,31 @@ class ProportionPageViewModel @AssistedInject constructor(
     }
 
     private fun saveMeasurements() = viewModelScope.launch {
-        val currentState = _state.value as? ProportionPageUiState.Success ?: return@launch
+        val currentState = _state.value as? ProportionPageUiState.ProportionForm ?: return@launch
 
-        insertOrUpdateProportionUseCase(currentState.item).onFailure { error ->
-            _state.value = ProportionPageUiState.Error(error.toString())
-        }
+        insertOrUpdateProportionUseCase(currentState.item).fold(
+            onSuccess = {
+                _state.value = ProportionPageUiState.Success
+            },
+            onFailure = { error ->
+                _state.value = ProportionPageUiState.Error(error.toString())
+            }
+        )
     }
 
     private fun onPickDate(millis: Long?) = viewModelScope.launch {
-        val currentState = _state.value as? ProportionPageUiState.Success ?: return@launch
+        val currentState = _state.value as? ProportionPageUiState.ProportionForm ?: return@launch
 
         val item = currentState.item.copy(date = parseMillisToDateTime(millis))
 
-        updateIfSuccess { it.copy(item = item) }
+        updateIfForm { it.copy(item = item) }
     }
 
     private fun openDialog(id: Int?) = viewModelScope.launch {
         if (id!=null) {
             getMeasurementDataUseCase(id).fold(
                 onSuccess = { data ->
-                    updateIfSuccess { it.copy( dialogContent = data) }
+                    updateIfForm { it.copy( dialogContent = data) }
                 },
                 onFailure = { error ->
                     _state.value = ProportionPageUiState.Error(error.toString())
@@ -94,27 +99,27 @@ class ProportionPageViewModel @AssistedInject constructor(
             )
         }
         else {
-           updateIfSuccess {
+           updateIfForm {
                it.copy(dialogContent = null)
            }
         }
     }
 
     private fun onChangeValue(id: Int?, value: String) {
-        val currentState = _state.value as? ProportionPageUiState.Success ?: return
+        val currentState = _state.value as? ProportionPageUiState.ProportionForm ?: return
 
         val list = currentState.item.items.map {
             if (id == it.id) it.copy(value = value)
             else it
         }
-        updateIfSuccess {
+        updateIfForm {
             it.copy(item = currentState.item.copy(items = list))
         }
     }
 
-    private fun updateIfSuccess(transform: (ProportionPageUiState.Success) -> ProportionPageUiState.Success) {
+    private fun updateIfForm(transform: (ProportionPageUiState.ProportionForm) -> ProportionPageUiState.ProportionForm) {
         _state.update { currentState ->
-            if (currentState is ProportionPageUiState.Success) {
+            if (currentState is ProportionPageUiState.ProportionForm) {
                 transform(currentState)
             } else {
                 currentState

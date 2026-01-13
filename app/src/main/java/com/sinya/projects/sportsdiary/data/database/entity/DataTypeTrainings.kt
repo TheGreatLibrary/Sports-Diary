@@ -29,5 +29,6 @@ import androidx.room.Index
 )
 data class DataTypeTrainings(
     @ColumnInfo(name = "type_id") val typeId: Int,
-    @ColumnInfo(name = "exercise_id") val exerciseId: Int
+    @ColumnInfo(name = "exercise_id") val exerciseId: Int,
+    @ColumnInfo(name = "order_index", defaultValue = "0") val orderIndex: Int
 )

@@ -1,13 +1,11 @@
 package com.sinya.projects.sportsdiary.data.database.dao
 
-import android.util.Log
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
 import androidx.room.Upsert
 import com.sinya.projects.sportsdiary.data.database.entity.DataProportions
 import com.sinya.projects.sportsdiary.data.database.entity.Proportions
@@ -38,8 +36,7 @@ interface ProportionsDao {
 
     // ProportionPage
 
-    @Query(
-        """
+    @Query("""
       SELECT 
         t.id,
         tpt.name AS title,
@@ -61,12 +58,10 @@ interface ProportionsDao {
        )
       WHERE d.proportion_id = :id AND language = :locale
       ORDER BY t.id
-    """
-    )
+    """)
     suspend fun proportionPage(id: Int, locale: String): List<ProportionRow>
 
-    @Query(
-        """
+    @Query("""
         SELECT 
             t.id,
             tpt.name AS title,
@@ -79,8 +74,7 @@ interface ProportionsDao {
         JOIN type_proportion_translations tpt ON t.id = tpt.type_id
         WHERE  language = :language
         ORDER BY t.id
-    """
-    )
+    """)
     suspend fun newProportionsWithPrevData(language: String): List<ProportionRow>
 
     @Query("SELECT * FROM proportions WHERE id = :id")
@@ -88,40 +82,34 @@ interface ProportionsDao {
 
     @Transaction
     suspend fun insertOrUpdate(item: ProportionItem): Int {
-        return if (item.id == null) {
-            val newId = upsertProportion(
-                Proportions(date = item.date)
-            ).toInt()
+        val newId = upsertProportion(
+            Proportions(
+                id = item.id?:0,
+                date = item.date
+            )
+        ).toInt().let { id ->
+            if (item.id != null && item.id != 0) item.id else id
+        }
 
+        deleteDataProportionByProportionId(newId)
+
+        if (item.items.isNotEmpty()) {
             insertDataProportions(
                 item.items.map {
                     DataProportions(
                         proportionId = newId,
                         typeId = it.id,
-                        value = it.value.toFloat()
-                    )
-                }
-            )
-
-            newId
-        } else {
-            upsertProportion(
-                Proportions(id = item.id, date = item.date)
-            ).toInt()
-
-            updateProportion(
-                item.items.map {
-                    DataProportions(
-                        proportionId = item.id,
-                        typeId = it.id,
                         value = (it.value.ifEmpty { "0" }).toFloat()
                     )
                 }
             )
-
-            item.id
         }
+
+        return newId
     }
+
+    @Query("DELETE FROM data_proportions WHERE proportion_id = :proportionId")
+    suspend fun deleteDataProportionByProportionId(proportionId: Int)
 
     @Upsert
     suspend fun upsertProportion(item: Proportions): Long
@@ -129,11 +117,8 @@ interface ProportionsDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertDataProportions(item: List<DataProportions>): List<Long>
 
-    @Update
-    suspend fun updateProportion(item: List<DataProportions>): Int
 
-    @Query(
-        """
+    @Query("""
         SELECT 
             type_id AS id,
             name,
@@ -141,7 +126,6 @@ interface ProportionsDao {
             icon
         FROM type_proportion_translations tpt JOIN type_proportions tp ON tpt.type_id = tp.id
         WHERE type_id = :id AND language = :locale
-    """
-    )
+    """)
     suspend fun getMeasurementDataById(id: Int, locale: String): ProportionDialogContent
 }

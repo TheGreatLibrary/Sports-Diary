@@ -60,10 +60,8 @@ class ProportionRepositoryImpl @Inject constructor(
                 )
             }
             else {
-                val page = proportionsDao.getById(id)
-                    ?: return Result.failure(
-                        IllegalStateException("Proportion with id=$id not found")
-                    )
+                val page = proportionsDao.getById(id) ?:
+                    return Result.failure(IllegalStateException("Proportion with id=$id not found"))
 
                 val items = proportionsDao.proportionPage(id, locale)
 

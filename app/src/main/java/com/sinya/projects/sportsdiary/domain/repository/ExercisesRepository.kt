@@ -8,42 +8,37 @@ import com.sinya.projects.sportsdiary.data.database.dao.ExercisesDao
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseMuscles
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
 import com.sinya.projects.sportsdiary.data.database.entity.Exercises
+import com.sinya.projects.sportsdiary.domain.model.ExerciseMusclesData
 import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 
-data class ExerciseMusclesData(
-    val value: Int,
-    val muscleId: Int,
-    val exerciseId: Int,
-    val language: String,
-    val name: String
-)
-
 interface ExercisesRepository {
+    // Exercises
     suspend fun getExercisesList(): List<ExerciseUi>
-    suspend fun importExercisesFromAssets(
-        fileName: String = "exercise_j.json",
-        context: Context
-    ): Int
 
-    suspend fun getExerciseTranslations(language: String): List<ExerciseTranslations>
-    suspend fun getExerciseById(id: Int, language: String): ExerciseTranslations
-    suspend fun getExerciseMusclesById(id: Int, language: String): List<ExerciseMusclesData>
+    // TrainingPage
+    suspend fun getExerciseById(id: Int, language: String = Locale.current.language): Result<ExerciseTranslations>
+
+    // Exercise
+    suspend fun getExerciseTranslations(language: String = Locale.current.language): List<ExerciseTranslations>
+    suspend fun getExerciseMusclesById(id: Int, language: String = Locale.current.language): List<ExerciseMusclesData>
 }
 
 class ExercisesRepositoryImpl @Inject constructor(
-    private val exercisesDao: ExercisesDao,
+    private val exercisesDao: ExercisesDao
 ) : ExercisesRepository {
+
+    // Exercises
 
     override suspend fun getExercisesList(): List<ExerciseUi> {
         val db = exercisesDao.getExercisesList(Locale.current.language)
         return db
     }
 
-    override suspend fun importExercisesFromAssets(fileName: String, context: Context): Int {
+    suspend fun importExercisesFromAssets(fileName: String, context: Context): Int {
         return withContext(Dispatchers.IO) {
             try {
                 Log.d("ExerciseImport", "Начало импорта упражнений...")
@@ -211,19 +206,27 @@ class ExercisesRepositoryImpl @Inject constructor(
         }
     }
 
+    // Exercise
+
     override suspend fun getExerciseTranslations(language: String): List<ExerciseTranslations> {
         return exercisesDao.getExercisesTranslations(language)
     }
 
-    override suspend fun getExerciseById(id: Int, language: String): ExerciseTranslations {
-        return exercisesDao.getExerciseById(id, language)
-    }
-
-
     override suspend fun getExerciseMusclesById(id: Int, language: String): List<ExerciseMusclesData> {
         return exercisesDao.getExerciseMuscleById(id, language)
     }
+
+    // TrainingPage
+
+    override suspend fun getExerciseById(id: Int, language: String): Result<ExerciseTranslations> {
+        return try {
+            Result.success(exercisesDao.getExerciseById(id, language))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
+
 
 private fun jsonArrayToIntList(jsonArray: JSONArray?): List<Int> {
     if (jsonArray == null) return emptyList()
@@ -243,7 +246,7 @@ private fun jsonArrayToList(jsonArray: JSONArray?): List<String> {
     return list
 }
 
-fun translateForce(force: String, language: String): String {
+private fun translateForce(force: String, language: String): String {
     return when (language) {
         "ru" -> when (force) {
             "pull" -> "Тяга"
@@ -261,7 +264,7 @@ fun translateForce(force: String, language: String): String {
     }
 }
 
-fun translateLevel(level: String, language: String): String {
+private fun translateLevel(level: String, language: String): String {
     return when (language) {
         "ru" -> when (level) {
             "beginner" -> "Новичок"
@@ -279,7 +282,7 @@ fun translateLevel(level: String, language: String): String {
     }
 }
 
-fun translateMechanic(mechanic: String, language: String): String {
+private fun translateMechanic(mechanic: String, language: String): String {
     return when (language) {
         "ru" -> when (mechanic) {
             "compound" -> "Базовое"
@@ -295,7 +298,7 @@ fun translateMechanic(mechanic: String, language: String): String {
     }
 }
 
-fun translateEquipment(equipment: String, language: String): String {
+private fun translateEquipment(equipment: String, language: String): String {
     return when (language) {
         "ru" -> when (equipment) {
             "bands" -> "Ленты"
@@ -331,7 +334,7 @@ fun translateEquipment(equipment: String, language: String): String {
     }
 }
 
-fun translateCategory(category: String, language: String): String {
+private fun translateCategory(category: String, language: String): String {
     return when (language) {
         "ru" -> when (category) {
             "cardio" -> "Кардио"

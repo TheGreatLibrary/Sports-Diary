@@ -138,13 +138,13 @@ private fun NavGraph(
         }
         composable<ScreenRoute.Statistic> {
             StatisticScreen(
-                onBackClick = { onBack() },
+                onBackClick = onBack,
             )
         }
         composable<ScreenRoute.Settings> {
             SettingsScreen(
-                onBackClick = { onBack() },
-                toggleTheme = { viewModel.toggleTheme() },
+                onBackClick = onBack,
+                toggleTheme = viewModel::toggleTheme,
                 setLanguage = { lang ->
                     viewModel.setLanguage(lang)
                     updateLocale(lang)
@@ -156,27 +156,22 @@ private fun NavGraph(
 
         composable<ScreenRoute.Training> {
             TrainingsScreen(
-                onBackClick = { onBack() },
+                onBackClick = onBack,
                 onTrainingClick = { id -> navigateTo(ScreenRoute.TrainingPage(id)) }
             )
         }
         composable<ScreenRoute.TrainingPage> { entry ->
             val args = entry.toRoute<ScreenRoute.TrainingPage>()
-            val vm: TrainingPageViewModel = hiltViewModel()
-
-            LaunchedEffect(args.id) { vm.init(args.id) }
 
             TrainingPageScreen(
-                state = vm.state.value,
-                onEvent = { event -> vm.onEvent(event) },
-                onBackClick = { onBack() },
-                onInfoClick = { },
+                id = args.id,
+                onBackClick = onBack
             )
         }
 
         composable<ScreenRoute.Proportions> {
             ProportionsScreen(
-                onBackClick = { onBack() },
+                onBackClick = onBack,
                 onProportionClick = { id -> navigateTo(ScreenRoute.ProportionPage(id)) },
             )
         }
@@ -185,14 +180,13 @@ private fun NavGraph(
 
             ProportionPageScreen(
                 id = args.id,
-                onBackClick = { onBack() },
+                onBackClick = onBack,
             )
-
         }
 
         composable<ScreenRoute.MorningExercises> {
             MorningExercisesScreen(
-                onBackClick = { onBack() },
+                onBackClick = onBack,
                 currentPlanId = currentPlanId,
                 onPlanClick = viewModel::setPlanMorningId
             )
@@ -204,7 +198,7 @@ private fun NavGraph(
 
         composable<ScreenRoute.SportExercises> {
             ExercisesScreen(
-                onBackClick = { onBack() },
+                onBackClick = onBack,
                 onExerciseClick = { id -> navigateTo(ScreenRoute.ExercisePage(id)) }
             )
         }
@@ -217,7 +211,7 @@ private fun NavGraph(
             ExercisePageScreen(
                 state = vm.state.value,
                 onEvent = { event -> vm.onEvent(event) },
-                onBackClick = { onBack() },
+                onBackClick = onBack,
                 onInfoClick = { },
             )
         }

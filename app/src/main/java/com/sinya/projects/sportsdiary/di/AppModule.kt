@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.work.impl.Migration_1_2
 import com.sinya.projects.sportsdiary.data.database.AppDatabase
 import com.sinya.projects.sportsdiary.data.database.dao.DataMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.ExercisesDao
@@ -29,6 +30,51 @@ object AppModule {
         @ApplicationContext context: Context
     ): AppDatabase {
         val MIGRATION_1_2 = object : Migration(1, 2) { override fun migrate(db: SupportSQLiteDatabase) {} }
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+
+                // 1. Добавляем state
+                db.execSQL("""
+                    ALTER TABLE data_training
+                    ADD COLUMN state INTEGER NOT NULL DEFAULT 1
+                """.trimIndent())
+
+                // 2. Добавляем order_index
+                db.execSQL("""
+                    ALTER TABLE data_training
+                    ADD COLUMN order_index INTEGER NOT NULL DEFAULT 0
+                """.trimIndent())
+
+                db.execSQL("""
+                    UPDATE data_training
+                    SET order_index = (
+                        SELECT COUNT(*)
+                        FROM data_training dt2
+                        WHERE dt2.training_id = data_training.training_id
+                          AND dt2.exercises_id < data_training.exercises_id
+                    )
+                """.trimIndent())
+            }
+        }
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+
+                db.execSQL("""
+                    ALTER TABLE data_type_trainings
+                    ADD COLUMN order_index INTEGER NOT NULL DEFAULT 0
+                """.trimIndent())
+
+                db.execSQL("""
+                    UPDATE data_type_trainings
+                    SET order_index = (
+                        SELECT COUNT(*)
+                        FROM data_type_trainings dt2
+                        WHERE dt2.type_id = data_type_trainings.type_id
+                          AND dt2.exercise_id < data_type_trainings.exercise_id
+                    )
+                """.trimIndent())
+            }
+        }
 
         return Room.databaseBuilder(
             context,
@@ -37,6 +83,8 @@ object AppModule {
         )
         .createFromAsset("diary.db")
         .addMigrations(MIGRATION_1_2)
+        .addMigrations(MIGRATION_2_3)
+        .addMigrations(MIGRATION_3_4)
         .build()
     }
 

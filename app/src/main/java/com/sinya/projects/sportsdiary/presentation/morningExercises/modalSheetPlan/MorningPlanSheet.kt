@@ -36,8 +36,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
-import com.sinya.projects.sportsdiary.presentation.trainingPage.components.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
+import com.sinya.projects.sportsdiary.ui.features.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.CustomTextFieldWithLabel
 import com.sinya.projects.sportsdiary.utils.getString
 

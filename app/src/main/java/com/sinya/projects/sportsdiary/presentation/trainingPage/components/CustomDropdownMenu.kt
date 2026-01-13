@@ -72,7 +72,6 @@ fun CustomDropdownMenu(
                         .background(
                             color = MaterialTheme.colorScheme.primaryContainer,
                             shape = MaterialTheme.shapes.small)
-                        .clickable { expanded = true }
                         .padding(vertical = 8.dp, horizontal = 18.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {

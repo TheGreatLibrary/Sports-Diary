@@ -51,19 +51,25 @@ fun ProportionPageScreen(
     when (state) {
         ProportionPageUiState.Loading -> PlaceholderScreen()
 
-        is ProportionPageUiState.Success -> ProportionPageView(
+        is ProportionPageUiState.ProportionForm -> ProportionPageView(
             onBackClick = onBackClick,
-            state = state as ProportionPageUiState.Success,
+            state = state as ProportionPageUiState.ProportionForm,
             onEvent = viewModel::onEvent
         )
 
         is ProportionPageUiState.Error -> ErrorScreen((state as ProportionPageUiState.Error).errorMessage)
+
+        ProportionPageUiState.Success -> {
+            LaunchedEffect(Unit) {
+                onBackClick()
+            }
+        }
     }
 }
 
 @Composable
 private fun ProportionPageView(
-    state: ProportionPageUiState.Success,
+    state: ProportionPageUiState.ProportionForm,
     onBackClick: () -> Unit,
     onEvent: (ProportionPageEvent) -> Unit,
 ) {
@@ -94,10 +100,7 @@ private fun ProportionPageView(
                         title = if (state.item.title.isNotEmpty()) stringResource(R.string.proportion_number, state.item.title)
                                 else stringResource(R.string.measurement),
                         painter = R.drawable.nav_save,
-                        onClick = {
-                            onEvent(ProportionPageEvent.Save)
-                            onBackClick()
-                        }
+                        onClick = { onEvent(ProportionPageEvent.Save) }
                     )
                 )
                 Spacer(Modifier.height(20.dp))

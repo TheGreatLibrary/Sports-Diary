@@ -7,7 +7,7 @@ data class Training(
     val name: String,
     val categoryId: Int,
     val category: String,
-    val date: String?
+    val date: String
 )
 
 val List<Training>.years: List<Int>

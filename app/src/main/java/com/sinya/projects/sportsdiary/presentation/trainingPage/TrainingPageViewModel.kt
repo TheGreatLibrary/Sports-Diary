@@ -1,205 +1,273 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.domain.repository.ExercisesRepository
-import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
+import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
+import com.sinya.projects.sportsdiary.domain.model.ExerciseDialogContent
+import com.sinya.projects.sportsdiary.domain.model.addEmptySet
+import com.sinya.projects.sportsdiary.domain.model.removeSet
+import com.sinya.projects.sportsdiary.domain.model.updateSet
+import com.sinya.projects.sportsdiary.domain.useCase.GetCategoriesListUseCase
+import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseDescriptionUseCase
+import com.sinya.projects.sportsdiary.domain.useCase.GetExercisesByCategoryUseCase
+import com.sinya.projects.sportsdiary.domain.useCase.GetSerialNumOfCategoryUseCase
+import com.sinya.projects.sportsdiary.domain.useCase.GetTrainingItemUseCase
+import com.sinya.projects.sportsdiary.domain.useCase.UpsertTrainingUseCase
+import com.sinya.projects.sportsdiary.utils.parseMillisToDateTime
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@HiltViewModel
-class TrainingPageViewModel @Inject constructor(
-    private val trainingRepository: TrainingRepository,
-    private val exerciseRepository: ExercisesRepository
+@HiltViewModel(assistedFactory = TrainingPageViewModel.Factory::class)
+class TrainingPageViewModel @AssistedInject constructor(
+    @Assisted("id") private val id: Int?,
+
+    private val getCategoriesListUseCase: GetCategoriesListUseCase,
+    private val upsertTrainingUseCase: UpsertTrainingUseCase,
+    private val getTrainingItemUseCase: GetTrainingItemUseCase,
+    private val getSerialNumOfCategoryUseCase: GetSerialNumOfCategoryUseCase,
+    private val getExercisesByCategoryUseCase: GetExercisesByCategoryUseCase,
+    private val getExerciseDescriptionUseCase: GetExerciseDescriptionUseCase
 ) : ViewModel() {
 
-    private val _state = mutableStateOf<TrainingPageUiState>(TrainingPageUiState.Loading)
-    val state: State<TrainingPageUiState> = _state
+    private val _state = MutableStateFlow<TrainingPageUiState>(TrainingPageUiState.Loading)
+    val state: StateFlow<TrainingPageUiState> = _state.asStateFlow()
 
-    fun init(id: Int?) {
-        viewModelScope.launch {
-            val entity = trainingRepository.getById(id)
-            val categories = trainingRepository.getCategoriesList().getOrElse { listOf() }
-            _state.value = TrainingPageUiState.Success(
-                id = entity.id,
-                title = entity.title,
-                category = entity.category,
-                date = entity.date,
-                items = entity.items,
-                categories = categories
-            )
-        }
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            @Assisted("id") id: Int?
+        ): TrainingPageViewModel
+    }
+
+    init {
+        loadData(id)
     }
 
     fun onEvent(event: TrainingPageEvent) {
-        val s = _state.value as? TrainingPageUiState.Success ?: return
         when (event) {
-            is TrainingPageEvent.OnSelectedCategory -> {
-                viewModelScope.launch {
-                    val items = trainingRepository.getDataByTypeTraining(event.name.id)
-                    _state.value = s.copy(
-                        category = event.name,
-                        title = trainingRepository.getSerialNumOfCategory(event.name.id),
-                        items = items,
-                    )
-                }
-            }
+            is TrainingPageEvent.OnSelectedCategory -> onSelectedCategory(event.category)
 
-            is TrainingPageEvent.UpdateListTraining -> {
-                viewModelScope.launch {
-                    val entity = trainingRepository.getById(s.id)
-                    _state.value = s.copy(
-                        items = entity.items,
-                        bottomSheetTrainingStatus = false
-                    )
-                }
-            }
+            is TrainingPageEvent.CalendarState -> updateIfForm { it.copy(calendarVisible = event.state) }
 
-            is TrainingPageEvent.AddSet -> {
-                addSet(event.id)
-            }
+            is TrainingPageEvent.AddSet -> addSet(event.id)
 
-            is TrainingPageEvent.DeleteSet -> {
-                removeSet(event.id, event.index)
-            }
+            is TrainingPageEvent.DeleteSet -> removeSet(event.id, event.index)
 
             is TrainingPageEvent.EditSet -> {
-                editSet(event.exId, event.index, event.value, event.valState)
-            }
-
-            is TrainingPageEvent.OpenBottomSheetCategory -> {
-                _state.value = s.copy(bottomSheetCategoryStatus = event.state)
-            }
-
-            is TrainingPageEvent.OpenBottomSheetTraining -> {
-                save()
-                _state.value = s.copy(bottomSheetTrainingStatus = event.state)
-            }
-
-            is TrainingPageEvent.AddExercise -> {
-                val newId = (s.items.maxOfOrNull { it.id } ?: 0) + 1
-                val newItems = s.items + ExerciseItem(
-                    id = newId,
-                    title = event.title,
-                    countList = listOf(""),
-                    weightList = listOf("")
+                editSet(
+                    exerciseId = event.exId,
+                    index = event.index,
+                    value = event.value,
+                    valState = event.valState
                 )
-                _state.value = s.copy(items = newItems)
-                save()
-
             }
 
-            is TrainingPageEvent.Delete -> {
-                _state.value = s.copy(items = s.items.filterNot { it.id == event.id })
+            is TrainingPageEvent.OpenBottomSheetCategory -> saveTraining {
+                updateIfForm { it.copy(bottomSheetCategoryStatus = event.state) }
             }
 
-            is TrainingPageEvent.Save -> {
-                    save()
-                event.exit()
+            is TrainingPageEvent.OpenBottomSheetTraining -> saveTraining {
+                updateIfForm { it.copy(bottomSheetTrainingStatus = event.state) }
             }
 
-            is TrainingPageEvent.UpdateCategories -> {
-                updateCategoriesList()
+            is TrainingPageEvent.OpenDialog -> openDialog(event.id)
+
+            is TrainingPageEvent.Delete -> deleteExercise(event.id)
+
+            is TrainingPageEvent.OnPickDate -> updateIfForm {
+                it.copy(
+                    item = it.item.copy(
+                        date = parseMillisToDateTime(
+                            event.millis
+                        )
+                    )
+                )
             }
 
-            is TrainingPageEvent.OpenDialog -> {
-                viewModelScope.launch {
-                    if (event.id != null) {
-                        val item = s.items.first { it.id == event.id }
-                        val exercise =
-                            exerciseRepository.getExerciseById(event.id, Locale.current.language)
-                        _state.value = s.copy(
+            is TrainingPageEvent.UpdateListTraining -> getTrainingEntity(event.id)
+
+            TrainingPageEvent.Save -> saveTraining {
+                _state.value = TrainingPageUiState.Success
+            }
+
+            TrainingPageEvent.UpdateCategories -> getCategoriesList()
+
+            TrainingPageEvent.OnErrorShown -> updateIfForm { it.copy(errorMessage = null) }
+        }
+    }
+
+    private fun onSelectedCategory(category: TypeTraining) = viewModelScope.launch {
+        val s = _state.value as? TrainingPageUiState.TrainingForm ?: return@launch
+
+        getExercisesByCategoryUseCase(category.id).fold(
+            onSuccess = { items ->
+                val title = getSerialNumOfCategoryUseCase(category.id).getOrElse { s.item.id.toString() }
+                updateIfForm { trainingForm ->
+                    trainingForm.copy(
+                        item = trainingForm.item.copy(
+                            items = items,
+                            title = title,
+                            category = category
+                        )
+                    )
+                }
+            },
+            onFailure = { error ->
+                _state.value = TrainingPageUiState.Error(errorMessage = error.toString())
+            }
+        )
+    }
+
+    private fun loadData(id: Int?) = viewModelScope.launch {
+        getTrainingEntity(id)
+        getCategoriesList()
+    }
+
+    private fun getCategoriesList() = viewModelScope.launch {
+        getCategoriesListUseCase().fold(
+            onSuccess = { list ->
+                updateIfForm { it.copy(categories = list) }
+            },
+            onFailure = { error ->
+                _state.value = TrainingPageUiState.Error(errorMessage = error.toString())
+            }
+        )
+    }
+
+    private fun getTrainingEntity(id: Int? = this.id) = viewModelScope.launch {
+        getTrainingItemUseCase(id).fold(
+            onSuccess = { item ->
+                if (_state.value is TrainingPageUiState.TrainingForm) {
+                    updateIfForm {
+                        it.copy(
+                            item = item,
+                            bottomSheetCategoryStatus = false,
+                            bottomSheetTrainingStatus = false,
+                            calendarVisible = false,
+                            dialogContent = null,
+                            errorMessage = null
+                        )
+                    }
+                } else {
+                    _state.value = TrainingPageUiState.TrainingForm(
+                        item = item
+                    )
+                }
+            },
+            onFailure = { error ->
+                _state.value = TrainingPageUiState.Error(errorMessage = error.toString())
+            }
+        )
+    }
+
+    private fun openDialog(id: Int?) = viewModelScope.launch {
+        if (id != null) {
+            getExerciseDescriptionUseCase(id).fold(
+                onSuccess = { exercise ->
+                    updateIfForm {
+                        it.copy(
                             dialogContent = ExerciseDialogContent(
-                                id = item.id,
+                                id = exercise.exerciseId,
                                 name = exercise.name,
                                 description = exercise.description,
                             )
                         )
-                    } else {
-                        _state.value = s.copy(
-                            dialogContent = null
-                        )
                     }
+                },
+                onFailure = { error ->
+                    updateIfForm { it.copy(errorMessage = error.toString()) }
                 }
-            }
-        }
-    }
-
-    private fun save() = viewModelScope.launch {
-        val s = _state.value as? TrainingPageUiState.Success ?: return@launch
-
-        val item = TrainingEntity(
-            id = s.id,
-            title = s.title,
-            category = s.category,
-            date = s.date,
-            items = s.items
-        )
-        trainingRepository.insertTraining(item)
-    }
-
-    private fun addSet(exId: Int) {
-        val s = _state.value as? TrainingPageUiState.Success ?: return
-        val newItems = s.items.map { ex ->
-            if (ex.id != exId) ex else {
-                val newCounts = ex.countList.toMutableList().apply { add("") }
-                val newWeights = ex.weightList.toMutableList().apply { add("") }
-                ex.copy(countList = newCounts, weightList = newWeights)
-            }
-        }
-        _state.value = s.copy(items = newItems)
-    }
-
-    private fun removeSet(exId: Int, index: Int) {
-        val s = _state.value as? TrainingPageUiState.Success ?: return
-        val newItems = s.items.map { ex ->
-            if (ex.id != exId) ex else {
-                if (index !in ex.countList.indices) ex else {
-                    val newCounts = ex.countList.toMutableList().also { it.removeAt(index) }
-                    val newWeights = ex.weightList.toMutableList().also { it.removeAt(index) }
-                    ex.copy(countList = newCounts, weightList = newWeights)
-                }
-            }
-        }
-        _state.value = s.copy(items = newItems)
-    }
-
-    private fun editSet(exId: Int, index: Int, value: String?, valState: Boolean) {
-        val s = _state.value as? TrainingPageUiState.Success ?: return
-
-        val newItems = s.items.map { ex ->
-            if (ex.id != exId) ex else {
-                if (index !in ex.countList.indices) ex else {
-                    if (valState) {
-                        val newCounts = ex.countList.toMutableList().apply {
-                            if (value != null) this[index] = value
-                        }
-                        ex.copy(countList = newCounts)
-                    } else {
-                        val newWeights = ex.weightList.toMutableList().apply {
-                            if (value != null) this[index] = value
-                        }
-                        ex.copy(weightList = newWeights)
-                    }
-
-
-                }
-            }
-        }
-        _state.value = s.copy(items = newItems)
-    }
-
-    private fun updateCategoriesList() {
-        val s = _state.value as? TrainingPageUiState.Success ?: return
-
-        viewModelScope.launch {
-            _state.value = s.copy(
-                categories = trainingRepository.getCategoriesList().getOrElse { listOf() }
             )
+        } else {
+            updateIfForm {
+                it.copy(dialogContent = null)
+            }
+        }
+    }
+
+    private fun saveTraining(function: () -> Unit) = viewModelScope.launch {
+        val s = _state.value as? TrainingPageUiState.TrainingForm ?: return@launch
+
+        upsertTrainingUseCase(s.item).fold(
+            onSuccess = { id ->
+                updateIfForm { it.copy(item = it.item.copy(id = id)) }
+                function()
+            },
+            onFailure = { error -> _state.value = TrainingPageUiState.Error(error.toString()) }
+        )
+    }
+
+    private fun deleteExercise(exerciseId: Int?) {
+        val s = _state.value as? TrainingPageUiState.TrainingForm ?: return
+
+        updateIfForm {
+            it.copy(
+                item = s.item.copy(
+                    items = s.item.items.filterNot { item -> item.id == exerciseId }
+                )
+            )
+        }
+    }
+
+    private fun addSet(exerciseId: Int) {
+        val s = _state.value as? TrainingPageUiState.TrainingForm ?: return
+
+        _state.value = s.copy(
+            item = s.item.copy(
+                items = s.item.items.map { ex ->
+                    if (ex.id != exerciseId) ex
+                    else ex.addEmptySet()
+                }
+            )
+        )
+    }
+
+    private fun editSet(exerciseId: Int, index: Int, value: String?, valState: Boolean) {
+        val s = _state.value as? TrainingPageUiState.TrainingForm ?: return
+        val newItems = s.item.items.map { ex ->
+            if (ex.id != exerciseId) ex
+            else {
+                if (index !in ex.item.indices) ex
+                else {
+                    if (valState) ex.updateSet(index, value, null)
+                    else ex.updateSet(index, null, value)
+                }
+            }
+        }
+
+        _state.value = s.copy(item = s.item.copy(items = newItems))
+    }
+
+    private fun removeSet(exerciseId: Int, index: Int) {
+        val s = _state.value as? TrainingPageUiState.TrainingForm ?: return
+
+        _state.value = s.copy(
+            item = s.item.copy(
+                items = s.item.items.map { ex ->
+                    if (ex.id != exerciseId) ex
+                    else {
+                        if (index !in ex.item.indices) ex
+                        else ex.removeSet(index)
+                    }
+                }
+            )
+        )
+    }
+
+    private fun updateIfForm(transform: (TrainingPageUiState.TrainingForm) -> TrainingPageUiState.TrainingForm) {
+        _state.update { currentState ->
+            if (currentState is TrainingPageUiState.TrainingForm) {
+                transform(currentState)
+            } else {
+                currentState
+            }
         }
     }
 }

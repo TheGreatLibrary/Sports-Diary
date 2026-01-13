@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
 import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.domain.repository.ExerciseMusclesData
+import com.sinya.projects.sportsdiary.domain.model.ExerciseMusclesData
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen

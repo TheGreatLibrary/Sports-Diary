@@ -26,30 +26,21 @@ fun DateCard(
 ) {
     val formatter = remember { DateTimeFormatter.ofPattern("dd.MM.yyyy") }
     val currentDate = remember(date) { LocalDate.parse(date).format(formatter) }
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.date),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-            AnimationIcon(
-                onClick = onDateClick,
-                icon = painterResource(R.drawable.ic_calendar),
-                size = 28.dp,
-                selectedContainerColor = Color.Transparent
-            )
-        }
         Text(
             text = currentDate,
             style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp),
             color = MaterialTheme.colorScheme.onSecondary
+        )
+        AnimationIcon(
+            onClick = onDateClick,
+            icon = painterResource(R.drawable.ic_calendar),
+            size = 28.dp,
+            selectedContainerColor = Color.Transparent
         )
     }
 }

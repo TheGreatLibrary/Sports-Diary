@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.entity.DataMorning

@@ -46,19 +46,7 @@ fun SwipeCard(
             }
         ),
         backgroundContent = {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
-                contentAlignment = Alignment.CenterEnd
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Delete",
-                    tint = MaterialTheme.colorScheme.onError,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
+           SwipeCardBackground()
         },
         content = {
             SwipeCardContent(

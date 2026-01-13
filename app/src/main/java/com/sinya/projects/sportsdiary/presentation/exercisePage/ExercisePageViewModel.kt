@@ -22,7 +22,7 @@ class ExercisePageViewModel @Inject constructor(
         val locale = Locale.current.language
 
         viewModelScope.launch {
-            val item = exercisesRepository.getExerciseById(id, locale)
+            val item = exercisesRepository.getExerciseById(id, locale).getOrThrow()
             val exMuscles = exercisesRepository.getExerciseMusclesById(id, locale)
 
             _state.value = ExercisePageUiState.Success(

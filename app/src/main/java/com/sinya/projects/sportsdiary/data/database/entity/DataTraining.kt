@@ -31,5 +31,7 @@ data class DataTraining(
     @ColumnInfo(name = "training_id") val trainingId: Int,
     @ColumnInfo(name = "exercises_id") val exerciseId: Int,
     @ColumnInfo(name = "count_result", defaultValue = "0/0/0/0") val countResult: String = "0/0/0/0",
-    @ColumnInfo(name = "weight_result", defaultValue = "0/0/0/0") val weightResult: String = "0/0/0/0"
+    @ColumnInfo(name = "weight_result", defaultValue = "0/0/0/0") val weightResult: String = "0/0/0/0",
+    @ColumnInfo(name = "state", defaultValue = "1") val state: Int = 1,
+    @ColumnInfo(name = "order_index", defaultValue = "0") val orderIndex: Int = 0
 )

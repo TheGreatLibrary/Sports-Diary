@@ -1,10 +1,12 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.state.ToggleableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sinya.projects.sportsdiary.data.database.entity.DataTypeTrainings
 import com.sinya.projects.sportsdiary.domain.repository.ExercisesRepository
 import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
 import com.sinya.projects.sportsdiary.utils.searchByTerms
@@ -70,9 +72,15 @@ class TrainingCategoryViewModel @Inject constructor(
         return currentState.items.searchByTerms(currentState.query) { it.name }
     }
 
-    private fun selectedIds(): List<Int> {
+    private fun selectedIds(): List<DataTypeTrainings> {
         val currentState = _state.value as? TrainingCategoryUiState.Success ?: return listOf()
-        return currentState.items.filter { it.checked }.map { it.id }
+        return currentState.items.filter { it.checked }.mapIndexed { index, it ->
+            DataTypeTrainings(
+                typeId = 0,
+                exerciseId = it.id,
+                orderIndex = index
+            )
+        }
     }
 
     fun triState(): ToggleableState {
@@ -92,6 +100,7 @@ class TrainingCategoryViewModel @Inject constructor(
 
         val nameLocal = currentState.categoryName.trim()
         val ids = selectedIds()
+        Log.d("ggbg", ids.toString())
         if (nameLocal.isEmpty()) {
             onError(IllegalStateException("Заполните название и выберите упражнения"))
             return
