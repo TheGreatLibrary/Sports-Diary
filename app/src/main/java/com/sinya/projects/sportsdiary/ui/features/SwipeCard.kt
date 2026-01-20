@@ -54,7 +54,7 @@ fun SwipeCard(
 }
 
 @Composable
-private fun SwipeCardContent(
+fun SwipeCardContent(
     title: String,
     description: String?,
     onTrainingClick: () -> Unit

@@ -46,13 +46,6 @@ fun ScrollableLineChart(
     gridColor: Color,
     formatYLabel: (Float) -> String = { it.roundToInt().toString() }
 ) {
-    if (points.isEmpty()) {
-        Box(modifier.height(100.dp), contentAlignment = Alignment.Center) {
-            Text(text = stringResource(R.string.not_found_data))
-        }
-        return
-    }
-
     val density = LocalDensity.current
     val paddingPx = with(density) { state.contentPadding.toPx() }
     val xStepPx = with(density) { state.xStep.toPx() }

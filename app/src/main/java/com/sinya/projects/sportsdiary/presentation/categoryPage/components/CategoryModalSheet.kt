@@ -48,41 +48,23 @@ fun CategoryModalSheet(
     filtered: List<ExerciseUi>,
     content: @Composable (PaddingValues) -> Unit
 ) {
-
     val coroutineScope = rememberCoroutineScope()
+
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
             initialValue = SheetValue.PartiallyExpanded,
             skipHiddenState = false,
             confirmValueChange = {
-                when (it) {
-                    SheetValue.Expanded -> onEvent(CategoryPageEvent.OpenBottomSheetTraining(true))
-                    SheetValue.PartiallyExpanded -> onEvent(CategoryPageEvent.OpenBottomSheetTraining(false))
-                    SheetValue.Hidden -> {
-                        onEvent(CategoryPageEvent.OpenBottomSheetTraining(false))
-                        false
-                    }
-                }
-                true
+                it != SheetValue.Hidden
             }
         )
     )
 
     LaunchedEffect(state.bottomSheetCategoryItemsState) {
-        when {
-            state.bottomSheetCategoryItemsState && scaffoldState.bottomSheetState.currentValue != SheetValue.Expanded -> {
-                scaffoldState.bottomSheetState.expand()
-            }
-            !state.bottomSheetCategoryItemsState && scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded -> {
-                scaffoldState.bottomSheetState.partialExpand()
-            }
-        }
-    }
-
-    LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
-        val isExpanded = scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded
-        if (state.bottomSheetCategoryItemsState != isExpanded) {
-            onEvent(CategoryPageEvent.OpenBottomSheetTraining(isExpanded))
+        if (state.bottomSheetCategoryItemsState) {
+            scaffoldState.bottomSheetState.expand()
+        } else {
+            scaffoldState.bottomSheetState.partialExpand()
         }
     }
 
@@ -102,12 +84,6 @@ fun CategoryModalSheet(
                         coroutineScope.launch {
                             val newValue = !state.bottomSheetCategoryItemsState
                             onEvent(CategoryPageEvent.OpenBottomSheetTraining(newValue))
-
-                            if (newValue) {
-                                scaffoldState.bottomSheetState.expand()
-                            } else {
-                                scaffoldState.bottomSheetState.partialExpand()
-                            }
                         }
                     }
             )
@@ -126,7 +102,6 @@ private fun ExerciseList(
     filtered: List<ExerciseUi>,
     onEvent: (CategoryPageEvent) -> Unit
 ) {
-
     Column(
         Modifier
             .fillMaxWidth()

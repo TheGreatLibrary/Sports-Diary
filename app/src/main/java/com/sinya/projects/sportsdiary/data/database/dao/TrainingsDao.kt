@@ -153,7 +153,7 @@ interface TrainingsDao {
             COALESCE(prev_d.count_result, '') AS prevCountResult,
             COALESCE(prev_d.weight_result, '') AS prevWeightResult,
             d.state,
-            prev_d.order_index AS orderIndex
+            d.order_index AS orderIndex
         FROM trainings t
         JOIN data_training d ON d.training_id = t.id
         JOIN exercises e ON e.id = d.exercises_id
@@ -166,7 +166,7 @@ interface TrainingsDao {
                 LIMIT 1
         )
         WHERE t.id = :id
-        ORDER BY prev_d.order_index
+        ORDER BY d.order_index
     """)
     suspend fun getExerciseDataByTrainingIdWithPrevData(id: Int?, lang: String): List<ExerciseData>
 

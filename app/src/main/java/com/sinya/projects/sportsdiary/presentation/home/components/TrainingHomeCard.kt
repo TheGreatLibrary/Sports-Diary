@@ -88,7 +88,7 @@ private fun TrainingItem(
                 R.string.workout_type_training,
                 context.getString(item.category),
                 item.name,
-                item.date.toString()
+                item.date
             ),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer,

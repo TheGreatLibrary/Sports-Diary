@@ -70,7 +70,7 @@ fun SwipeTrainingCard(
 }
 
 @Composable
-private fun SwipeTrainingCardContent(
+fun SwipeTrainingCardContent(
     expanded: Boolean,
     onExpanded: (Boolean) -> Unit,
     item: ExerciseItem,

@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.sqlite.execSQL
-import androidx.work.impl.Migration_1_2
 import com.sinya.projects.sportsdiary.data.database.AppDatabase
 import com.sinya.projects.sportsdiary.data.database.dao.DataMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.ExercisesDao
@@ -13,8 +11,6 @@ import com.sinya.projects.sportsdiary.data.database.dao.PlanMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.ProportionsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TrainingsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TypeTrainingDao
-import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
-import com.sinya.projects.sportsdiary.domain.repository.TrainingRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

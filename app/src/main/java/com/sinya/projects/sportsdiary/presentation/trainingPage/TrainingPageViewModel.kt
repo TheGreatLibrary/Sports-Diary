@@ -79,6 +79,8 @@ class TrainingPageViewModel @AssistedInject constructor(
 
             is TrainingPageEvent.OpenDialog -> openDialog(event.id)
 
+            is TrainingPageEvent.OpenDialogGuide -> openDialogGuide(event.title, event.descr)
+
             is TrainingPageEvent.Delete -> deleteExercise(event.id)
 
             is TrainingPageEvent.OnPickDate -> updateIfForm {
@@ -167,6 +169,18 @@ class TrainingPageViewModel @AssistedInject constructor(
                 _state.value = TrainingPageUiState.Error(errorMessage = error.toString())
             }
         )
+    }
+
+    private fun openDialogGuide(title: String, description: String) {
+        updateIfForm {
+            it.copy(
+                dialogContent = ExerciseDialogContent(
+                    id = -1,
+                    name = title,
+                    description = description,
+                )
+            )
+        }
     }
 
     private fun openDialog(id: Int?) = viewModelScope.launch {

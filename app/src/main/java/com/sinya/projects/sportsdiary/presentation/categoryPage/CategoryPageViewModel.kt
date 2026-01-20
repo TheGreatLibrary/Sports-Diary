@@ -12,8 +12,6 @@ import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseListUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.InsertCategoryWithDataUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.UpdateCategoryDataUseCase
 import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
-import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.TrainingCategoryEvent
-import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.TrainingCategoryUiState
 import com.sinya.projects.sportsdiary.utils.searchByTerms
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

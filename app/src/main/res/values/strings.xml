@@ -150,4 +150,5 @@
     <string name="category_with_name">Категория %1$s</string>
     <string name="categories_title">Категории</string>
     <string name="categories_description">Список категорий тренировок</string>
+    <string name="category_description">Категория - тип тренировки, который подразумевает определенный набор упражнений, порядок выполнения и количество повторений с весом, которые задает пользователь</string>
 </resources>

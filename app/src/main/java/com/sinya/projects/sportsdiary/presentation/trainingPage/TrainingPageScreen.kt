@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.glance.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
@@ -81,6 +82,8 @@ private fun TrainingPage(
     onEvent: (TrainingPageEvent) -> Unit,
     onBackClick: () -> Unit
 ) {
+    val title = stringResource(R.string.constructor)
+    val description = stringResource(R.string.category_description)
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -132,8 +135,10 @@ private fun TrainingPage(
                 Spacer(Modifier.height(8.dp))
                 CustomDropdownMenu(
                     items = state.categories,
-                    title = stringResource(R.string.constructor),
-                    onInfoClick = { },
+                    title = title,
+                    onInfoClick = {
+                        onEvent(TrainingPageEvent.OpenDialogGuide(title, description))
+                    },
                     selectedItem = state.item.category,
                     onOpenMenu = { onEvent(TrainingPageEvent.UpdateCategories) },
                     onSelectedCategory = { name ->

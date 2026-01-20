@@ -2,9 +2,11 @@ package com.sinya.projects.sportsdiary.ui.features.diagram
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.domain.enums.TypeTime
@@ -27,17 +30,7 @@ fun Chart(
     points: List<ChartPoint>,
     onInfoClick: () -> Unit
 ) {
-    val state = remember {
-        ChartState(
-            yMin = 0f,
-            yMax = 5f,
-            yGridLines = 5,
-            xStep = 80.dp,
-        )
-    }
-    val chartState = remember(points) {
-        state.copy(yMax = points.maxOf { it.yValue } )
-    }
+
 
     Column(
         modifier = Modifier
@@ -75,14 +68,32 @@ fun Chart(
         }
 
 
+        if (points.isEmpty()) {
+            Box(Modifier.height(100.dp), contentAlignment = Alignment.Center) {
+                Text(text = stringResource(R.string.not_found_data))
+            }
+        }
+        else {
+            val state = remember {
+                ChartState(
+                    yMin = 0f,
+                    yMax = 5f,
+                    yGridLines = 5,
+                    xStep = 80.dp,
+                )
+            }
+            val chartState = remember(points) {
+                state.copy(yMax = points.maxOf { it.yValue } )
+            }
 
-        ScrollableLineChart(
-            points = points,
-            timeMode = timeMode,
-            state = chartState,
-            lineColor = MaterialTheme.colorScheme.secondary,
-            gridColor = MaterialTheme.colorScheme.onSecondary
-        )
+            ScrollableLineChart(
+                points = points,
+                timeMode = timeMode,
+                state = chartState,
+                lineColor = MaterialTheme.colorScheme.secondary,
+                gridColor = MaterialTheme.colorScheme.onSecondary
+            )
+        }
     }
 }
 
