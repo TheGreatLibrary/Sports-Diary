@@ -41,7 +41,7 @@ fun List<Training>.filterByYearMonth(year: Int? = null, month: Int? = null): Lis
                 yearMatches && monthMatches
             } ?: false
         }
-        .sortedBy { it.localDateOrNull() }
+        .sortedByDescending { it.localDateOrNull() }
 }
 
 fun List<Training>.filterByMuscle(category: String?): List<Training> {

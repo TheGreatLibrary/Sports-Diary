@@ -31,7 +31,7 @@ fun TrainingHomeCard(
     onItemClick: (Int) -> Unit
 ) {
     HomeCard(
-        title = stringResource(R.string.training_title),
+        title = stringResource(R.string.trainings_title),
         onCardClick = onCardClick,
         onPlusClick = onPlusClick,
         colorCard = MaterialTheme.colorScheme.secondary

@@ -91,6 +91,8 @@ class TrainingPageViewModel @AssistedInject constructor(
                 )
             }
 
+            is TrainingPageEvent.MoveExercise -> moveExercise(event.from, event.to)
+
             is TrainingPageEvent.UpdateListTraining -> getTrainingEntity(event.id)
 
             TrainingPageEvent.Save -> saveTraining {
@@ -211,6 +213,30 @@ class TrainingPageViewModel @AssistedInject constructor(
             it.copy(
                 item = s.item.copy(
                     items = s.item.items.filterNot { item -> item.id == exerciseId }
+                )
+            )
+        }
+    }
+
+    private fun moveExercise(from: Int, to: Int) {
+        val s = _state.value as? TrainingPageUiState.TrainingForm ?: return
+
+        updateIfForm {
+            val mutable = s.item.items.toMutableList()
+
+            if (from !in mutable.indices) return@updateIfForm it
+            if (from == to) return@updateIfForm it
+
+            val moved = mutable.removeAt(from)
+
+            val target = to.coerceIn(0, mutable.size)
+            mutable.add(target, moved)
+
+            it.copy(
+                item = s.item.copy(
+                    items = mutable.mapIndexed { index, item ->
+                        item.copy(orderIndex = index)
+                    }
                 )
             )
         }

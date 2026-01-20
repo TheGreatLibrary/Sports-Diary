@@ -27,7 +27,7 @@ class TrainingExerciseViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = TrainingExerciseUiState.Success(
                 id = id,
-                items = repoEx.getExercisesList().map { ExerciseUi(it.id, it.name) }
+                items = repoEx.getExercisesList()
             )
         }
     }

@@ -7,6 +7,7 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.entity.DataTypeTrainings
+import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
 import com.sinya.projects.sportsdiary.domain.repository.ExercisesRepository
 import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
 import com.sinya.projects.sportsdiary.utils.searchByTerms
@@ -26,7 +27,7 @@ class TrainingCategoryViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _state.value = TrainingCategoryUiState.Success(
-                items = repoEx.getExercisesList().map { ExerciseUi(it.id, it.name) }
+                items = repoEx.getExercisesList()
             )
         }
     }
@@ -100,13 +101,12 @@ class TrainingCategoryViewModel @Inject constructor(
 
         val nameLocal = currentState.categoryName.trim()
         val ids = selectedIds()
-        Log.d("ggbg", ids.toString())
         if (nameLocal.isEmpty()) {
             onError(IllegalStateException("Заполните название и выберите упражнения"))
             return
         }
         viewModelScope.launch {
-            runCatching { repoTr.insertCategory(nameLocal, ids) }
+            runCatching { repoTr.insertCategory(TypeTraining(name = nameLocal), ids) }
                 .onSuccess { onDone() }
                 .onFailure { onError(it) }
         }

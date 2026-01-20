@@ -17,7 +17,7 @@ fun DeltaHint(delta: Int?) {
     if (delta == null || delta == 0) return
 
     val color =  if (delta > 0) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.onTertiaryContainer
+                        else MaterialTheme.colorScheme.secondary
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(

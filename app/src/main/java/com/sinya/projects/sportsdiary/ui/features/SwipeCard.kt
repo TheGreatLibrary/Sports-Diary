@@ -3,16 +3,10 @@ package com.sinya.projects.sportsdiary.ui.features
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -31,7 +25,7 @@ fun SwipeCard(
     modifier: Modifier,
     id: Int,
     title: String,
-    description: String,
+    description: String? = null,
     onDelete: (Int) -> Unit,
     onTrainingClick: () -> Unit,
 ) {
@@ -46,7 +40,7 @@ fun SwipeCard(
             }
         ),
         backgroundContent = {
-           SwipeCardBackground()
+            SwipeCardBackground()
         },
         content = {
             SwipeCardContent(
@@ -62,7 +56,7 @@ fun SwipeCard(
 @Composable
 private fun SwipeCardContent(
     title: String,
-    description: String,
+    description: String?,
     onTrainingClick: () -> Unit
 ) {
     Column(
@@ -80,10 +74,12 @@ private fun SwipeCardContent(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimary
         )
-        Text(
-            text = description,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
+        description?.let {
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
     }
 }

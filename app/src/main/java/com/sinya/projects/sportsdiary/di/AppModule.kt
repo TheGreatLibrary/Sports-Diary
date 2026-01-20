@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.execSQL
 import androidx.work.impl.Migration_1_2
 import com.sinya.projects.sportsdiary.data.database.AppDatabase
 import com.sinya.projects.sportsdiary.data.database.dao.DataMorningDao
@@ -75,6 +76,61 @@ object AppModule {
                 """.trimIndent())
             }
         }
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""
+                    INSERT OR IGNORE INTO type_training (id, name)
+                    VALUES (1, 'not_category')
+                """.trimIndent())
+
+                db.execSQL("""
+                    CREATE TABLE training_new (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        serial_num INTEGER NOT NULL,
+                        type_id INTEGER NOT NULL DEFAULT 1,
+                        date TEXT NOT NULL,
+                        FOREIGN KEY (type_id) 
+                        REFERENCES type_training(id) 
+                        ON DELETE SET DEFAULT
+                    )
+                """.trimIndent())
+
+                db.execSQL("""
+                    INSERT INTO training_new (id, serial_num, type_id, date)
+                    SELECT 
+                        t.id,
+                        t.serial_num,
+                        CASE 
+                            WHEN t.type_id IN (SELECT id FROM type_training) 
+                            THEN t.type_id 
+                            ELSE 1 
+                        END as type_id,
+                        t.date
+                    FROM trainings t
+                """.trimIndent())
+
+                db.execSQL("DROP TABLE trainings")
+
+                db.execSQL("ALTER TABLE training_new RENAME TO trainings")
+
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_type_id ON trainings (type_id)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_date ON trainings (date DESC)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_type_id_date ON trainings (type_id, date)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_date_serial_num ON trainings (date, serial_num)")
+
+                db.execSQL("""
+                    UPDATE data_training
+                    SET training_id = 1
+                    WHERE training_id NOT IN (SELECT id FROM trainings)
+                """.trimIndent())
+
+                db.execSQL("""
+                    UPDATE data_type_trainings
+                    SET type_id = 1
+                    WHERE type_id NOT IN (SELECT id FROM type_training)
+                """.trimIndent())
+            }
+        }
 
         return Room.databaseBuilder(
             context,
@@ -85,6 +141,7 @@ object AppModule {
         .addMigrations(MIGRATION_1_2)
         .addMigrations(MIGRATION_2_3)
         .addMigrations(MIGRATION_3_4)
+        .addMigrations(MIGRATION_4_5)
         .build()
     }
 

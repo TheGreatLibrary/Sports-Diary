@@ -10,12 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun SummaryPill(
-    text: String,
+    text: AnnotatedString,
     unit: String,
     modifier: Modifier,
 ) {
@@ -31,16 +33,17 @@ fun SummaryPill(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             maxLines = 1,
-            color = MaterialTheme.colorScheme.onPrimary,
+            fontSize = 14.sp,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.fillMaxWidth(0.8f)
         )
         Text(
             text = unit,
             color = MaterialTheme.colorScheme.onSecondary,
-            style = MaterialTheme.typography.bodyMedium,
+            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodyLarge,
         )
     }
 }

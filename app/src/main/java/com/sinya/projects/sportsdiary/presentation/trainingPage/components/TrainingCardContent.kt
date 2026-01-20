@@ -18,17 +18,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.domain.model.ExerciseItemData
+import com.sinya.projects.sportsdiary.domain.model.coloringText
+import com.sinya.projects.sportsdiary.domain.model.toColoringRepsList
+import com.sinya.projects.sportsdiary.domain.model.toColoringWeightList
 import com.sinya.projects.sportsdiary.ui.features.SummaryPill
 import com.sinya.projects.sportsdiary.utils.deltaFloat
 import com.sinya.projects.sportsdiary.utils.deltaInt
-import com.sinya.projects.sportsdiary.utils.safeFloat
-import com.sinya.projects.sportsdiary.utils.trimZeros
 
 @Composable
 fun TrainingCardContent(
@@ -41,17 +42,10 @@ fun TrainingCardContent(
     onExpanded: (Boolean) -> Unit,
     onEditSet: (Int, Int, String?, Boolean) -> Unit,
     onDeleteSet: (Int, Int) -> Unit,
+    onPlusClick: (Int) -> Unit,
 ) {
-    val repsSummary = remember(items) {
-        items.map { it.count }.joinToString("/") {
-            it.ifBlank { "0" }
-        }
-    }
-    val weightsSummary = remember(items) {
-        items.map { it.weight }.joinToString("/") { s ->
-            safeFloat(s)?.let { trimZeros(it) } ?: "0"
-        }
-    }
+    val repsSummary = items.toColoringRepsList().coloringText()
+    val weightsSummary = items.toColoringWeightList().coloringText()
 
     Column(
         modifier = modifier
@@ -81,7 +75,8 @@ fun TrainingCardContent(
             repsUnit = repsUnit,
             weightUnit = weightUnit,
             onEditSet = onEditSet,
-            onDeleteSet = onDeleteSet
+            onDeleteSet = onDeleteSet,
+            onPlusClick = onPlusClick
         )
     }
 }
@@ -89,8 +84,8 @@ fun TrainingCardContent(
 @Composable
 private fun CollapsedSummary(
     visible: Boolean,
-    repsSummary: String,
-    weightsSummary: String,
+    repsSummary: AnnotatedString,
+    weightsSummary: AnnotatedString,
     repsUnit: String,
     weightUnit: String,
     onClick: () -> Unit
@@ -129,7 +124,8 @@ private fun ExpandedSetsList(
     repsUnit: String,
     weightUnit: String,
     onEditSet: (Int, Int, String?, Boolean) -> Unit,
-    onDeleteSet: (Int, Int) -> Unit
+    onDeleteSet: (Int, Int) -> Unit,
+    onPlusClick: (Int) -> Unit
 ) {
     AnimatedVisibility(
         visible = visible,
@@ -143,7 +139,7 @@ private fun ExpandedSetsList(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             itemsIndexed(items) { index, rep ->
-                SwipeTrainingCard(
+                SwipeTrainingStepCard(
                     rep = rep.count,
                     weight = rep.weight,
                     repsUnit = repsUnit,
@@ -153,7 +149,7 @@ private fun ExpandedSetsList(
                     deltaRep = deltaInt(rep.count, rep.prevCount),
                     deltaWeight = deltaFloat(rep.weight, rep.prevWeight),
                     onRemove = { onDeleteSet(id, index) },
-                    onClear = {}
+                    onPlusClick = { onPlusClick(rep.exerciseId) }
                 )
             }
         }

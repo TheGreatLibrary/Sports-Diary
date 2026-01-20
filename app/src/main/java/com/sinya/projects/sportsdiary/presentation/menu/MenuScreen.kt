@@ -42,8 +42,13 @@ fun MenuScreen(
             BlockOfCards(title = stringResource(R.string.main_block)) {
                 ListCardItem(
                     onClick = { navigateTo(ScreenRoute.Training) },
-                    title = stringResource(R.string.training_title),
+                    title = stringResource(R.string.trainings_title),
                     description = stringResource(R.string.list_of_training)
+                )
+                ListCardItem(
+                    onClick = { navigateTo(ScreenRoute.Categories) },
+                    title = stringResource(R.string.categories_title),
+                    description = stringResource(R.string.categories_description)
                 )
                 ListCardItem(
                     onClick = { navigateTo(ScreenRoute.MorningExercises) },

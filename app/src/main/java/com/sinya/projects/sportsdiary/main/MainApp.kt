@@ -14,13 +14,14 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.intl.Locale
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.sinya.projects.sportsdiary.data.datastore.AppViewModel
+import com.sinya.projects.sportsdiary.presentation.categories.CategoriesScreen
+import com.sinya.projects.sportsdiary.presentation.categoryPage.CategoryPageScreen
 import com.sinya.projects.sportsdiary.presentation.exercisePage.ExercisePageScreen
 import com.sinya.projects.sportsdiary.presentation.exercisePage.ExercisePageViewModel
 import com.sinya.projects.sportsdiary.presentation.exercises.ExercisesScreen
@@ -28,12 +29,10 @@ import com.sinya.projects.sportsdiary.presentation.home.HomeScreen
 import com.sinya.projects.sportsdiary.presentation.menu.MenuScreen
 import com.sinya.projects.sportsdiary.presentation.morningExercises.MorningExercisesScreen
 import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionPageScreen
-import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionPageViewModel
 import com.sinya.projects.sportsdiary.presentation.proportions.ProportionsScreen
 import com.sinya.projects.sportsdiary.presentation.settings.SettingsScreen
 import com.sinya.projects.sportsdiary.presentation.statistic.StatisticScreen
 import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingPageScreen
-import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingPageViewModel
 import com.sinya.projects.sportsdiary.presentation.trainings.TrainingsScreen
 import com.sinya.projects.sportsdiary.ui.features.getCurrentRoute
 import com.sinya.projects.sportsdiary.ui.theme.SportsDiaryTheme
@@ -168,6 +167,22 @@ private fun NavGraph(
                 onBackClick = onBack
             )
         }
+
+        composable<ScreenRoute.Categories> {
+            CategoriesScreen(
+                onBackClick = onBack,
+                onCategoryClick = { id -> navigateTo(ScreenRoute.CategoryPage(id)) }
+            )
+        }
+        composable<ScreenRoute.CategoryPage> { entry ->
+            val args = entry.toRoute<ScreenRoute.TrainingPage>()
+
+            CategoryPageScreen(
+                id = args.id,
+                onBackClick = onBack
+            )
+        }
+
 
         composable<ScreenRoute.Proportions> {
             ProportionsScreen(

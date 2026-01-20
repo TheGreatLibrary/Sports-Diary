@@ -13,7 +13,7 @@ import androidx.room.PrimaryKey
             entity = TypeTraining::class,
             parentColumns = ["id"],
             childColumns = ["type_id"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.SET_DEFAULT
         )
     ],
     indices = [
@@ -25,7 +25,7 @@ import androidx.room.PrimaryKey
 )
 data class Trainings(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "type_id") val typeId: Int,
+    @ColumnInfo(name = "type_id", defaultValue = "1") val typeId: Int = 1,
     @ColumnInfo(name = "serial_num") val serialNum: Int,
     @ColumnInfo(name = "date") val date: String
 )

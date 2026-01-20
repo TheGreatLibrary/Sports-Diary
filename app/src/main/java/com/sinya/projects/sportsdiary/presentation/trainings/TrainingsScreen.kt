@@ -124,7 +124,7 @@ private fun TrainingsScreenView(
                 NavigationTopBar(
                     type = TypeAppTopNavigation.WithIcon(
                         onBackClick = onBackClick,
-                        title = stringResource(R.string.training_title),
+                        title = stringResource(R.string.trainings_title),
                         painter = R.drawable.ic_plus,
                         onClick = { onTrainingClick(null) }
                     )
@@ -218,7 +218,7 @@ private fun TrainingsScreenView(
                 SwipeCard(
                     modifier = Modifier.padding(bottom = 8.dp),
                     id = it.id,
-                    title = stringResource(R.string.training_num, it.name),
+                    title = stringResource(R.string.training_number, it.name),
                     description = "${context.getString(it.category)} • $dateText",
                     onTrainingClick = { onTrainingClick(it.id) },
                     onDelete = { id -> onEvent(TrainingEvent.OpenDialog(id)) },

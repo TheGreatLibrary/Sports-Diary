@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.ui.features.trainingConstructor
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,8 +87,9 @@ fun CompactUnitField(
             }
         },
         singleLine = true,
-        textStyle = MaterialTheme.typography.bodyMedium.copy(
-            color = MaterialTheme.colorScheme.onPrimary
+        textStyle = MaterialTheme.typography.bodyLarge.copy(
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontSize = 14.sp
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType
@@ -105,20 +107,23 @@ fun CompactUnitField(
                 singleLine = true,
                 visualTransformation = VisualTransformation.None,
                 interactionSource = interaction,
-                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 18.dp),
+                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
                 container = {},
                 trailingIcon = {
-                    Row(
-                        modifier = Modifier.padding(end = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = unit,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = if (focused) .6f else 1f)
-                        )
-                        if (!focused) DeltaHint(delta)
+                    AnimatedVisibility(!focused) {
+                        Row(
+                            modifier = Modifier.padding(end = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            DeltaHint(delta)
+                            Text(
+                                text = unit,
+                                fontSize = 14.sp,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
                     }
                 }
             )

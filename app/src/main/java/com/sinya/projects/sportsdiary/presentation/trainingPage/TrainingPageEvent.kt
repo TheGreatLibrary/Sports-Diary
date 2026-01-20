@@ -16,6 +16,8 @@ sealed interface TrainingPageEvent {
 
     data object UpdateCategories : TrainingPageEvent
     data class UpdateListTraining(val id: Int?) : TrainingPageEvent
+    data class MoveExercise(val from: Int, val to: Int) : TrainingPageEvent
+
     data object OnErrorShown : TrainingPageEvent
     data object Save : TrainingPageEvent
 }

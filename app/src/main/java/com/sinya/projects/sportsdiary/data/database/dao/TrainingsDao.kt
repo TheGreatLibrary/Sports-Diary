@@ -141,7 +141,7 @@ interface TrainingsDao {
       JOIN exercise_translations et ON e.id = et.exercise_id
       WHERE d.type_id = :id AND et.language = :lang
     """)
-    suspend fun getDataOfTypeTraining(id: Int, lang: String): List<ExerciseItemWithoutList>
+    suspend fun getDataOfTypeTraining(id: Int?, lang: String): List<ExerciseItemWithoutList>
 
 
     @Query("""
@@ -166,6 +166,7 @@ interface TrainingsDao {
                 LIMIT 1
         )
         WHERE t.id = :id
+        ORDER BY prev_d.order_index
     """)
     suspend fun getExerciseDataByTrainingIdWithPrevData(id: Int?, lang: String): List<ExerciseData>
 
@@ -192,6 +193,7 @@ interface TrainingsDao {
                 LIMIT 1
            )
         WHERE dc.type_id = :categoryId
+        ORDER BY dc.order_index
     """)
     suspend fun getExercisesByCategoryIdWithLastData(categoryId: Int?, lang: String): List<ExerciseData>
 

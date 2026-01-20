@@ -9,6 +9,7 @@ import com.sinya.projects.sportsdiary.data.database.entity.DataTypeTrainings
 import com.sinya.projects.sportsdiary.data.database.entity.Trainings
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
 import com.sinya.projects.sportsdiary.domain.enums.TypeTime
+import com.sinya.projects.sportsdiary.domain.model.CategoryEntity
 import com.sinya.projects.sportsdiary.domain.model.ExerciseItem
 import com.sinya.projects.sportsdiary.domain.model.ExerciseItemData
 import com.sinya.projects.sportsdiary.domain.model.Training
@@ -27,11 +28,9 @@ interface TrainingRepository {
     // Training
     suspend fun getTrainingList(): Result<List<Training>>
     suspend fun deleteTraining(it: Trainings): Result<Int>
-    suspend fun getCategoriesList(): Result<List<TypeTraining>>
 
     // TrainingPage
     suspend fun getById(id: Int?): Result<TrainingEntity>
-    suspend fun insertCategory(name: String, exercises: List<DataTypeTrainings>): Result<Long>
     suspend fun insertDataTraining(items: List<DataTraining>): Result<Int>
     suspend fun upsertTraining(entity: TrainingEntity): Result<Int>
     suspend fun getSerialNumOfCategory(typeTraining: Int?): Result<String>
@@ -39,6 +38,16 @@ interface TrainingRepository {
 
     // Calendar
     suspend fun getList(start: String, end: String): Result<List<Training>>
+
+    // Categories
+    suspend fun deleteCategory(it: TypeTraining): Result<Int>
+    suspend fun getCategoriesList(): Result<List<TypeTraining>>
+
+    // CategoryPage
+
+    suspend fun getCategoryEntity(id: Int?): Result<CategoryEntity>
+    suspend fun insertCategory(item: TypeTraining, exercises: List<DataTypeTrainings>): Result<Int>
+    suspend fun updateDataCategory(items: List<DataTypeTrainings>): Result<Int>
 }
 
 
@@ -141,15 +150,6 @@ class TrainingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCategoriesList(): Result<List<TypeTraining>> {
-        return try {
-            val list = typeTrainingDao.getList()
-            Result.success(list)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
     // TrainingPage
 
     override suspend fun getDataByTypeTraining(typeId: Int): Result<List<ExerciseItem>> {
@@ -244,14 +244,6 @@ class TrainingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertCategory(name: String, exercises: List<DataTypeTrainings>): Result<Long> {
-        return try {
-            Result.success(typeTrainingDao.createTypeWithExercises(name, exercises))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
     override suspend fun getSerialNumOfCategory(typeTraining: Int?): Result<String> {
         return try {
             Result.success(trainingDao.getSerialNumOfCategory(typeTraining))
@@ -273,6 +265,60 @@ class TrainingRepositoryImpl @Inject constructor(
     override suspend fun getList(start: String, end: String): Result<List<Training>> {
         return try {
             Result.success(trainingDao.getDataOfMonth(start, end))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // Categories
+
+    override suspend fun deleteCategory(it: TypeTraining): Result<Int> {
+        return try {
+            if (it.id==1) return Result.failure(IllegalStateException("Нельзя удалять категорию с id = 1"))
+            Result.success(typeTrainingDao.delete(it))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getCategoriesList(): Result<List<TypeTraining>> {
+        return try {
+            val list = typeTrainingDao.getList()
+            Result.success(list)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+
+    // CategoryPage
+
+    override suspend fun getCategoryEntity(id: Int?): Result<CategoryEntity> {
+        return try {
+            val locale = Locale.current.language
+            val category = typeTrainingDao.getById(id) ?: TypeTraining(0, "")
+            val items = trainingDao.getDataOfTypeTraining(id, locale)
+
+            Result.success(CategoryEntity(
+                category = category,
+                items = items
+            ))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun insertCategory(item: TypeTraining, exercises: List<DataTypeTrainings>): Result<Int> {
+        return try {
+            Result.success(typeTrainingDao.createTypeWithExercises(item, exercises))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateDataCategory(items: List<DataTypeTrainings>): Result<Int> {
+        return try {
+            Result.success(typeTrainingDao.insertDataTypeTrainings(items).size)
         } catch (e: Exception) {
             Result.failure(e)
         }

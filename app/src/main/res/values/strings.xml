@@ -11,7 +11,7 @@
     <string name="sunday_short">Вс</string>
 
     <string name="menu_title">Меню</string>
-    <string name="training_title">Тренировки</string>
+    <string name="trainings_title">Тренировки</string>
     <string name="list_of_training">Список проведенных тренировок</string>
     <string name="main_block">Основные</string>
     <string name="other_block">Прочее</string>
@@ -144,7 +144,10 @@
     <string name="year">Года</string>
     <string name="month">Мес.</string>
     <string name="all">Все</string>
-    <string name="training_num">Тренировка №%1$s</string>
+    <string name="training_title">Тренировка</string>
     <string name="date">Дата</string>
     <string name="measurement">Замер</string>
+    <string name="category_with_name">Категория %1$s</string>
+    <string name="categories_title">Категории</string>
+    <string name="categories_description">Список категорий тренировок</string>
 </resources>
