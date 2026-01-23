@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.entity.DataTypeTrainings
 import com.sinya.projects.sportsdiary.domain.model.CategorySheetItem
 import com.sinya.projects.sportsdiary.domain.model.ExerciseDialogContent
+import com.sinya.projects.sportsdiary.domain.useCase.CheckNameCategoryExistsUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetCategoryItemUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseDescriptionUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseListUseCase
@@ -31,7 +32,8 @@ class CategoryPageViewModel @AssistedInject constructor(
     private val insertCategoryUseCase: InsertCategoryWithDataUseCase,
     private val getExerciseDescriptionUseCase: GetExerciseDescriptionUseCase,
     private val updateCategoryDataUseCase: UpdateCategoryDataUseCase,
-    private val getExerciseListUseCase: GetExerciseListUseCase
+    private val getExerciseListUseCase: GetExerciseListUseCase,
+    private val checkNameCategoryExistsUseCase: CheckNameCategoryExistsUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<CategoryPageUiState>(CategoryPageUiState.Loading)
@@ -58,14 +60,15 @@ class CategoryPageViewModel @AssistedInject constructor(
 
             is CategoryPageEvent.OnValueChange -> updateIfForm {
                 it.copy(
+                    isError = false,
                     item = it.item.copy(
                         category = it.item.category.copy(name = event.name)
                     )
                 )
             }
 
-            is CategoryPageEvent.OpenBottomSheetTraining -> saveCategory {
-                updateIfForm { it.copy(bottomSheetCategoryItemsState = event.state) }
+            is CategoryPageEvent.OpenBottomSheetTraining -> {
+                saveCategory {}
             }
 
             is CategoryPageEvent.OpenDialog -> openDialog(event.id)
@@ -75,14 +78,14 @@ class CategoryPageViewModel @AssistedInject constructor(
             }
 
             is CategoryPageEvent.AddExercise -> saveCategory {
-                updateCategoryData { it -> getCategoryEntity(it)}
+                updateCategoryData { getCategoryEntity(it) }
             }
 
             is CategoryPageEvent.Toggle -> {
-                updateIfForm {
-                    it.copy(
-                        sheetData = it.sheetData.copy(
-                            items = it.sheetData.items.map { if (it.id == event.id) it.copy(checked = !it.checked) else it }
+                updateIfForm { categoryForm ->
+                    categoryForm.copy(
+                        sheetData = categoryForm.sheetData.copy(
+                            items = categoryForm.sheetData.items.map { if (it.id == event.id) it.copy(checked = !it.checked) else it }
                         )
                     )
                 }
@@ -111,18 +114,6 @@ class CategoryPageViewModel @AssistedInject constructor(
         return currentState.sheetData.items.searchByTerms(currentState.sheetData.query) { it.name }
     }
 
-    private fun getCategorySheetData() = viewModelScope.launch {
-        val items = getExerciseListUseCase.invoke()
-        updateIfForm {
-            it.copy(
-                sheetData = CategorySheetItem(
-                    query = "",
-                    items = items
-                )
-            )
-        }
-    }
-
     private fun updateCategoryData(function: (Int) -> Unit) = viewModelScope.launch {
         val s = _state.value as? CategoryPageUiState.CategoryForm ?: return@launch
         val items1 = s.sheetData.items.filter { it.checked }.mapIndexed { index, it ->
@@ -132,14 +123,9 @@ class CategoryPageViewModel @AssistedInject constructor(
                 index
             )
         }
-        Log.d("DD", items1.toString())
 
         updateCategoryDataUseCase(items1).fold(
             onSuccess = {
-                Log.d("DD", "Success")
-                updateIfForm {
-                    it.copy(bottomSheetCategoryItemsState = false)
-                }
                 function(s.item.category.id)
             },
             onFailure = { error ->
@@ -158,7 +144,6 @@ class CategoryPageViewModel @AssistedInject constructor(
                         it.copy(
                             item = item,
                             sheetData = CategorySheetItem("", items),
-                            bottomSheetCategoryItemsState = false,
                             dialogContent = null,
                             errorMessage = null
                         )
@@ -203,24 +188,32 @@ class CategoryPageViewModel @AssistedInject constructor(
 
     private fun saveCategory(function: () -> Unit) = viewModelScope.launch {
         val s = _state.value as? CategoryPageUiState.CategoryForm ?: return@launch
-        val id = s.item.category.id
-        val items = s.item.items.map {
-            DataTypeTrainings(
-                typeId = id,
-                exerciseId = it.id,
-                orderIndex = it.orderIndex
+
+        if (s.item.category.name.isEmpty())  updateIfForm { it.copy(isError = true) }
+        else if (checkNameCategoryExistsUseCase(s.item.category.name, s.item.category.id).getOrElse { true }){
+            updateIfForm { it.copy(isError = true) }
+        }
+        else {
+            val id = s.item.category.id
+            val items = s.item.items.map {
+                DataTypeTrainings(
+                    typeId = id,
+                    exerciseId = it.id,
+                    orderIndex = it.orderIndex
+                )
+            }
+
+            insertCategoryUseCase(s.item.category, items).fold(
+                onSuccess = { id1 ->
+                    updateIfForm { it.copy(item = it.item.copy(category = it.item.category.copy(id = id1))) }
+                    Log.d("ddd", id1.toString())
+                    function()
+                },
+                onFailure = { error ->
+                    updateIfForm { it.copy(isError = true, errorMessage = error.toString()) }
+                }
             )
         }
-
-        insertCategoryUseCase(s.item.category, items).fold(
-            onSuccess = { id1 ->
-                updateIfForm { it.copy(item = it.item.copy(category = it.item.category.copy(id = id1))) }
-                function()
-            },
-            onFailure = { error ->
-                _state.value = CategoryPageUiState.Error(error.toString())
-            }
-        )
     }
 
     private fun deleteExercise(exerciseId: Int?) {

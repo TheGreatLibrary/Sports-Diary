@@ -28,26 +28,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
 import com.sinya.projects.sportsdiary.ui.features.HeaderInfo
-import com.sinya.projects.sportsdiary.utils.getString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDropdownMenu(
-    items: List<TypeTraining>,
+    items: List<TypeTraining?>,
     title: String,
-    selectedItem: TypeTraining,
+    selectedItem: TypeTraining?,
     onOpenMenu: () -> Unit,
-    onSelectedCategory: (TypeTraining) -> Unit,
+    onSelectedCategory: (TypeTraining?) -> Unit,
     onInfoClick: () -> Unit,
     onPlusClick: () -> Unit
 ) {
-    val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     val rotation by animateFloatAsState(if (expanded) 180f else 0f, label = "")
 
@@ -82,7 +80,7 @@ fun CustomDropdownMenu(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = context.getString(selectedItem.name),
+                            text = selectedItem?.name ?: stringResource(R.string.not_category),
                             modifier = Modifier.fillMaxWidth(),
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodyLarge,
@@ -108,7 +106,7 @@ fun CustomDropdownMenu(
                         items.forEach { item ->
                             DropdownMenuItem(
                                 text = {
-                                    Text(text = context.getString(item.name))
+                                    Text(text = item?.name ?: stringResource(R.string.not_category))
                                 },
                                 onClick = {
                                     onSelectedCategory(item)

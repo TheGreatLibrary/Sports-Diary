@@ -48,6 +48,7 @@ interface TrainingRepository {
     suspend fun getCategoryEntity(id: Int?): Result<CategoryEntity>
     suspend fun insertCategory(item: TypeTraining, exercises: List<DataTypeTrainings>): Result<Int>
     suspend fun updateDataCategory(items: List<DataTypeTrainings>): Result<Int>
+    suspend fun checkNameCategoryExists(name: String, id: Int): Result<Boolean>
 }
 
 
@@ -193,12 +194,10 @@ class TrainingRepositoryImpl @Inject constructor(
             val locale = Locale.current.language
 
             if (id == null) {
-                val typeCategory = typeTrainingDao.getById(1) ?: return Result.failure(
-                    IllegalStateException("TrainingCategory is not found")
-                )
+                val typeCategory = typeTrainingDao.getById(null)
 
                 val listData =
-                    trainingDao.getExercisesByCategoryIdWithLastData(typeCategory.id, locale)
+                    trainingDao.getExercisesByCategoryIdWithLastData(typeCategory?.id, locale)
                         .map { it.toItem() }
 
                 Result.success(
@@ -222,10 +221,10 @@ class TrainingRepositoryImpl @Inject constructor(
                     TrainingEntity(
                         id = training.id,
                         title = training.name,
-                        category = TypeTraining(
+                        category = if (training.categoryId!=null)TypeTraining(
                             training.categoryId,
-                            training.category
-                        ),
+                            training.category?:"not_category"
+                        ) else null,
                         date = training.date,
                         items = listData
                     )
@@ -246,7 +245,8 @@ class TrainingRepositoryImpl @Inject constructor(
 
     override suspend fun getSerialNumOfCategory(typeTraining: Int?): Result<String> {
         return try {
-            Result.success(trainingDao.getSerialNumOfCategory(typeTraining))
+            val result = trainingDao.getSerialNumOfCategory(typeTraining)
+            Result.success(result)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -274,7 +274,6 @@ class TrainingRepositoryImpl @Inject constructor(
 
     override suspend fun deleteCategory(it: TypeTraining): Result<Int> {
         return try {
-            if (it.id==1) return Result.failure(IllegalStateException("Нельзя удалять категорию с id = 1"))
             Result.success(typeTrainingDao.delete(it))
         } catch (e: Exception) {
             Result.failure(e)
@@ -296,7 +295,7 @@ class TrainingRepositoryImpl @Inject constructor(
     override suspend fun getCategoryEntity(id: Int?): Result<CategoryEntity> {
         return try {
             val locale = Locale.current.language
-            val category = typeTrainingDao.getById(id) ?: TypeTraining(0, "")
+            val category = typeTrainingDao.getById(id) ?: TypeTraining(name = "")
             val items = trainingDao.getDataOfTypeTraining(id, locale)
 
             Result.success(CategoryEntity(
@@ -319,6 +318,14 @@ class TrainingRepositoryImpl @Inject constructor(
     override suspend fun updateDataCategory(items: List<DataTypeTrainings>): Result<Int> {
         return try {
             Result.success(typeTrainingDao.insertDataTypeTrainings(items).size)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun checkNameCategoryExists(name: String, id: Int): Result<Boolean> {
+        return try {
+            Result.success(typeTrainingDao.checkIfNameExists(name, id))
         } catch (e: Exception) {
             Result.failure(e)
         }

@@ -41,19 +41,17 @@ class CategoriesViewModel @Inject constructor(
         val currentState = _state.value as? CategoriesUiState.Success ?: return@launch
 
         currentState.deleteDialogId?.let { id ->
-            if (id == 1) {
-                val item = currentState.categories.first { id == it.id }
+            val item = currentState.categories.first { id == it.id }
 
-                deleteCategoryUseCase(item).fold(
-                    onSuccess = {
-                        updateIfSuccess { it.copy(deleteDialogId = null) }
-                        loadData()
-                    },
-                    onFailure = { error ->
-                        updateIfSuccess { it.copy(errorMessage = error.toString()) }
-                    }
-                )
-            }
+            deleteCategoryUseCase(item).fold(
+                onSuccess = {
+                    updateIfSuccess { it.copy(deleteDialogId = null) }
+                    loadData()
+                },
+                onFailure = { error ->
+                    updateIfSuccess { it.copy(errorMessage = error.toString()) }
+                }
+            )
         }
     }
 
@@ -69,9 +67,9 @@ class CategoriesViewModel @Inject constructor(
                             isRefreshing = false
                         )
                     }
-                }
-                else {
-                    _state.value = CategoriesUiState.Success(categories = list, isRefreshing = false)
+                } else {
+                    _state.value =
+                        CategoriesUiState.Success(categories = list, isRefreshing = false)
                 }
             },
             onFailure = { error ->
@@ -82,8 +80,7 @@ class CategoriesViewModel @Inject constructor(
                             isRefreshing = false
                         )
                     }
-                }
-                else {
+                } else {
                     _state.value = CategoriesUiState.Success(
                         errorMessage = error.toString(),
                         isRefreshing = false

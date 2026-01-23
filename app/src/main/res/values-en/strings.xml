@@ -54,7 +54,6 @@
     <string name="new_category">New category</string>
 
     <string name="category_name">Category name</string>
-    <string name="choose_exercises">Choose exercises</string>
     <string name="chosen_n">Selected: %1$d</string>
     <string name="search">Search</string>
     <string name="select_all">Select all</string>
@@ -155,4 +154,11 @@
     <string name="category_with_name">Category %1$s</string>
     <string name="categories_title">Categories</string>
     <string name="categories_description">List of training categories</string>
+
+    <string name="category_description">A workout category defines a specific set of exercises with their order, reps, and weights as customized by the user</string>
+    <string name="put_your_text">Enter exercise/text</string>
+    <string name="choose_exercises">Select exercises</string>
+    <string name="put_your_title">Enter category name</string>
+    <string name="category_name_is_empty">Category name is required and must be unique</string>
+    <string name="add">Add</string>
 </resources>

@@ -31,7 +31,7 @@ class AppViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(1000),
-            initialValue = 0
+            initialValue = null
         )
 
     fun toggleTheme() {
@@ -46,7 +46,7 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun setPlanMorningId(id: Int) {
+    fun setPlanMorningId(id: Int?) {
         viewModelScope.launch {
             dataStoreManager.setPlanMorningId(id)
         }

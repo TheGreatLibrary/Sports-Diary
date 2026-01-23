@@ -11,10 +11,9 @@ sealed interface CategoryPageUiState {
         val item: CategoryEntity,
         val sheetData: CategorySheetItem,
 
-        val bottomSheetCategoryItemsState: Boolean = false,
         val dialogContent: ExerciseDialogContent? = null,
-
-        val errorMessage: String? = null
+        val errorMessage: String? = null,
+        val isError: Boolean = false
     ) : CategoryPageUiState
 
     data object Success : CategoryPageUiState

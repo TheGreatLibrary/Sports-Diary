@@ -41,6 +41,21 @@ class DataStoreManager @Inject constructor(
     suspend fun setLangMode(value: String) = save(LANG_MODE, value)
     fun getLangMode(): Flow<String> = read(LANG_MODE, "ru")
 
-    suspend fun setPlanMorningId(value: Int) = save(PLAN_MORNING_ID, value)
-    fun getPlanMorningId(): Flow<Int> = read(PLAN_MORNING_ID, 0)
+    suspend fun setPlanMorningId(value: Int?) {
+        context.dataStore.edit { settings ->
+            if (value != null) {
+                settings[PLAN_MORNING_ID] = value
+            } else {
+                settings.remove(PLAN_MORNING_ID)
+            }
+        }
+    }
+    fun getPlanMorningId(): Flow<Int?> = context.dataStore.data
+        .map { settings ->
+            if (settings.contains(PLAN_MORNING_ID)) {
+                settings[PLAN_MORNING_ID]
+            } else {
+                null
+            }
+        }
 }

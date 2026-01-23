@@ -34,7 +34,7 @@ import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 
 @Composable
 fun HomeScreen(
-    currentPlanId: Int,
+    currentPlanId: Int?,
     navigateTo: (ScreenRoute) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -60,7 +60,7 @@ fun HomeScreen(
 
 @Composable
 private fun HomeScreenView(
-    currentPlanId: Int,
+    currentPlanId: Int?,
     state: HomeUiState.Success,
     onEvent: (HomeEvent) -> Unit,
     navigateTo: (ScreenRoute) -> Unit
@@ -139,7 +139,6 @@ private fun HomeScreenView(
                         onPlusClick = { navigateTo(ScreenRoute.ProportionPage()) },
                         onItemClick = {},
                         colorCard = MaterialTheme.colorScheme.tertiary
-
                     )
                 }
             }
@@ -147,8 +146,7 @@ private fun HomeScreenView(
 
         SnackbarHost(
             hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center)
         )
     }
 }

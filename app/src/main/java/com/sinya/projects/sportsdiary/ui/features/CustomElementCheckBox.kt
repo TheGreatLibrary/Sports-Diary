@@ -1,9 +1,9 @@
-package com.sinya.projects.sportsdiary.ui.features.trainingConstructor
+package com.sinya.projects.sportsdiary.ui.features
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
 
 @Composable
@@ -21,17 +20,12 @@ fun CustomElementCheckBox(
     ex: ExerciseUi
 ) {
     Row(
-        Modifier
-            .fillMaxWidth()
-            .clickable { onEvent() }
-            .padding(vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
             checked = ex.checked,
-            onCheckedChange = {
-                onEvent()
-            },
+            onCheckedChange = { onEvent() },
             colors = CheckboxDefaults.colors(
                 checkedColor = MaterialTheme.colorScheme.primary,
                 checkmarkColor = MaterialTheme.colorScheme.onPrimaryContainer

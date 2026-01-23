@@ -30,8 +30,8 @@ fun ExerciseData.toItem(): ExerciseItem {
             index = index,
             count = counts.getOrNull(index)?.takeIf { it.isNotBlank() } ?: "0",
             weight = weights.getOrNull(index)?.takeIf { it.isNotBlank() } ?: "0",
-            prevCount = prevCounts.getOrNull(index)?.takeIf { it.isNotBlank() },
-            prevWeight = prevWeights.getOrNull(index)?.takeIf { it.isNotBlank() }
+            prevCount = prevCounts.getOrNull(index)?.takeIf { it.isNotBlank() } ?: "0",
+            prevWeight = prevWeights.getOrNull(index)?.takeIf { it.isNotBlank() } ?: "0",
         )
     }
 

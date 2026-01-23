@@ -43,7 +43,6 @@ import com.sinya.projects.sportsdiary.ui.features.SortedRow
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
 import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
-import com.sinya.projects.sportsdiary.utils.getString
 import java.time.format.DateTimeFormatter
 
 val dateFmt: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
@@ -190,7 +189,7 @@ private fun TrainingsScreenView(
                     SortMode.MUSCLE -> {
                         val categories = remember(state.trainings, state.selectedMode) {
                             listOf(RadioItem(all, null, "")) +
-                                    state.trainings.categories.map { RadioItem(context.getString(it), null, it) }
+                                    state.trainings.categories.map { RadioItem(it ?: context.getString(R.string.not_category), null, it?:"no one") }
                         }
 
                         SortedRow(
@@ -204,7 +203,6 @@ private fun TrainingsScreenView(
                             shape = MaterialTheme.shapes.extraLarge
                             )
                         Spacer(Modifier.height(20.dp))
-
                     }
                 }
             }
@@ -219,7 +217,7 @@ private fun TrainingsScreenView(
                     modifier = Modifier.padding(bottom = 8.dp),
                     id = it.id,
                     title = stringResource(R.string.training_number, it.name),
-                    description = "${context.getString(it.category)} • $dateText",
+                    description = "${it.category?: stringResource(R.string.not_category)} • $dateText",
                     onTrainingClick = { onTrainingClick(it.id) },
                     onDelete = { id -> onEvent(TrainingEvent.OpenDialog(id)) },
                 )

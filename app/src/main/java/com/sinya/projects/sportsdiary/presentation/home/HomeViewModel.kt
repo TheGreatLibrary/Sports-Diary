@@ -1,6 +1,5 @@
 package com.sinya.projects.sportsdiary.presentation.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
@@ -56,7 +55,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun morningExercisesButtonClick(morningState: Boolean, date: LocalDate, planId: Int) {
+    private fun morningExercisesButtonClick(morningState: Boolean, date: LocalDate, planId: Int?) {
         viewModelScope.launch {
             markDayMorningExerciseUseCase(
                 morningState = morningState,

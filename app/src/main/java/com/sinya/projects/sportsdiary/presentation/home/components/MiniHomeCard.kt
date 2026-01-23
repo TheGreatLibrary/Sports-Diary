@@ -13,14 +13,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.main.ScreenRoute
 import com.sinya.projects.sportsdiary.domain.model.Training
+import com.sinya.projects.sportsdiary.main.ScreenRoute
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
-import com.sinya.projects.sportsdiary.utils.getString
 import kotlinx.coroutines.launch
 
 @Composable
@@ -63,8 +61,7 @@ fun MiniHomeCard(
                 }
 
             }
-        }
-        else {
+        } else {
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
@@ -79,8 +76,6 @@ private fun MeasurementItem(
     item: Training,
     onClick: (Int) -> Unit
 ) {
-    val context = LocalContext.current
-
     AnimationCard(
         modifier = Modifier.fillMaxWidth(),
         onClick = { onClick(item.id) },
@@ -90,9 +85,9 @@ private fun MeasurementItem(
         Text(
             text = stringResource(
                 R.string.workout_type_training,
-                context.getString(item.category),
+                item.category ?: stringResource(R.string.not_category),
                 item.name,
-                item.date.toString()
+                item.date
             ),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer,

@@ -28,8 +28,8 @@ import com.sinya.projects.sportsdiary.ui.features.CardWithArrow
 fun MorningExercisesScreen(
     vm: MorningExercisesViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    currentPlanId: Int,
-    onPlanClick: (Int) -> Unit
+    currentPlanId: Int?,
+    onPlanClick: (Int?) -> Unit
 ) {
     when (val state = vm.state.value) {
         is MorningExercisesUiState.Loading -> PlaceholderScreen()
@@ -49,8 +49,8 @@ private fun MorningExercisesView(
     state: MorningExercisesUiState.Success,
     onEvent: (MorningExercisesUiEvent) -> Unit,
     onBackClick: () -> Unit,
-    currentPlanId: Int,
-    onPlanClick: (Int) -> Unit
+    currentPlanId: Int?,
+    onPlanClick: (Int?) -> Unit
 ) {
     Column(
         modifier = Modifier

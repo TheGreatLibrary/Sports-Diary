@@ -32,7 +32,7 @@ import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.CustomTextField
-import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.CustomElementCheckBox
+import com.sinya.projects.sportsdiary.ui.features.CustomElementCheckBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,8 +94,8 @@ private fun TrainingBottomSheetCategoryView(
             onTrailingClick = { onEvent(TrainingCategoryEvent.OnNameChange("")) },
             keyboardType = KeyboardType.Text,
             modifier = Modifier.fillMaxWidth(),
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            contentColor = MaterialTheme.colorScheme.onSurface
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
         Text(
             text = stringResource(R.string.choose_exercises),
@@ -120,8 +120,8 @@ private fun TrainingBottomSheetCategoryView(
             },
             keyboardType = KeyboardType.Text,
             modifier = Modifier.fillMaxWidth(),
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            contentColor = MaterialTheme.colorScheme.onSurface
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
 //                    CustomElementTriCheck(
 //                        triState = triState,

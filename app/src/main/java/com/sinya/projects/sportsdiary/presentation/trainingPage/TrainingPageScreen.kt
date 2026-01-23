@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -24,18 +25,17 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.glance.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.domain.model.ExerciseItem
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
+import com.sinya.projects.sportsdiary.presentation.categoryPage.components.DragOverlay
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.CustomDropdownMenu
-import com.sinya.projects.sportsdiary.presentation.trainingPage.components.DragOverlay
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.SwipeTrainingCard
+import com.sinya.projects.sportsdiary.presentation.trainingPage.components.SwipeTrainingCardContent
 import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.TrainingCategorySheet
 import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetExercises.TrainingExerciseSheet
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
@@ -157,7 +157,6 @@ private fun TrainingPage(
                 items = state.item.items,
                 key = { it.id }
             ) { item ->
-
                 val isDragging = reorderState.draggedItemId == item.id
 
                 SwipeTrainingCard(
@@ -210,11 +209,22 @@ private fun TrainingPage(
         }
 
 
-        DragOverlay<ExerciseItem>(
+        DragOverlay(
             reorderState = reorderState,
-            items = state.item.items,
+            index = state.item.items.indexOfFirst { it.id == reorderState.draggedItemId },
             listState = listState,
-        )
+        ) {
+            SwipeTrainingCardContent(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                expanded = false,
+                onExpanded = { },
+                item = state.item.items.find { it.id == reorderState.draggedItemId } ?:  state.item.items.first(),
+                onInfoClick = {},
+                onPlusClick = {},
+                onEditSet = { _, _, _, _ -> },
+                onDeleteSet = { _, _ -> }
+            )
+        }
 
         state.dialogContent?.let {
             GuideDialog(

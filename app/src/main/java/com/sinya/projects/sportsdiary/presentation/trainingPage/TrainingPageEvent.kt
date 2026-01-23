@@ -8,7 +8,7 @@ sealed interface TrainingPageEvent {
     data class Delete(val id: Int) : TrainingPageEvent
     data class DeleteSet(val id: Int, val index: Int) : TrainingPageEvent
     data class AddSet(val id: Int) : TrainingPageEvent
-    data class OnSelectedCategory(val category: TypeTraining) : TrainingPageEvent
+    data class OnSelectedCategory(val category: TypeTraining?) : TrainingPageEvent
     data class EditSet(val exId: Int, val index: Int, val value: String?, val valState: Boolean) : TrainingPageEvent
     data class OpenDialog(val id: Int?) : TrainingPageEvent
     data class CalendarState(val state: Boolean) : TrainingPageEvent

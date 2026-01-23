@@ -22,7 +22,6 @@ import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
-import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetExercises.TrainingExerciseEvent
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
 import com.sinya.projects.sportsdiary.ui.features.CustomTextField
 
@@ -89,8 +88,8 @@ private fun ExercisesView(
             },
             keyboardType = KeyboardType.Text,
             modifier = Modifier.fillMaxWidth(),
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            contentColor = MaterialTheme.colorScheme.onSurface
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
         if (exercises.isEmpty()) {
             Text(

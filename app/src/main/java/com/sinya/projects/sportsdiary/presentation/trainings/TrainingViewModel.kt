@@ -91,7 +91,7 @@ class TrainingViewModel @Inject constructor(
                     id = item.id,
                     typeId = item.categoryId,
                     serialNum = item.name.toInt(),
-                    date = item.date.toString()
+                    date = item.date
                 )
             }
 

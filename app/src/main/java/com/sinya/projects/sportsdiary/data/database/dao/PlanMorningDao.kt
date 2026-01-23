@@ -20,11 +20,8 @@ interface PlanMorningDao {
     @Update
     suspend fun updatePlan(item: PlanMornings)
 
-    @Transaction
-    suspend fun deletePlan(item: PlanMornings) {
-        if (item.id != 0) deletePlanMorning(item)
-        else return
-    }
+    @Delete
+    suspend fun deletePlan(item: PlanMornings)
 
     @Delete
     suspend fun deletePlanMorning(item: PlanMornings)

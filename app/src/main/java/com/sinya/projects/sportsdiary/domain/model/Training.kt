@@ -5,8 +5,8 @@ import java.time.LocalDate
 data class Training(
     val id: Int,
     val name: String,
-    val categoryId: Int,
-    val category: String,
+    val categoryId: Int?,
+    val category: String?,
     val date: String
 )
 
@@ -16,11 +16,20 @@ val List<Training>.years: List<Int>
         .distinct()
         .sortedDescending()
 
-val List<Training>.categories: List<String>
+//val List<Training>.categories: List<String>
+//    get() = this
+//        .map { it.category }
+//        .distinct()
+//        .sortedDescending()
+
+val List<Training>.categories: List<String?>
     get() = this
         .map { it.category }
         .distinct()
-        .sortedDescending()
+        .sortedWith(
+            compareBy<String?> { it == null }
+                .thenByDescending { it }
+        )
 
 fun List<Training>.monthsForYear(year: Int?): List<Int> {
     return this
@@ -47,7 +56,7 @@ fun List<Training>.filterByYearMonth(year: Int? = null, month: Int? = null): Lis
 fun List<Training>.filterByMuscle(category: String?): List<Training> {
     return this
         .filter { training ->
-            category.isNullOrEmpty() || training.category == category
+            category.isNullOrEmpty() || training.category == category || (category == "no one" && training.category == null)
         }
         .sortedByDescending { it.localDateOrNull() }
 }

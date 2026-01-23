@@ -43,10 +43,10 @@ interface TypeTrainingDao {
 
         deleteDataTypeTrainingByTypeId(typeId)
 
-        if(exerciseIds.isNotEmpty() && typeId!=1) {
-            Log.d("D",insertDataTypeTrainings(exerciseIds.map {
+        if(exerciseIds.isNotEmpty()) {
+            insertDataTypeTrainings(exerciseIds.map {
                 it.copy(typeId = typeId)
-            }).toString())
+            })
         }
 
         return typeId
@@ -61,4 +61,6 @@ interface TypeTrainingDao {
     @Query("DELETE FROM data_type_trainings WHERE type_id = :typeId")
     suspend fun deleteDataTypeTrainingByTypeId(typeId: Int)
 
+    @Query("SELECT COUNT(*) FROM type_training WHERE name = :name AND id != :excludeId")
+    suspend fun checkIfNameExists(name: String, excludeId: Int): Boolean
 }

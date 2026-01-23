@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -159,8 +158,8 @@ private fun MorningNoteView(
                                 onTrailingClick = { onEvent(ModalSheetNoteEvent.ClearQuery) },
                                 keyboardType = KeyboardType.Text,
                                 modifier = Modifier.fillMaxWidth(),
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                contentColor = MaterialTheme.colorScheme.onSurface
+                                contentColor = MaterialTheme.colorScheme.onSurface,
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer
                             )
                         }
                         HorizontalDivider()
@@ -176,8 +175,8 @@ private fun MorningNoteView(
                 onTrailingClick = { onEvent(ModalSheetNoteEvent.ClearQuery) },
                 keyboardType = KeyboardType.Text,
                 modifier = Modifier.fillMaxWidth(),
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
             )
         }
 

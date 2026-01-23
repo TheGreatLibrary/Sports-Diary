@@ -71,6 +71,7 @@ fun SwipeTrainingCard(
 
 @Composable
 fun SwipeTrainingCardContent(
+    modifier: Modifier = Modifier,
     expanded: Boolean,
     onExpanded: (Boolean) -> Unit,
     item: ExerciseItem,
@@ -80,7 +81,7 @@ fun SwipeTrainingCardContent(
     onDeleteSet: (Int, Int) -> Unit,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(bottom = 20.dp)
             .clip(shape = MaterialTheme.shapes.small)
             .clickable { onExpanded(!expanded) },

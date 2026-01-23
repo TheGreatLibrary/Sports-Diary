@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,17 +36,20 @@ import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.domain.model.ExerciseItemWithoutList
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
-import com.sinya.projects.sportsdiary.presentation.categoryPage.components.CategoryModalSheet
+import com.sinya.projects.sportsdiary.presentation.categoryPage.components.CategorySheetContent
 import com.sinya.projects.sportsdiary.presentation.categoryPage.components.DragOverlay
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.CustomTextField
+import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
+import com.sinya.projects.sportsdiary.ui.features.SwipeCardContent
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
 import com.sinya.projects.sportsdiary.ui.features.rememberReorderState
+import kotlinx.coroutines.launch
 
 @Composable
 fun CategoryPageScreen(
@@ -77,6 +83,7 @@ fun CategoryPageScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryPageView(
     state: CategoryPageUiState.CategoryForm,
@@ -86,6 +93,7 @@ private fun CategoryPageView(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
+    val scaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
     val reorderState = rememberReorderState(
         listState = listState,
@@ -105,10 +113,9 @@ private fun CategoryPageView(
         }
     }
 
-    CategoryModalSheet(
-        state,
-        onEvent,
-        filtered
+    ScaffoldBottomSheet(
+        scaffoldState = scaffoldState,
+        sheetContent = { CategorySheetContent(state, filtered, onEvent, scaffoldState) }
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -136,10 +143,14 @@ private fun CategoryPageView(
                         value = state.item.category.name,
                         onValueChange = { s -> onEvent(CategoryPageEvent.OnValueChange(s)) },
                         onTrailingClick = { onEvent(CategoryPageEvent.OnValueChange("")) },
+                        placeholder = stringResource(R.string.put_your_title),
+                        shape = MaterialTheme.shapes.extraLarge,
                         keyboardType = KeyboardType.Text,
                         modifier = Modifier.fillMaxWidth(),
+                        contentColor = MaterialTheme.colorScheme.onSurface,
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        contentColor = MaterialTheme.colorScheme.onSurface
+                        isError = state.isError,
+                        errorMessage = stringResource(R.string.category_name_is_empty)
                     )
                     Spacer(Modifier.height(20.dp))
                 }
@@ -180,7 +191,12 @@ private fun CategoryPageView(
                         contentAlignment = Alignment.Center
                     ) {
                         CustomButton(
-                            onClick = { onEvent(CategoryPageEvent.OpenBottomSheetTraining(!state.bottomSheetCategoryItemsState)) },
+                            onClick = {
+                                scope.launch {
+                                    onEvent(CategoryPageEvent.OpenBottomSheetTraining)
+                                    scaffoldState.bottomSheetState.expand()
+                                }
+                            },
                             text = stringResource(R.string.add_exercise),
                         )
                     }
@@ -188,12 +204,18 @@ private fun CategoryPageView(
                 }
             }
 
-
-            DragOverlay<ExerciseItemWithoutList>(
+            DragOverlay(
                 reorderState = reorderState,
-                items = state.item.items,
-                listState = listState,
-            )
+                index = state.item.items.indexOfFirst { it.id == reorderState.draggedItemId },
+                listState = listState
+            ) {
+                SwipeCardContent(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    title = state.item.items.find { it.id == reorderState.draggedItemId }?.title ?: "",
+                    description = null,
+                    onTrainingClick = { }
+                )
+            }
 
             state.dialogContent?.let {
                 GuideDialog(

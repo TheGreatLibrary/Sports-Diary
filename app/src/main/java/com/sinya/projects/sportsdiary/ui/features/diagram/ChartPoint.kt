@@ -35,7 +35,7 @@ fun List<ChartPoint>.groupPointsByTimeMode(mode: TypeTime): List<Pair<String, In
         TypeTime.MONTHS -> {
             groupBy { point ->
                 val date = LocalDate.parse(point.xDate)
-                "${date.year} год"
+                "${date.year}"
             }.map { (commonPart, group) ->
                 Pair(commonPart, group.size)
             }
@@ -45,7 +45,7 @@ fun List<ChartPoint>.groupPointsByTimeMode(mode: TypeTime): List<Pair<String, In
             groupBy { point ->
                 val date = LocalDate.parse(point.xDate)
                 val year = date.year
-                val decade = "${year / 100 + 1} век" // 2020s, 2030s и т.д.
+                val decade = "${year / 10 * 10}s" // 2020s, 2030s и т.д.
                 decade
             }.map { (commonPart, group) ->
                 Pair(commonPart, group.size)

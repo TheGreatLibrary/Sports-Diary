@@ -50,7 +50,7 @@ interface TrainingsDao {
             strftime('%Y-%m-%d', t.date),
             strftime('%Y-%m-%d', 'now','localtime')
         ) AS date
-        FROM trainings t JOIN type_training tt ON t.type_id = tt.id
+        FROM trainings t LEFT JOIN type_training tt ON t.type_id = tt.id
     """)
     suspend fun getList() : List<Training>
 
@@ -68,8 +68,8 @@ interface TrainingsDao {
         val id = upsertTraining(
             Trainings(
                 id = item.id?:0,
-                typeId = item.category.id,
-                serialNum = item.title.ifEmpty { getSerialNumOfCategory(item.category.id) }.toIntOrNull() ?: 0,
+                typeId = if (item.category!=null) item.category.id else null,
+                serialNum = item.title.ifEmpty { getSerialNumOfCategory(item.category?.id) }.toIntOrNull() ?: 0,
                 date = item.date
             )
         ).toInt().let { id ->
@@ -102,8 +102,8 @@ interface TrainingsDao {
 
     @Query("""
         SELECT COUNT(*) + 1 
-        FROM trainings tx 
-        WHERE tx.type_id = COALESCE(:categoryId, 1)
+        FROM trainings t 
+        WHERE COALESCE(t.type_id, -1) = COALESCE(:categoryId, -1)
     """)
     suspend fun getSerialNumOfCategory(categoryId: Int?) : String
 
@@ -120,13 +120,13 @@ interface TrainingsDao {
         SELECT 
             t.id AS id,
             COALESCE(t.serial_num, t.id) AS name,
-            COALESCE(t.type_id, 1) AS categoryId,
-            COALESCE(tt.name, 'not_category') AS category,
+            t.type_id AS categoryId,
+            tt.name AS category,
             COALESCE(
                 strftime('%Y-%m-%d', t.date),
                 strftime('%Y-%m-%d', 'now','localtime')
             ) AS date
-        FROM trainings t JOIN type_training tt ON t.type_id = tt.id
+        FROM trainings t LEFT JOIN type_training tt ON t.type_id = tt.id
         WHERE t.id = :id
     """)
     suspend fun getById(id: Int): Training?
@@ -209,7 +209,7 @@ interface TrainingsDao {
             strftime('%Y-%m-%d', t.date),
             strftime('%Y-%m-%d', 'now','localtime')
         ) AS date
-        FROM trainings t JOIN type_training tt ON t.type_id = tt.id
+        FROM trainings t LEFT JOIN type_training tt ON t.type_id = tt.id
         WHERE date >= :startDate AND date < :endDate
         ORDER BY date
     """)

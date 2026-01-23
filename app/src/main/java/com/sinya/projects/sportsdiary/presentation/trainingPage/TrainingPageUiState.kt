@@ -9,7 +9,7 @@ sealed interface TrainingPageUiState {
 
     data class TrainingForm(
         val item: TrainingEntity,
-        val categories: List<TypeTraining> = emptyList(),
+        val categories: List<TypeTraining?> = emptyList(),
 
         val bottomSheetCategoryStatus: Boolean = false,
         val bottomSheetTrainingStatus: Boolean = false,

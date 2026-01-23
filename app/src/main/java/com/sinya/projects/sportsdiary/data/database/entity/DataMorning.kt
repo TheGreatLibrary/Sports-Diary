@@ -13,7 +13,7 @@ import androidx.room.PrimaryKey
             entity = PlanMornings::class,
             parentColumns = ["id"],
             childColumns = ["plan_id"],
-            onDelete = ForeignKey.SET_DEFAULT
+            onDelete = ForeignKey.SET_NULL
         ),
     ],
     indices = [
@@ -25,6 +25,6 @@ import androidx.room.PrimaryKey
 data class DataMorning(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "note") val note: String?,
-    @ColumnInfo(name = "date") val date: String, // Лучше использовать Long timestamp
-    @ColumnInfo(name = "plan_id", defaultValue = "0") val planId: Int = 0
+    @ColumnInfo(name = "date") val date: String,
+    @ColumnInfo(name = "plan_id") val planId: Int?
 )

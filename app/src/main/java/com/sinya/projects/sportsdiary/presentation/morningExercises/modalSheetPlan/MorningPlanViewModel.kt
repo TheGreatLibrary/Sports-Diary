@@ -19,11 +19,13 @@ class MorningPlanViewModel @Inject constructor(
     val state: State<MorningPlanUiState> = _state
 
     init {
-        viewModelScope.launch {
-            _state.value = MorningPlanUiState.Success(
-                items = morningRepo.getPlans()
-            )
-        }
+        getPlans()
+    }
+
+    private fun getPlans() = viewModelScope.launch {
+        _state.value = MorningPlanUiState.Success(
+            items = listOf(null) + morningRepo.getPlans()
+        )
     }
 
     fun onEvent(event: ModalSheetPlanEvent) {
@@ -43,7 +45,7 @@ class MorningPlanViewModel @Inject constructor(
                         visibleAddField = false,
                         queryName = "",
                         queryDescription = "",
-                        items = morningRepo.getPlans()
+                        items = listOf(null) + morningRepo.getPlans()
                     )
                 }
             }
@@ -57,33 +59,35 @@ class MorningPlanViewModel @Inject constructor(
             }
             is ModalSheetPlanEvent.DeletePlan -> {
                 viewModelScope.launch {
-                    val item = currentState.items.first { it.id == event.id }
-                    morningRepo.deletePlanMorning(item)
+                    val item = currentState.items.first { it?.id == event.id }
+                    item?.let { morningRepo.deletePlanMorning(item) }
 
                     _state.value = currentState.copy(
                         visibleAddField = false,
                         visibleEditFieldId = null,
                         queryName = "",
                         queryDescription = "",
-                        items = morningRepo.getPlans()
+                        items = listOf(null) + morningRepo.getPlans()
                     )
                 }
             }
             is ModalSheetPlanEvent.EditPlan -> {
                 viewModelScope.launch {
-                    val item = currentState.items.first { it.id == currentState.visibleEditFieldId }
-                    morningRepo.updatePlanMorning(
-                        item.copy(
-                            name = currentState.queryName,
-                            description = currentState.queryDescription
+                    val item = currentState.items.first { it?.id == currentState.visibleEditFieldId }
+                    item?.let {
+                        morningRepo.updatePlanMorning(
+                            item.copy(
+                                name = currentState.queryName,
+                                description = currentState.queryDescription
+                            )
                         )
-                    )
+                    }
                     _state.value = currentState.copy(
                         visibleAddField = false,
                         visibleEditFieldId = null,
                         queryName = "",
                         queryDescription = "",
-                        items = morningRepo.getPlans()
+                        items = listOf(null) + morningRepo.getPlans()
                     )
                 }
             }
@@ -106,13 +110,16 @@ class MorningPlanViewModel @Inject constructor(
                 )
             }
             is ModalSheetPlanEvent.OpenEditPlanField -> {
-                val item = currentState.items.first { it.id == event.id }
-                _state.value = currentState.copy(
-                    queryDescription = item.description.toString(),
-                    queryName = item.name,
-                    visibleAddField = false,
-                    visibleEditFieldId = event.id
-                )
+                val item = currentState.items.first { it?.id == event.id }
+                item?.let {
+                    _state.value = currentState.copy(
+                        queryDescription = item.description.toString(),
+                        queryName = item.name,
+                        visibleAddField = false,
+                        visibleEditFieldId = event.id
+                    )
+                }
+
             }
         }
     }

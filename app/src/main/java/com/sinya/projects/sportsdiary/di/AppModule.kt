@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.execSQL
 import com.sinya.projects.sportsdiary.data.database.AppDatabase
 import com.sinya.projects.sportsdiary.data.database.dao.DataMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.ExercisesDao
@@ -127,6 +128,99 @@ object AppModule {
                 """.trimIndent())
             }
         }
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""
+                    CREATE TABLE trainings_new (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        serial_num INTEGER NOT NULL,
+                        type_id INTEGER NULL,
+                        date TEXT NOT NULL,
+                        FOREIGN KEY (type_id)
+                        REFERENCES type_training(id)
+                        ON DELETE SET NULL
+                    )""".trimIndent()
+                )
+
+                db.execSQL("""
+                    INSERT INTO trainings_new (id, serial_num, type_id, date)
+                    SELECT
+                        t.id,
+                        t.serial_num,
+                        CASE
+                            WHEN t.type_id IS NULL THEN NULL
+                            WHEN t.type_id NOT IN (SELECT id FROM type_training) THEN NULL
+                            WHEN t.type_id = 1 THEN NULL
+                            ELSE t.type_id
+                        END,
+                        t.date
+                    FROM trainings t
+                    """.trimIndent()
+                )
+
+                db.execSQL("DROP TABLE trainings")
+
+                db.execSQL("ALTER TABLE trainings_new RENAME TO trainings")
+
+                db.execSQL("DELETE FROM type_training WHERE id = 1")
+
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_type_id ON trainings (type_id)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_date ON trainings (date DESC)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_type_id_date ON trainings (type_id, date)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_date_serial_num ON trainings (date, serial_num)")
+
+                db.execSQL("""
+                    DELETE FROM data_training
+                    WHERE training_id NOT IN (SELECT id FROM trainings)
+                    """.trimIndent()
+                )
+
+                db.execSQL("""
+                    DELETE FROM data_type_trainings
+                    WHERE type_id NOT IN (SELECT id FROM type_training)
+                    """.trimIndent()
+                )
+
+                db.execSQL("""
+                    CREATE TABLE data_mornings_new (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        note TEXT,
+                        date TEXT NOT NULL,
+                        plan_id INTEGER NULL,
+                        FOREIGN KEY (plan_id)
+                        REFERENCES plan_mornings(id)
+                        ON DELETE SET NULL
+                    )""".trimIndent()
+                )
+
+                db.execSQL("""
+                    INSERT INTO data_mornings_new (id, note, date, plan_id)
+                    SELECT
+                        id,
+                        note,
+                        date,
+                        CASE
+                            WHEN plan_id NOT IN (SELECT id FROM plan_mornings) THEN NULL
+                            ELSE plan_id
+                        END
+                    FROM data_mornings
+                    """.trimIndent()
+                )
+
+                db.execSQL("DROP TABLE data_mornings")
+                db.execSQL("ALTER TABLE data_mornings_new RENAME TO data_mornings")
+
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_data_mornings_plan_id ON data_mornings (plan_id)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_data_mornings_date ON data_mornings (date DESC)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_data_mornings_date_plan_id ON data_mornings (date, plan_id)")
+
+                db.execSQL("""
+                    DELETE FROM plan_mornings
+                    WHERE id = 0
+                    """.trimIndent()
+                )
+            }
+        }
 
         return Room.databaseBuilder(
             context,
@@ -138,6 +232,7 @@ object AppModule {
         .addMigrations(MIGRATION_2_3)
         .addMigrations(MIGRATION_3_4)
         .addMigrations(MIGRATION_4_5)
+        .addMigrations(MIGRATION_5_6)
         .build()
     }
 

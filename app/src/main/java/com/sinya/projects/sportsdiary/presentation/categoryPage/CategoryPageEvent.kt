@@ -1,7 +1,7 @@
 package com.sinya.projects.sportsdiary.presentation.categoryPage
 
 sealed interface CategoryPageEvent {
-    data class OpenBottomSheetTraining(val state: Boolean) : CategoryPageEvent
+    data object OpenBottomSheetTraining : CategoryPageEvent
     data class Delete(val id: Int) : CategoryPageEvent
     data class OnValueChange(val name: String) : CategoryPageEvent
     data class OpenDialog(val id: Int?) : CategoryPageEvent

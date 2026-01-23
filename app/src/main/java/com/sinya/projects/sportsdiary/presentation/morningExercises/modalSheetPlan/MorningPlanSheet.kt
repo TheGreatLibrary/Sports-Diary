@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -44,8 +43,8 @@ import com.sinya.projects.sportsdiary.utils.getString
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MorningPlanSheet(
-    currentPlanId: Int,
-    onPlanClick: (Int) -> Unit,
+    currentPlanId: Int?,
+    onPlanClick: (Int?) -> Unit,
     onDismiss: () -> Unit,
     vm: MorningPlanViewModel = hiltViewModel()
 ) {
@@ -76,20 +75,19 @@ fun MorningPlanSheet(
 
 @Composable
 private fun MorningPlanView(
-    currentPlanId: Int,
-    onPlanClick: (Int) -> Unit,
+    currentPlanId: Int?,
+    onPlanClick: (Int?) -> Unit,
     state: MorningPlanUiState.Success,
     onEvent: (ModalSheetPlanEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val context = LocalContext.current
     val onClickBtn = {
         if (state.visibleAddField) onEvent(ModalSheetPlanEvent.AddPlan)
         else if (state.visibleEditFieldId != null) onEvent(ModalSheetPlanEvent.EditPlan(state.visibleEditFieldId))
         else onEvent(ModalSheetPlanEvent.OpenAddPlanField)
     }
-    val textBtn = if (state.visibleEditFieldId==null) stringResource(R.string.create)
-                        else stringResource(R.string.save)
+    val textBtn = if (state.visibleEditFieldId == null) stringResource(R.string.create)
+    else stringResource(R.string.save)
 
     Column(
         Modifier
@@ -119,10 +117,10 @@ private fun MorningPlanView(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Row() {
+                        Row {
                             RadioButton(
-                                selected = it.id == currentPlanId,
-                                onClick = { onPlanClick(it.id) }
+                                selected = it?.id == currentPlanId,
+                                onClick = { onPlanClick(it?.id) }
                             )
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -133,47 +131,60 @@ private fun MorningPlanView(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = context.getString(it.name),
+                                        text = it?.name ?: stringResource(R.string.base_plan),
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         modifier = Modifier.fillMaxWidth(0.8f)
                                     )
-                                    AnimationIcon(
-                                        onClick = { onEvent(ModalSheetPlanEvent.OpenEditPlanField(it.id)) },
-                                        icon = painterResource(R.drawable.morn_edit),
-                                        description = "update",
-                                        isSelected = true,
-                                        size = 28.dp,
-                                        shape = MaterialTheme.shapes.small,
-                                        selectedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                        selectedContentColor = MaterialTheme.colorScheme.onSurface
-                                    )
-
+                                    it?.let {
+                                        AnimationIcon(
+                                            onClick = {
+                                                onEvent(
+                                                    ModalSheetPlanEvent.OpenEditPlanField(
+                                                        it.id
+                                                    )
+                                                )
+                                            },
+                                            icon = painterResource(R.drawable.morn_edit),
+                                            description = "update",
+                                            isSelected = true,
+                                            size = 28.dp,
+                                            shape = MaterialTheme.shapes.small,
+                                            selectedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                            selectedContentColor = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
                                 }
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                 ) {
                                     Text(
-                                        text = context.getString(it.description ?: stringResource(R.string.not_found_data)),
+                                        text = it?.description ?: stringResource(R.string.base_description),
                                         style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
                                         color = MaterialTheme.colorScheme.onPrimary,
                                         modifier = Modifier.fillMaxWidth(0.8f)
                                     )
-                                    AnimationIcon(
-                                        onClick = { onEvent(ModalSheetPlanEvent.DeletePlan(it.id)) },
-                                        icon = painterResource(R.drawable.morn_trash),
-                                        description = "delete",
-                                        isSelected = true,
-                                        size = 28.dp,
-                                        shape = MaterialTheme.shapes.small,
-                                        selectedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                        selectedContentColor = MaterialTheme.colorScheme.onSurface
-                                    )
+                                    it?.let {
+                                        AnimationIcon(
+                                            onClick = {
+                                                onEvent(ModalSheetPlanEvent.DeletePlan(it.id))
+                                                onPlanClick(null)
+                                            },
+                                            icon = painterResource(R.drawable.morn_trash),
+                                            description = "delete",
+                                            isSelected = true,
+                                            size = 28.dp,
+                                            shape = MaterialTheme.shapes.small,
+                                            selectedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                            selectedContentColor = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
                                 }
                             }
                         }
-                        AnimatedVisibility(state.visibleEditFieldId == it.id) {
+
+                        AnimatedVisibility(it!=null && state.visibleEditFieldId == it.id) {
                             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                 CustomTextFieldWithLabel(
                                     label = stringResource(R.string.name),

@@ -12,15 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.main.ScreenRoute
 import com.sinya.projects.sportsdiary.domain.model.Training
+import com.sinya.projects.sportsdiary.main.ScreenRoute
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
-import com.sinya.projects.sportsdiary.utils.getString
 import kotlinx.coroutines.launch
 
 @Composable
@@ -75,8 +73,6 @@ private fun TrainingItem(
     item: Training,
     onClick: (Int) -> Unit
 ) {
-    val context = LocalContext.current
-
     AnimationCard(
         modifier = Modifier.fillMaxWidth(),
         onClick = { onClick(item.id) },
@@ -86,7 +82,7 @@ private fun TrainingItem(
         Text(
             text = stringResource(
                 R.string.workout_type_training,
-                context.getString(item.category),
+                item.category ?: stringResource(R.string.not_category),
                 item.name,
                 item.date
             ),

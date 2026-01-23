@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
@@ -107,26 +108,40 @@ class TrainingPageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun onSelectedCategory(category: TypeTraining) = viewModelScope.launch {
+    private fun onSelectedCategory(category: TypeTraining?) = viewModelScope.launch {
         val s = _state.value as? TrainingPageUiState.TrainingForm ?: return@launch
 
-        getExercisesByCategoryUseCase(category.id).fold(
-            onSuccess = { items ->
-                val title = getSerialNumOfCategoryUseCase(category.id).getOrElse { s.item.id.toString() }
-                updateIfForm { trainingForm ->
-                    trainingForm.copy(
-                        item = trainingForm.item.copy(
-                            items = items,
-                            title = title,
-                            category = category
+        if (category!=null) {
+            getExercisesByCategoryUseCase(category.id).fold(
+                onSuccess = { items ->
+                    val title = getSerialNumOfCategoryUseCase(category.id).getOrElse { s.item.id.toString() }
+                    updateIfForm { trainingForm ->
+                        trainingForm.copy(
+                            item = trainingForm.item.copy(
+                                items = items,
+                                title = title,
+                                category = category
+                            )
                         )
-                    )
+                    }
+                },
+                onFailure = { error ->
+                    _state.value = TrainingPageUiState.Error(errorMessage = error.toString())
                 }
-            },
-            onFailure = { error ->
-                _state.value = TrainingPageUiState.Error(errorMessage = error.toString())
+            )
+        }
+        else {
+            val title = getSerialNumOfCategoryUseCase(null).getOrElse { s.item.id.toString() }
+            updateIfForm { trainingForm ->
+                trainingForm.copy(
+                    item = trainingForm.item.copy(
+                        items = listOf(),
+                        title = title,
+                        category = category
+                    )
+                )
             }
-        )
+        }
     }
 
     private fun loadData(id: Int?) = viewModelScope.launch {
@@ -137,7 +152,7 @@ class TrainingPageViewModel @AssistedInject constructor(
     private fun getCategoriesList() = viewModelScope.launch {
         getCategoriesListUseCase().fold(
             onSuccess = { list ->
-                updateIfForm { it.copy(categories = list) }
+                updateIfForm { it.copy(categories = listOf(null) + list) }
             },
             onFailure = { error ->
                 _state.value = TrainingPageUiState.Error(errorMessage = error.toString())
@@ -216,7 +231,9 @@ class TrainingPageViewModel @AssistedInject constructor(
                 updateIfForm { it.copy(item = it.item.copy(id = id)) }
                 function()
             },
-            onFailure = { error -> _state.value = TrainingPageUiState.Error(error.toString()) }
+            onFailure = { error ->
+                Log.e("d", error.toString())
+                _state.value = TrainingPageUiState.Error(error.toString()) }
         )
     }
 

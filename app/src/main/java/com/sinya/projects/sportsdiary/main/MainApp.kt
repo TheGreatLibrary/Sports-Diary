@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.main
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -45,7 +46,7 @@ fun MainApp(
     val themeMode by viewModel.themeMode.collectAsState()
     val language by viewModel.language.collectAsState()
     val currentPlanId by viewModel.planId.collectAsState()
-
+    Log.d("plan", currentPlanId.toString())
     updateLocale(language)
     val currentLocale = remember(language) { Locale(language) }
 
@@ -109,7 +110,7 @@ fun MainApp(
 @Composable
 private fun NavGraph(
     navController: NavHostController,
-    currentPlanId: Int,
+    currentPlanId: Int?,
     language: String,
     themeMode: Boolean,
     onBack: () -> Unit,

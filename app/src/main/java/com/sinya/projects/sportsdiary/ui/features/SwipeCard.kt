@@ -55,12 +55,13 @@ fun SwipeCard(
 
 @Composable
 fun SwipeCardContent(
+    modifier: Modifier = Modifier,
     title: String,
     description: String?,
     onTrainingClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.small)
             .clip(MaterialTheme.shapes.small)
