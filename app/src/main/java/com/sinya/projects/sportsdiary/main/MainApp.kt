@@ -176,7 +176,7 @@ private fun NavGraph(
             )
         }
         composable<ScreenRoute.CategoryPage> { entry ->
-            val args = entry.toRoute<ScreenRoute.TrainingPage>()
+            val args = entry.toRoute<ScreenRoute.CategoryPage>()
 
             CategoryPageScreen(
                 id = args.id,
@@ -220,15 +220,10 @@ private fun NavGraph(
         }
         composable<ScreenRoute.ExercisePage> { entry ->
             val args = entry.toRoute<ScreenRoute.ExercisePage>()
-            val vm: ExercisePageViewModel = hiltViewModel()
-
-            LaunchedEffect(args.id) { vm.init(args.id) }
 
             ExercisePageScreen(
-                state = vm.state.value,
-                onEvent = { event -> vm.onEvent(event) },
-                onBackClick = onBack,
-                onInfoClick = { },
+                id = args.id,
+                onBackClick = onBack
             )
         }
 

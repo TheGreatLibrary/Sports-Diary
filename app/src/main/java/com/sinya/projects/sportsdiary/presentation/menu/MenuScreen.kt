@@ -46,11 +46,6 @@ fun MenuScreen(
                     description = stringResource(R.string.list_of_training)
                 )
                 ListCardItem(
-                    onClick = { navigateTo(ScreenRoute.Categories) },
-                    title = stringResource(R.string.categories_title),
-                    description = stringResource(R.string.categories_description)
-                )
-                ListCardItem(
                     onClick = { navigateTo(ScreenRoute.MorningExercises) },
                     title = stringResource(R.string.morning_exercises_title),
                     description = stringResource(R.string.statistic_and_note)
@@ -66,6 +61,11 @@ fun MenuScreen(
                     onClick ={ navigateTo(ScreenRoute.SportExercises) },
                     title = stringResource(R.string.sports_exercises_title),
                     description = stringResource(R.string.list_of_exercises)
+                )
+                ListCardItem(
+                    onClick = { navigateTo(ScreenRoute.Categories) },
+                    title = stringResource(R.string.categories_title),
+                    description = stringResource(R.string.categories_description)
                 )
 //                ListCardItem(
 //                    onClick = { navigateTo(ScreenRoute.Calculate) },

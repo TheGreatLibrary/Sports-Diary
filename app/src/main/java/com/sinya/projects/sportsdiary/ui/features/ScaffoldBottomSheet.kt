@@ -14,12 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
-import com.sinya.projects.sportsdiary.domain.model.CategoryEntity
-import com.sinya.projects.sportsdiary.domain.model.CategorySheetItem
-import com.sinya.projects.sportsdiary.presentation.categoryPage.CategoryPageUiState
-import com.sinya.projects.sportsdiary.presentation.categoryPage.components.CategorySheetContent
-import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
+import com.sinya.projects.sportsdiary.domain.model.ExerciseUi
+import com.sinya.projects.sportsdiary.presentation.categoryPage.components.ExerciseSheetContent
 import com.sinya.projects.sportsdiary.ui.theme.SportsDiaryTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,18 +56,11 @@ private fun CategoryModalSheetPreview() {
 
             scaffoldState = scaffoldState,
             sheetContent = {
-                CategorySheetContent(
-                    state = CategoryPageUiState.CategoryForm(
-                        item = CategoryEntity(
-                            category = TypeTraining(1, "d"),
-                            items = listOf()
-                        ),
-                        sheetData = CategorySheetItem(
-                            query = "",
-                            items = emptyList()
-                        ),
-                    ),
-                    onEvent = {},
+                ExerciseSheetContent(
+                    query = "",
+                    onToggle = {},
+                    onQueryChange = {},
+                    onClickSuccess = {},
                     filtered = listOf(
                         ExerciseUi(
                             1,

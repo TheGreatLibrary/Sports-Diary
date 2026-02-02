@@ -8,8 +8,10 @@ import androidx.room.Transaction
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseMuscles
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
 import com.sinya.projects.sportsdiary.data.database.entity.Exercises
+import com.sinya.projects.sportsdiary.domain.model.ExerciseMuscleName
 import com.sinya.projects.sportsdiary.domain.model.ExerciseMusclesData
-import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
+import com.sinya.projects.sportsdiary.domain.model.ExerciseUi
+import com.sinya.projects.sportsdiary.domain.model.ExerciseWithSortedData
 
 @Dao
 interface ExercisesDao {
@@ -65,17 +67,33 @@ interface ExercisesDao {
     suspend fun insertExerciseMuscle(exerciseMuscle: List<ExerciseMuscles>)
 
     @Query("""
-        SELECT *
+        SELECT 
+            exercise_id as id,
+            name,
+            level,
+            equipment,
+            category
         FROM exercise_translations
         WHERE language = :language
         ORDER BY name
     """)
-    suspend fun getExercisesTranslations(language: String): List<ExerciseTranslations>
+    suspend fun getExerciseList(language: String): List<ExerciseWithSortedData>
+
+    @Query("""
+    SELECT 
+        em.exercise_id AS exerciseId,
+        mt.name as name
+    FROM exercise_muscles em 
+    JOIN muscle_translations mt ON em.muscle_id = mt.muscle_id
+    WHERE mt.language = :language
+    ORDER BY em.exercise_id
+""")
+    suspend fun getMusclesForAllExercises(language: String): List<ExerciseMuscleName>
 
     @Query("""
         SELECT 
             em.muscle_id AS muscleId,
-            exercise_id AS exerciseId,
+            em.exercise_id AS exerciseId,
             language,
             name,
             value

@@ -8,7 +8,7 @@ sealed interface ProportionsUiState {
 
     data class Success(
         val proportions: List<Proportions> = emptyList(),
-        val selectedMode: ModeOfSorting.TimeMode = ModeOfSorting.TimeMode(),
+        val selectedMode: ModeOfSorting.Time = ModeOfSorting.Time(),
         val deleteDialogId: Int? = null,
         val errorMessage: String? = null,
         val isRefreshing: Boolean = false

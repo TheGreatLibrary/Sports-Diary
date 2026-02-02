@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,6 +35,7 @@ import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.domain.model.RadioItem
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.presentation.trainings.TrainingEvent
 import com.sinya.projects.sportsdiary.presentation.trainings.dateFmt
 import com.sinya.projects.sportsdiary.ui.features.SortedRow
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
@@ -68,7 +70,7 @@ private fun ProportionsScreenView(
     onEvent: (ProportionsEvent) -> Unit,
     onProportionClick: (Int?) -> Unit
 ) {
-    val all = stringResource(R.string.all)
+    val context = LocalContext.current
     val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -91,16 +93,12 @@ private fun ProportionsScreenView(
         }
     }
 
-    val years = remember(state.proportions, state.selectedMode) {
-        listOf(RadioItem(all, null, -1)) +
-                state.proportions.years.map { RadioItem(it.toString(), null, it) }
-    }
-    val months = remember(state.proportions, state.selectedMode) {
-        listOf(RadioItem(all, null, -1)) +
-                state.proportions.monthsForYear(state.selectedMode.year).map { RadioItem(it.toString(), null, it) }
-    }
     val grouped = remember(state.proportions, state.selectedMode) {
-        state.proportions.filterByYearMonth(state.selectedMode.year, state.selectedMode.month)
+        state.selectedMode.filter(state.proportions)
+    }
+
+    val categories = remember(state.proportions, state.selectedMode) {
+        state.selectedMode.categories<Any, Any>(state.proportions, context)
     }
 
     Box(Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) {
@@ -121,27 +119,16 @@ private fun ProportionsScreenView(
                 Spacer(Modifier.height(20.dp))
             }
 
-            item {
+            items(categories) { filter ->
                 SortedRow(
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                    title = stringResource(R.string.year),
-                    radioOptions = years,
-                    selectedOption = state.selectedMode.year,
-                    onOptionSelected = { year ->
-                        onEvent(ProportionsEvent.YearChange(year))
+                    title = stringResource(filter.titleRes),
+                    radioOptions = filter.options,
+                    selectedOption = filter.selectedValue,
+                    onOptionSelected = { value ->
+                        onEvent(ProportionsEvent.SortParamChange(filter.onSelect(value)))
                     },
-                    shape = MaterialTheme.shapes.extraLarge,
-                )
-                Spacer(Modifier.height(15.dp))
-                SortedRow(
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                    title = stringResource(R.string.month),
-                    radioOptions = months,
-                    selectedOption = state.selectedMode.month,
-                    onOptionSelected = { month ->
-                        onEvent(ProportionsEvent.MonthChange(month))
-                    },
-                    shape = MaterialTheme.shapes.extraLarge,
+                    shape = filter.shape
                 )
                 Spacer(Modifier.height(20.dp))
             }
@@ -182,10 +169,11 @@ private fun ProportionsScreenView(
             state = pullToRefreshState,
         )
 
+
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
+                .align(Alignment.TopCenter)
         )
     }
 }

@@ -19,7 +19,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -34,13 +33,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.domain.model.ExerciseItemWithoutList
+import com.sinya.projects.sportsdiary.domain.model.ExerciseUi
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
-import com.sinya.projects.sportsdiary.presentation.categoryPage.components.CategorySheetContent
+import com.sinya.projects.sportsdiary.presentation.categoryPage.components.ExerciseSheetContent
 import com.sinya.projects.sportsdiary.presentation.categoryPage.components.DragOverlay
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
-import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.CustomTextField
 import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
@@ -115,7 +113,13 @@ private fun CategoryPageView(
 
     ScaffoldBottomSheet(
         scaffoldState = scaffoldState,
-        sheetContent = { CategorySheetContent(state, filtered, onEvent, scaffoldState) }
+        sheetContent = { ExerciseSheetContent(
+            query = state.sheetData.query,
+            filtered = filtered,
+            onQueryChange = { s -> onEvent(CategoryPageEvent.OnQueryChange(s)) },
+            onToggle =  { id -> onEvent(CategoryPageEvent.Toggle(id)) },
+            onClickSuccess = { onEvent(CategoryPageEvent.AddExercise) },
+            scaffoldState = scaffoldState) }
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -235,7 +239,7 @@ private fun CategoryPageView(
             SnackbarHost(
                 hostState = snackbarHostState,
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.TopCenter)
             )
         }
     }

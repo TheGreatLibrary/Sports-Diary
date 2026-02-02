@@ -1,36 +1,29 @@
 package com.sinya.projects.sportsdiary.presentation.exercises
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
-import com.sinya.projects.sportsdiary.domain.repository.ExercisesRepository
-import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
-import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetExercises.TrainingExerciseEvent
-import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetExercises.TrainingExerciseUiState
+import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
+import com.sinya.projects.sportsdiary.domain.model.SortParam
+import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseWithSortedDataUseCase
 import com.sinya.projects.sportsdiary.utils.searchByTerms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ExercisesViewModel @Inject constructor(
-    private val exerciseRepository: ExercisesRepository
+    private val getExerciseWithSortedDataUseCase: GetExerciseWithSortedDataUseCase
 ) : ViewModel() {
 
-    private val _state = mutableStateOf<ExercisesUiState>(ExercisesUiState.Loading)
-    val state: State<ExercisesUiState> = _state
+    private val _state = MutableStateFlow<ExercisesUiState>(ExercisesUiState.Loading)
+    val state: StateFlow<ExercisesUiState> = _state.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            val list = exerciseRepository.getExerciseTranslations(Locale.current.language)
-
-            _state.value = ExercisesUiState.Success(
-                exercises = list
-            )
-        }
+        loadData()
     }
 
     fun onEvent(event: ExercisesEvent) {
@@ -42,11 +35,61 @@ class ExercisesViewModel @Inject constructor(
                     query = event.s
                 )
             }
+
+            is ExercisesEvent.SortParamChange -> {
+                updateIfSuccess {
+                    val updatedList = it.selectedModes.map { mode ->
+                        if (mode == event.mode) {
+                            mode.apply(event.param as SortParam)
+                        } else {
+                            mode
+                        }
+                    }
+                    it.copy(selectedModes = updatedList)
+                }
+            }
+
+            ExercisesEvent.OnErrorShown -> updateIfSuccess {
+                it.copy(errorMessage = null)
+            }
+
+            ExercisesEvent.ReloadData -> { }
         }
     }
 
-    fun filtered() : List<ExerciseTranslations> {
-        val currentState = _state.value as? ExercisesUiState.Success ?: return listOf()
-        return currentState.exercises.searchByTerms(currentState.query) { it.name }
+    private fun loadData() = viewModelScope.launch {
+        getExerciseWithSortedDataUseCase().fold(
+            onSuccess = { list ->
+                _state.value = ExercisesUiState.Success(
+                    exercises = list
+                )
+            },
+            onFailure = { error ->
+                _state.value = ExercisesUiState.Success(
+                    exercises = listOf(),
+                    errorMessage = error.toString()
+                )
+            }
+        )
+    }
+
+    fun filtered() : List<ExerciseWithMuscles> {
+        val cs = _state.value as? ExercisesUiState.Success ?: return listOf()
+
+        val filtered = cs.selectedModes.fold(cs.exercises) { exercises, mode ->
+            mode.filter(exercises)
+        }
+
+        return filtered.searchByTerms(cs.query) { it.name }
+    }
+
+    private fun updateIfSuccess(transform: (ExercisesUiState.Success) -> ExercisesUiState.Success) {
+        _state.update { currentState ->
+            if (currentState is ExercisesUiState.Success) {
+                transform(currentState)
+            } else {
+                currentState
+            }
+        }
     }
 }

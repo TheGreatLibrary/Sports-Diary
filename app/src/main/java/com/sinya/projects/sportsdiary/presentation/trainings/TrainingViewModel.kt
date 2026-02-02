@@ -3,7 +3,6 @@ package com.sinya.projects.sportsdiary.presentation.trainings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.entity.Trainings
-import com.sinya.projects.sportsdiary.domain.enums.SortMode
 import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
 import com.sinya.projects.sportsdiary.domain.useCase.DeleteTrainingUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetTrainingListUseCase
@@ -32,42 +31,14 @@ class TrainingViewModel @Inject constructor(
         when (event) {
             is TrainingEvent.ModeChange -> {
                 updateIfSuccess {
-                    it.copy(
-                        selectedMode = if (event.mode == SortMode.TIME) ModeOfSorting.TimeMode(
-                            -1,
-                            -1
-                        ) else ModeOfSorting.MuscleMode("")
-                    )
+                    it.copy(selectedMode = ModeOfSorting.fromCode(event.code))
                 }
             }
 
-            is TrainingEvent.CategoryChange -> {
+            is TrainingEvent.SortParamChange -> {
                 updateIfSuccess {
                     it.copy(
-                        selectedMode = (it.selectedMode as ModeOfSorting.MuscleMode).copy(
-                            category = event.category
-                        )
-                    )
-                }
-            }
-
-            is TrainingEvent.MonthChange -> {
-                updateIfSuccess {
-                    it.copy(
-                        selectedMode = (it.selectedMode as ModeOfSorting.TimeMode).copy(
-                            month = event.month
-                        )
-                    )
-                }
-            }
-
-            is TrainingEvent.YearChange -> {
-                updateIfSuccess {
-                    it.copy(
-                        selectedMode = (it.selectedMode as ModeOfSorting.TimeMode).copy(
-                            year = event.year,
-                            month = -1
-                        )
+                        selectedMode = it.selectedMode.apply(event.param)
                     )
                 }
             }

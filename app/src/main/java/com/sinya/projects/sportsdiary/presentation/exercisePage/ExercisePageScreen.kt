@@ -19,40 +19,46 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
 import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.domain.model.ExerciseMusclesData
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 
 @Composable
 fun ExercisePageScreen(
-    state: ExercisePageUiState,
-    onEvent: (ExercisePageEvent) -> Unit,
-    onBackClick: () -> Unit,
-    onInfoClick: () -> Unit
+    id: Int,
+    onBackClick: () -> Unit
 ) {
+    val viewModel = hiltViewModel(
+        creationCallback = { factory: ExercisePageViewModel.Factory ->
+            factory.create(id = id)
+        }
+    )
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     when (state) {
-        is ExercisePageUiState.Loading -> PlaceholderScreen()
+        ExercisePageUiState.Loading -> PlaceholderScreen()
+
         is ExercisePageUiState.Success -> ExercisePageView(
-            item = state.exercise,
-            itemsM = state.exMuscles,
-            onEvent = onEvent,
+            state = state as ExercisePageUiState.Success,
+            onEvent = viewModel::onEvent,
             onBackClick = onBackClick
         )
-        is ExercisePageUiState.Error -> ErrorScreen(state.message)
+
+        is ExercisePageUiState.Error -> ErrorScreen((state as ExercisePageUiState.Error).message)
     }
 }
 @Composable
 private fun ExercisePageView(
-    item: ExerciseTranslations,
-    itemsM: List<ExerciseMusclesData>,
+    state: ExercisePageUiState.Success,
     onEvent: (ExercisePageEvent) -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -67,7 +73,7 @@ private fun ExercisePageView(
 
         // Заголовок
         Text(
-            text = item.name,
+            text = state.exercise.name,
             style = MaterialTheme.typography.displaySmall,
             color = MaterialTheme.colorScheme.onPrimary,
 
@@ -77,23 +83,23 @@ private fun ExercisePageView(
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 CharacteristicRow(
                     label = stringResource(R.string.level),
-                    value = item.level ?: stringResource(R.string.not_found_data)
+                    value = state.exercise.level ?: stringResource(R.string.not_found_data)
                 )
                 CharacteristicRow(
                     label = stringResource(R.string.type),
-                    value = item.force ?: stringResource(R.string.not_found_data)
+                    value = state.exercise.force ?: stringResource(R.string.not_found_data)
                 )
                 CharacteristicRow(
                     label = stringResource(R.string.equipment),
-                    value = item.equipment ?: stringResource(R.string.not_found_data)
+                    value = state.exercise.equipment ?: stringResource(R.string.not_found_data)
                 )
                 CharacteristicRow(
                     label = stringResource(R.string.category),
-                    value = item.category ?: stringResource(R.string.not_found_data)
+                    value = state.exercise.category ?: stringResource(R.string.not_found_data)
                 )
                 CharacteristicRow(
                     label = stringResource(R.string.mechanic),
-                    value = item.mechanic ?: stringResource(R.string.not_found_data)
+                    value = state.exercise.mechanic ?: stringResource(R.string.not_found_data)
                 )
             }
         }
@@ -108,7 +114,7 @@ private fun ExercisePageView(
                 color = MaterialTheme.colorScheme.onPrimary,
                 )
             Text(
-                text = item.description,
+                text = state.exercise.description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -123,7 +129,7 @@ private fun ExercisePageView(
                 color = MaterialTheme.colorScheme.onPrimary,
                 )
             Text(
-                text = item.rule,
+                text = state.exercise.rule,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -138,8 +144,8 @@ private fun ExercisePageView(
 
 
         // Мышцы
-        val primaryM = itemsM.filter { it.value == 2 }.joinToString(", ") { it.name }
-        val secondaryM = itemsM.filter { it.value == 1 }.joinToString(", ") { it.name }
+        val primaryM = state.exMuscles.filter { it.value == 2 }.joinToString(", ") { it.name }
+        val secondaryM = state.exMuscles.filter { it.value == 1 }.joinToString(", ") { it.name }
 
         InfoCard(title = stringResource(R.string.muscle_title)) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {

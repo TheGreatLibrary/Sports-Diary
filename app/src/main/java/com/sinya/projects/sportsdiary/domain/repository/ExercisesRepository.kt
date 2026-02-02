@@ -3,13 +3,13 @@ package com.sinya.projects.sportsdiary.domain.repository
 import android.content.Context
 import android.util.Log
 import androidx.compose.ui.text.intl.Locale
-
 import com.sinya.projects.sportsdiary.data.database.dao.ExercisesDao
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseMuscles
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
 import com.sinya.projects.sportsdiary.data.database.entity.Exercises
 import com.sinya.projects.sportsdiary.domain.model.ExerciseMusclesData
-import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
+import com.sinya.projects.sportsdiary.domain.model.ExerciseUi
+import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,14 +17,14 @@ import org.json.JSONArray
 
 interface ExercisesRepository {
     // Exercises
-    suspend fun getExercisesList(): List<ExerciseUi>
+    suspend fun getExercisesList(language: String = Locale.current.language): Result<List<ExerciseUi>>
 
     // TrainingPage
     suspend fun getExerciseById(id: Int, language: String = Locale.current.language): Result<ExerciseTranslations>
 
     // Exercise
-    suspend fun getExerciseTranslations(language: String = Locale.current.language): List<ExerciseTranslations>
-    suspend fun getExerciseMusclesById(id: Int, language: String = Locale.current.language): List<ExerciseMusclesData>
+    suspend fun getExerciseTranslations(language: String = Locale.current.language): Result<List<ExerciseWithMuscles>>
+    suspend fun getExerciseMusclesById(id: Int, language: String = Locale.current.language): Result<List<ExerciseMusclesData>>
 }
 
 class ExercisesRepositoryImpl @Inject constructor(
@@ -33,9 +33,12 @@ class ExercisesRepositoryImpl @Inject constructor(
 
     // Exercises
 
-    override suspend fun getExercisesList(): List<ExerciseUi> {
-        val db = exercisesDao.getExercisesList(Locale.current.language)
-        return db
+    override suspend fun getExercisesList(language: String): Result<List<ExerciseUi>> {
+        return try {
+            Result.success(exercisesDao.getExercisesList(language))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     suspend fun importExercisesFromAssets(fileName: String, context: Context): Int {
@@ -51,8 +54,12 @@ class ExercisesRepositoryImpl @Inject constructor(
 
                 // Читаем JSON из assets
                 Log.d("ExerciseImport", "Чтение JSON из assets...")
-                val jsonString = context.assets.open(fileName).bufferedReader().use { it.readText() }
-                Log.d("ExerciseImport", "JSON успешно прочитан, размер: ${jsonString.length} символов")
+                val jsonString =
+                    context.assets.open(fileName).bufferedReader().use { it.readText() }
+                Log.d(
+                    "ExerciseImport",
+                    "JSON успешно прочитан, размер: ${jsonString.length} символов"
+                )
 
                 // Парсим JSON
                 Log.d("ExerciseImport", "Парсинг JSON...")
@@ -89,8 +96,10 @@ class ExercisesRepositoryImpl @Inject constructor(
                         if (equipment.isNotEmpty()) equipmentSet.add(equipment)
                         if (category.isNotEmpty()) categorySet.add(category)
 
-                        val primaryMuscles = jsonArrayToIntList(jsonObject.optJSONArray("primary_muscles"))
-                        val secondaryMuscles = jsonArrayToIntList(jsonObject.optJSONArray("secondary_muscles"))
+                        val primaryMuscles =
+                            jsonArrayToIntList(jsonObject.optJSONArray("primary_muscles"))
+                        val secondaryMuscles =
+                            jsonArrayToIntList(jsonObject.optJSONArray("secondary_muscles"))
                         val translations = jsonObject.optJSONObject("translations")
 
                         exercises.add(
@@ -163,7 +172,10 @@ class ExercisesRepositoryImpl @Inject constructor(
 
                         // Логируем прогресс каждые 100 упражнений
                         if ((i + 1) % 100 == 0) {
-                            Log.d("ExerciseImport", "Обработано ${i + 1}/${jsonArray.length()} упражнений")
+                            Log.d(
+                                "ExerciseImport",
+                                "Обработано ${i + 1}/${jsonArray.length()} упражнений"
+                            )
                         }
 
                     } catch (e: Exception) {
@@ -176,8 +188,14 @@ class ExercisesRepositoryImpl @Inject constructor(
                 Log.d("ExerciseImport", "========== METADATA TO TRANSLATE ==========")
                 Log.d("ExerciseImport", "📊 FORCE (${forceSet.size}): ${forceSet.sorted()}")
                 Log.d("ExerciseImport", "📈 LEVEL (${levelSet.size}): ${levelSet.sorted()}")
-                Log.d("ExerciseImport", "⚙️ MECHANIC (${mechanicSet.size}): ${mechanicSet.sorted()}")
-                Log.d("ExerciseImport", "🏋️ EQUIPMENT (${equipmentSet.size}): ${equipmentSet.sorted()}")
+                Log.d(
+                    "ExerciseImport",
+                    "⚙️ MECHANIC (${mechanicSet.size}): ${mechanicSet.sorted()}"
+                )
+                Log.d(
+                    "ExerciseImport",
+                    "🏋️ EQUIPMENT (${equipmentSet.size}): ${equipmentSet.sorted()}"
+                )
                 Log.d("ExerciseImport", "🎯 CATEGORY (${categorySet.size}): ${categorySet.sorted()}")
                 Log.d("ExerciseImport", "============================================")
 
@@ -196,7 +214,7 @@ class ExercisesRepositoryImpl @Inject constructor(
                 // НЕ выводим jsonString в лог!
                 Log.e("ExerciseImport", "❌ КРИТИЧЕСКАЯ ОШИБКА")
                 Log.e("ExerciseImport", "Тип: ${e.javaClass.simpleName}")
-              //  Log.e("ExerciseImport", "Сообщение: ${e.message}")
+                //  Log.e("ExerciseImport", "Сообщение: ${e.message}")
                 Log.e("ExerciseImport", "Stack trace первые 5 элементов:")
                 e.stackTrace.take(5).forEach {
                     Log.e("ExerciseImport", "  at ${it}")
@@ -206,14 +224,29 @@ class ExercisesRepositoryImpl @Inject constructor(
         }
     }
 
-    // Exercise
+    // Exercises
 
-    override suspend fun getExerciseTranslations(language: String): List<ExerciseTranslations> {
-        return exercisesDao.getExercisesTranslations(language)
-    }
+    override suspend fun getExerciseTranslations(language: String): Result<List<ExerciseWithMuscles>> {
+        return try {
+            val exercises = exercisesDao.getExerciseList(language)
+            val allMusclesMap =
+                exercisesDao.getMusclesForAllExercises(language).groupBy { it.exerciseId }
 
-    override suspend fun getExerciseMusclesById(id: Int, language: String): List<ExerciseMusclesData> {
-        return exercisesDao.getExerciseMuscleById(id, language)
+            Result.success(exercises.map { exercise ->
+                ExerciseWithMuscles(
+                    id = exercise.id,
+                    name = exercise.name,
+                    level = exercise.level,
+                    equipment = exercise.equipment,
+                    category = exercise.category,
+                    muscles = allMusclesMap[exercise.id]
+                        ?.map { it.name }
+                        ?: emptyList()
+                )
+            })
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     // TrainingPage
@@ -221,6 +254,14 @@ class ExercisesRepositoryImpl @Inject constructor(
     override suspend fun getExerciseById(id: Int, language: String): Result<ExerciseTranslations> {
         return try {
             Result.success(exercisesDao.getExerciseById(id, language))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getExerciseMusclesById(id: Int, language: String): Result<List<ExerciseMusclesData>> {
+        return try {
+            Result.success(exercisesDao.getExerciseMuscleById(id, language))
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -254,12 +295,14 @@ private fun translateForce(force: String, language: String): String {
             "static" -> "Статика"
             else -> ""
         }
+
         "en" -> when (force) {
             "pull" -> "Pull"
             "push" -> "Push"
             "static" -> "Static"
             else -> ""
         }
+
         else -> force
     }
 }
@@ -272,12 +315,14 @@ private fun translateLevel(level: String, language: String): String {
             "expert" -> "Эксперт"
             else -> ""
         }
+
         "en" -> when (level) {
             "beginner" -> "Beginner"
             "intermediate" -> "Intermediate"
             "expert" -> "Expert"
             else -> ""
         }
+
         else -> level
     }
 }
@@ -289,11 +334,13 @@ private fun translateMechanic(mechanic: String, language: String): String {
             "isolation" -> "Изолирующее"
             else -> ""
         }
+
         "en" -> when (mechanic) {
             "compound" -> "Compound"
             "isolation" -> "Isolation"
             else -> ""
         }
+
         else -> mechanic
     }
 }
@@ -315,6 +362,7 @@ private fun translateEquipment(equipment: String, language: String): String {
             "other" -> "Другое"
             else -> ""
         }
+
         "en" -> when (equipment) {
             "bands" -> "Bands"
             "barbell" -> "Barbell"
@@ -330,6 +378,7 @@ private fun translateEquipment(equipment: String, language: String): String {
             "other" -> "Other"
             else -> ""
         }
+
         else -> equipment
     }
 }
@@ -346,6 +395,7 @@ private fun translateCategory(category: String, language: String): String {
             "strongman" -> "Стронгмен"
             else -> ""
         }
+
         "en" -> when (category) {
             "cardio" -> "Cardio"
             "olympic weightlifting" -> "Olympic Weightlifting"
@@ -356,6 +406,7 @@ private fun translateCategory(category: String, language: String): String {
             "strongman" -> "Strongman"
             else -> ""
         }
+
         else -> category
     }
 }

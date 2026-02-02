@@ -6,13 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.entity.DataTypeTrainings
 import com.sinya.projects.sportsdiary.domain.model.CategorySheetItem
 import com.sinya.projects.sportsdiary.domain.model.ExerciseDialogContent
+import com.sinya.projects.sportsdiary.domain.model.ExerciseUi
 import com.sinya.projects.sportsdiary.domain.useCase.CheckNameCategoryExistsUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetCategoryItemUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseDescriptionUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseListUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.InsertCategoryWithDataUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.UpdateCategoryDataUseCase
-import com.sinya.projects.sportsdiary.presentation.trainingPage.modalSheetCategory.ExerciseUi
 import com.sinya.projects.sportsdiary.utils.searchByTerms
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -135,7 +135,7 @@ class CategoryPageViewModel @AssistedInject constructor(
     }
 
     private fun getCategoryEntity(id: Int? = this.id) = viewModelScope.launch {
-        val items = getExerciseListUseCase.invoke()
+        val items = getExerciseListUseCase().getOrElse { emptyList() }
 
         getCategoryItemUseCase(id).fold(
             onSuccess = { item ->

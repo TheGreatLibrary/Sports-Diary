@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 
@@ -25,6 +26,7 @@ fun SwipeCard(
     modifier: Modifier,
     id: Int,
     title: String,
+    maxLines: Int = Int.MAX_VALUE,
     description: String? = null,
     onDelete: (Int) -> Unit,
     onTrainingClick: () -> Unit,
@@ -46,6 +48,7 @@ fun SwipeCard(
             SwipeCardContent(
                 title = title,
                 description = description,
+                maxLines = maxLines,
                 onTrainingClick = onTrainingClick
             )
         }
@@ -57,6 +60,7 @@ fun SwipeCard(
 fun SwipeCardContent(
     modifier: Modifier = Modifier,
     title: String,
+    maxLines: Int = Int.MAX_VALUE,
     description: String?,
     onTrainingClick: () -> Unit
 ) {
@@ -79,7 +83,9 @@ fun SwipeCardContent(
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary
+                color = MaterialTheme.colorScheme.onSecondary,
+                maxLines = maxLines,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

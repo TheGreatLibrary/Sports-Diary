@@ -1,12 +1,22 @@
 package com.sinya.projects.sportsdiary.presentation.exercises
 
-import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
+import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
+import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
 
-sealed class ExercisesUiState {
-    data object Loading : ExercisesUiState()
+sealed interface ExercisesUiState {
+    data object Loading : ExercisesUiState
+
     data class Success(
-        val exercises: List<ExerciseTranslations> = emptyList(),
-        val query: String = ""
-    ) : ExercisesUiState()
-    data class Error(val message: String) : ExercisesUiState()
+        val query: String = "",
+        val exercises: List<ExerciseWithMuscles> = emptyList(),
+        val selectedModes: List<ModeOfSorting> = listOf(
+            ModeOfSorting.Level(),
+            ModeOfSorting.Category(),
+            ModeOfSorting.Muscle(),
+            ModeOfSorting.Equipment()
+        ),
+        val errorMessage: String? = null,
+    ) : ExercisesUiState
+
+    data class Error(val message: String) : ExercisesUiState
 }

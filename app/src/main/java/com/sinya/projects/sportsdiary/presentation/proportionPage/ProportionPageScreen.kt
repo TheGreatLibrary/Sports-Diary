@@ -155,10 +155,11 @@ private fun ProportionPageView(
             )
         }
 
+
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
+                .align(Alignment.TopCenter)
         )
     }
 }

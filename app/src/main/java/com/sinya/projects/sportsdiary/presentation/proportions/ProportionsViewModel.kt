@@ -3,8 +3,10 @@ package com.sinya.projects.sportsdiary.presentation.proportions
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.entity.Proportions
+import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
 import com.sinya.projects.sportsdiary.domain.useCase.DeleteProportionUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetProportionsUseCase
+import com.sinya.projects.sportsdiary.presentation.trainings.TrainingEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,17 +30,10 @@ class ProportionsViewModel @Inject constructor(
 
     fun onEvent(event: ProportionsEvent) {
         when (event) {
-            is ProportionsEvent.MonthChange -> {
-                updateIfSuccess { it.copy(selectedMode = it.selectedMode.copy(month = event.month)) }
-            }
-
-            is ProportionsEvent.YearChange -> {
+            is ProportionsEvent.SortParamChange -> {
                 updateIfSuccess {
                     it.copy(
-                        selectedMode = it.selectedMode.copy(
-                            year = event.year,
-                            month = -1
-                        )
+                        selectedMode = it.selectedMode.apply(event.onSelect) as ModeOfSorting.Time
                     )
                 }
             }

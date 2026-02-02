@@ -157,5 +157,11 @@
     <string name="put_your_title">Введите название</string>
     <string name="category_name_is_empty">Название категории пустое или дублируется</string>
     <string name="add">Добавить</string>
+    <string name="ex_level">Сложность</string>
+    <string name="ex_equipment">Экипировка</string>
+    <string name="ex_muscle">Мышцы</string>
+    <string name="no_one">Не указано</string>
+    <string name="sort_title">Сортировать</string>
+    <string name="create_category">Создание категории</string>
 
 </resources>

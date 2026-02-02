@@ -1,6 +1,5 @@
 package com.sinya.projects.sportsdiary.data.database.dao
 
-import android.util.Log
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert

@@ -8,7 +8,7 @@ sealed interface TrainingUiState {
 
     data class Success(
         val trainings: List<Training> = emptyList(),
-        val selectedMode: ModeOfSorting = ModeOfSorting.TimeMode(),
+        val selectedMode: ModeOfSorting = ModeOfSorting.Time(),
         val deleteDialogId: Int? = null,
         val errorMessage: String? = null,
         val isRefreshing: Boolean = false

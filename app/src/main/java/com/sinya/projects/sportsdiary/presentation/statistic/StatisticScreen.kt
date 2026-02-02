@@ -173,10 +173,11 @@ private fun StatisticScreenView(
             }
         }
 
+
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
-                .align(Alignment.Center)
+                .align(Alignment.TopCenter)
         )
     }
 

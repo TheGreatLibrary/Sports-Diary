@@ -17,14 +17,16 @@ fun CustomTextButton(
     text: String,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
     containerColor: Color = Color.Transparent,
-    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    contentColor: Color = MaterialTheme.colorScheme.secondary ,
+    disabledContentColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
 ) {
     TextButton(
         onClick = onClick,
         shape = MaterialTheme.shapes.extraLarge,
         contentPadding = PaddingValues(vertical = 4.dp, horizontal = 16.dp),
-        colors = ButtonDefaults.textButtonColors(
+        colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
+            disabledContentColor = disabledContentColor,
             contentColor = contentColor
         )
     ) {

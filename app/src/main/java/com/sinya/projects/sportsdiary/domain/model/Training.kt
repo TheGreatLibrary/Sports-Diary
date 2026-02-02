@@ -16,12 +16,6 @@ val List<Training>.years: List<Int>
         .distinct()
         .sortedDescending()
 
-//val List<Training>.categories: List<String>
-//    get() = this
-//        .map { it.category }
-//        .distinct()
-//        .sortedDescending()
-
 val List<Training>.categories: List<String?>
     get() = this
         .map { it.category }

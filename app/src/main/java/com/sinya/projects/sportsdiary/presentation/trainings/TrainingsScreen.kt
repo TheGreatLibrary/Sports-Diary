@@ -27,16 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.enums.SortMode
 import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
-import com.sinya.projects.sportsdiary.domain.model.RadioItem
-import com.sinya.projects.sportsdiary.domain.model.categories
-import com.sinya.projects.sportsdiary.domain.model.filterByMuscle
-import com.sinya.projects.sportsdiary.domain.model.filterByYearMonth
 import com.sinya.projects.sportsdiary.domain.model.localDateOrNull
-import com.sinya.projects.sportsdiary.domain.model.monthsForYear
-import com.sinya.projects.sportsdiary.domain.model.years
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.ui.features.SortedRow
@@ -76,7 +69,6 @@ private fun TrainingsScreenView(
     onTrainingClick: (Int?) -> Unit,
 ) {
     val context = LocalContext.current
-    val all = stringResource(R.string.all)
     val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -100,17 +92,11 @@ private fun TrainingsScreenView(
     }
 
     val grouped = remember(state.trainings, state.selectedMode) {
-        when (state.selectedMode.mode) {
-            SortMode.TIME -> {
-                val selectedMode = state.selectedMode as ModeOfSorting.TimeMode
-                state.trainings.filterByYearMonth(selectedMode.year, selectedMode.month)
-            }
+        state.selectedMode.filter(state.trainings)
+    }
 
-            SortMode.MUSCLE -> {
-                val selectedMode = state.selectedMode as ModeOfSorting.MuscleMode
-                state.trainings.filterByMuscle(selectedMode.category)
-            }
-        }
+    val categories = remember(state.trainings, state.selectedMode) {
+        state.selectedMode.categories<Any, Any>(state.trainings, context)
     }
 
     Box(Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) {
@@ -135,76 +121,28 @@ private fun TrainingsScreenView(
                 SortedRow(
                     modifier = Modifier.padding(4.dp),
                     title = stringResource(R.string.sorted_by),
-                    radioOptions = SortMode.entries.map {
-                       it.radioItem.copy(
-                            value = it.code
-                        )
-                    },
-                    selectedOption = state.selectedMode.mode.code,
+                    radioOptions = ModeOfSorting.trainingsModes(),
+                    selectedOption = state.selectedMode.code,
                     onOptionSelected = { code ->
-                        val mode = SortMode.fromIndex(code)
-                        onEvent(TrainingEvent.ModeChange(mode))
+                        onEvent(TrainingEvent.ModeChange(code))
                     },
                     shape = MaterialTheme.shapes.extraSmall,
                 )
                 Spacer(Modifier.height(15.dp))
             }
 
-            item {
-                when (state.selectedMode.mode) {
-                    SortMode.TIME -> {
-                        val years = remember(state.trainings, state.selectedMode) {
-                            listOf(RadioItem(all, null, -1)) +
-                                    state.trainings.years.map { RadioItem(it.toString(), null, it) }
-                        }
-                        val months = remember(state.trainings, state.selectedMode) {
-                            listOf(RadioItem(all, null, -1)) +
-                                    state.trainings.monthsForYear((state.selectedMode as ModeOfSorting.TimeMode).year).map { RadioItem(it.toString(), null, it) }
-                        }
-
-                        SortedRow(
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            title = stringResource(R.string.year),
-                            radioOptions = years,
-                            selectedOption = (state.selectedMode as ModeOfSorting.TimeMode).year,
-                            onOptionSelected = { year ->
-                                onEvent(TrainingEvent.YearChange(year))
-                            },
-                            shape = MaterialTheme.shapes.extraLarge
-                        )
-                        Spacer(Modifier.height(15.dp))
-                        SortedRow(
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            title = stringResource(R.string.month),
-                            radioOptions = months,
-                            selectedOption = state.selectedMode.month,
-                            onOptionSelected = { month ->
-                                onEvent(TrainingEvent.MonthChange(month))
-                            },
-                            shape = MaterialTheme.shapes.extraLarge
-                            )
-                        Spacer(Modifier.height(20.dp))
-                    }
-
-                    SortMode.MUSCLE -> {
-                        val categories = remember(state.trainings, state.selectedMode) {
-                            listOf(RadioItem(all, null, "")) +
-                                    state.trainings.categories.map { RadioItem(it ?: context.getString(R.string.not_category), null, it?:"no one") }
-                        }
-
-                        SortedRow(
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            title = stringResource(R.string.categories),
-                            radioOptions = categories,
-                            selectedOption = (state.selectedMode as ModeOfSorting.MuscleMode).category,
-                            onOptionSelected = { category ->
-                                onEvent(TrainingEvent.CategoryChange(category))
-                            },
-                            shape = MaterialTheme.shapes.extraLarge
-                            )
-                        Spacer(Modifier.height(20.dp))
-                    }
-                }
+            items(categories) { filter ->
+                SortedRow(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    title = stringResource(filter.titleRes),
+                    radioOptions = filter.options,
+                    selectedOption = filter.selectedValue,
+                    onOptionSelected = { value ->
+                        onEvent(TrainingEvent.SortParamChange(filter.onSelect(value)))
+                    },
+                    shape = filter.shape
+                )
+                Spacer(Modifier.height(15.dp))
             }
 
             items(
@@ -244,7 +182,7 @@ private fun TrainingsScreenView(
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
+                .align(Alignment.TopCenter)
         )
     }
 }

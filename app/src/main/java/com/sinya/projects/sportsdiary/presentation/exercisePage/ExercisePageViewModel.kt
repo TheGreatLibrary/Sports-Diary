@@ -1,38 +1,52 @@
 package com.sinya.projects.sportsdiary.presentation.exercisePage
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.domain.repository.ExercisesRepository
+import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseDescriptionUseCase
+import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseMusclesUseCase
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-@HiltViewModel
-class ExercisePageViewModel @Inject constructor(
-    private val exercisesRepository: ExercisesRepository
+@HiltViewModel(assistedFactory = ExercisePageViewModel.Factory::class)
+class ExercisePageViewModel @AssistedInject constructor(
+    @Assisted("id") val id: Int,
+    private val getExerciseDescriptionUseCase: GetExerciseDescriptionUseCase,
+    private val getExerciseMusclesUseCase: GetExerciseMusclesUseCase
 ) : ViewModel() {
 
-    private val _state = mutableStateOf<ExercisePageUiState>(ExercisePageUiState.Loading)
-    val state: State<ExercisePageUiState> = _state
+    private val _state = MutableStateFlow<ExercisePageUiState>(ExercisePageUiState.Loading)
+    val state: StateFlow<ExercisePageUiState> = _state.asStateFlow()
 
-    fun init(id: Int) {
-        val locale = Locale.current.language
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            @Assisted("id") id: Int
+        ): ExercisePageViewModel
+    }
 
+    init {
         viewModelScope.launch {
-            val item = exercisesRepository.getExerciseById(id, locale).getOrThrow()
-            val exMuscles = exercisesRepository.getExerciseMusclesById(id, locale)
+            val exercise = getExerciseDescriptionUseCase(id)
+            val exMuscles = getExerciseMusclesUseCase(id)
+
+            val error = listOf(exercise, exMuscles)
+                .firstOrNull { it.isFailure }
+                ?.exceptionOrNull()
+
+            if (error!=null)  _state.value = ExercisePageUiState.Error(error.toString())
 
             _state.value = ExercisePageUiState.Success(
-                exercise = item,
-                exMuscles = exMuscles
+                exercise = exercise.getOrThrow(),
+                exMuscles = exMuscles.getOrThrow()
             )
         }
     }
 
-    fun onEvent(event: ExercisePageEvent) {
-
-    }
+    fun onEvent(event: ExercisePageEvent) { }
 }

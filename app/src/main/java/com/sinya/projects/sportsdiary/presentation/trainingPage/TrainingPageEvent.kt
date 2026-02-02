@@ -3,8 +3,8 @@ package com.sinya.projects.sportsdiary.presentation.trainingPage
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
 
 sealed interface TrainingPageEvent {
-    data class OpenBottomSheetCategory(val state: Boolean) : TrainingPageEvent
-    data class OpenBottomSheetTraining(val state: Boolean) : TrainingPageEvent
+    data object OpenBottomSheetCategory : TrainingPageEvent
+    data object OpenBottomSheetTraining : TrainingPageEvent
     data class Delete(val id: Int) : TrainingPageEvent
     data class DeleteSet(val id: Int, val index: Int) : TrainingPageEvent
     data class AddSet(val id: Int) : TrainingPageEvent
@@ -21,4 +21,12 @@ sealed interface TrainingPageEvent {
 
     data object OnErrorShown : TrainingPageEvent
     data object Save : TrainingPageEvent
+
+    // модальные окна
+
+    data class Toggle(val id: Int) : TrainingPageEvent
+    data class OnNameChange(val s: String) : TrainingPageEvent
+    data class OnQueryChange(val s: String) : TrainingPageEvent
+    data class OnCreateCategory(val onDone: () -> Unit) : TrainingPageEvent
+    data object AddExercise : TrainingPageEvent
 }
