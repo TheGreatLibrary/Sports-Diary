@@ -7,7 +7,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -24,7 +23,6 @@ import com.sinya.projects.sportsdiary.data.datastore.AppViewModel
 import com.sinya.projects.sportsdiary.presentation.categories.CategoriesScreen
 import com.sinya.projects.sportsdiary.presentation.categoryPage.CategoryPageScreen
 import com.sinya.projects.sportsdiary.presentation.exercisePage.ExercisePageScreen
-import com.sinya.projects.sportsdiary.presentation.exercisePage.ExercisePageViewModel
 import com.sinya.projects.sportsdiary.presentation.exercises.ExercisesScreen
 import com.sinya.projects.sportsdiary.presentation.home.HomeScreen
 import com.sinya.projects.sportsdiary.presentation.menu.MenuScreen

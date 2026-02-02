@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -27,15 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.data.database.entity.filterByYearMonth
 import com.sinya.projects.sportsdiary.data.database.entity.localDateOrNull
-import com.sinya.projects.sportsdiary.data.database.entity.monthsForYear
-import com.sinya.projects.sportsdiary.data.database.entity.years
 import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.domain.model.RadioItem
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
-import com.sinya.projects.sportsdiary.presentation.trainings.TrainingEvent
 import com.sinya.projects.sportsdiary.presentation.trainings.dateFmt
 import com.sinya.projects.sportsdiary.ui.features.SortedRow
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard

@@ -155,6 +155,12 @@
     <string name="categories_title">Categories</string>
     <string name="categories_description">List of training categories</string>
 
+    <string name="ex_level">Difficulty</string>
+    <string name="ex_equipment">Equipment</string>
+    <string name="ex_muscle">Muscles</string>
+    <string name="no_one">Not specified</string>
+    <string name="sort_title">Sort</string>
+    <string name="create_category">Create category</string>
     <string name="category_description">A workout category defines a specific set of exercises with their order, reps, and weights as customized by the user</string>
     <string name="put_your_text">Enter exercise/text</string>
     <string name="choose_exercises">Select exercises</string>

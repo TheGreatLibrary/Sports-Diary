@@ -6,7 +6,6 @@ import com.sinya.projects.sportsdiary.data.database.entity.Proportions
 import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
 import com.sinya.projects.sportsdiary.domain.useCase.DeleteProportionUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetProportionsUseCase
-import com.sinya.projects.sportsdiary.presentation.trainings.TrainingEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
