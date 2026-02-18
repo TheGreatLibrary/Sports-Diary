@@ -11,13 +11,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = ExercisePageViewModel.Factory::class)
 class ExercisePageViewModel @AssistedInject constructor(
-    @Assisted("id") val id: Int,
+    @Assisted("id") val id: Int?,
     private val getExerciseDescriptionUseCase: GetExerciseDescriptionUseCase,
-    private val getExerciseMusclesUseCase: GetExerciseMusclesUseCase
+    private val getExerciseMusclesUseCase: GetExerciseMusclesUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ExercisePageUiState>(ExercisePageUiState.Loading)
@@ -26,27 +28,30 @@ class ExercisePageViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("id") id: Int
+            @Assisted("id") id: Int?
         ): ExercisePageViewModel
     }
 
     init {
-        viewModelScope.launch {
-            val exercise = getExerciseDescriptionUseCase(id)
-            val exMuscles = getExerciseMusclesUseCase(id)
+        if (id != null) loadSuccess(id)
+    }
 
-            val error = listOf(exercise, exMuscles)
-                .firstOrNull { it.isFailure }
-                ?.exceptionOrNull()
-
-            if (error!=null)  _state.value = ExercisePageUiState.Error(error.toString())
-
-            _state.value = ExercisePageUiState.Success(
-                exercise = exercise.getOrThrow(),
-                exMuscles = exMuscles.getOrThrow()
+    private fun loadSuccess(id: Int) = viewModelScope.launch {
+        combine(
+            getExerciseDescriptionUseCase(id),
+            getExerciseMusclesUseCase(id)
+        ) { exercise, muscles ->
+            ExercisePageUiState.Success(
+                exercise = exercise,
+                exMuscles = muscles
             )
+        }
+        .catch { error ->
+            _state.value = ExercisePageUiState.Error(error.message ?: "Unknown error")
+        }
+        .collect { state ->
+            _state.value = state
         }
     }
 
-    fun onEvent(event: ExercisePageEvent) { }
 }

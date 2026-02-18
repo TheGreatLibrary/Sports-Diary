@@ -98,6 +98,7 @@ private fun MorningExercisesView(
 
         if (state.noteExpanded) {
             MorningNoteSheet(
+                currentPlanId = currentPlanId,
                 onDismiss = { onEvent(MorningExercisesUiEvent.OnNoteExpanded(false))}
             )
         }

@@ -37,14 +37,15 @@ import com.sinya.projects.sportsdiary.ui.features.HeaderInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomDropdownMenu(
-    items: List<TypeTraining?>,
+fun <T> CustomDropdownMenu(
+    items: List<T?>,
     title: String,
-    selectedItem: TypeTraining?,
+    selectedItem: T?,
+    nameObject: (T) -> String,
     onOpenMenu: () -> Unit,
-    onSelectedCategory: (TypeTraining?) -> Unit,
+    onSelectedCategory: (T?) -> Unit,
     onInfoClick: () -> Unit,
-    onPlusClick: () -> Unit
+    onPlusClick: (() -> Unit)?
 ) {
     var expanded by remember { mutableStateOf(false) }
     val rotation by animateFloatAsState(if (expanded) 180f else 0f, label = "")
@@ -80,7 +81,9 @@ fun CustomDropdownMenu(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = selectedItem?.name ?: stringResource(R.string.not_category),
+                            text = if (selectedItem != null) nameObject(selectedItem) else stringResource(
+                                R.string.not_category
+                            ),
                             modifier = Modifier.fillMaxWidth(),
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodyLarge,
@@ -106,7 +109,11 @@ fun CustomDropdownMenu(
                         items.forEach { item ->
                             DropdownMenuItem(
                                 text = {
-                                    Text(text = item?.name ?: stringResource(R.string.not_category))
+                                    Text(
+                                        text = if (item != null) nameObject(item) else stringResource(
+                                            R.string.not_category
+                                        )
+                                    )
                                 },
                                 onClick = {
                                     onSelectedCategory(item)
@@ -120,23 +127,26 @@ fun CustomDropdownMenu(
                     }
                 }
 
-                Card(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clickable { onPlusClick() },
-                    shape = MaterialTheme.shapes.small,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_plus),
-                        contentDescription = "Plus",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.padding(7.dp)
-                    )
+                onPlusClick?.let {
+                    Card(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clickable { onPlusClick() },
+                        shape = MaterialTheme.shapes.small,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_plus),
+                            contentDescription = "Plus",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.padding(7.dp)
+                        )
+                    }
                 }
             }
+
         }
     }
 }

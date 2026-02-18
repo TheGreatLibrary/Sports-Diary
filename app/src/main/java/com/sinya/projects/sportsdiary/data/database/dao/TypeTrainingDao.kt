@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import com.sinya.projects.sportsdiary.data.database.entity.DataTypeTrainings
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TypeTrainingDao {
@@ -19,7 +20,7 @@ interface TypeTrainingDao {
     suspend fun delete(it: TypeTraining): Int
 
     @Query("SELECT * FROM type_training")
-    suspend fun getList(): List<TypeTraining>
+    fun getList(): Flow<List<TypeTraining>>
 
     // CategoryPage
 

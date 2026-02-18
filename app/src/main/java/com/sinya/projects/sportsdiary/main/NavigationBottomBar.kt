@@ -20,7 +20,7 @@ import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
 @Composable
 fun NavigationBottomBar(
     currentRoute: String?,
-    navigateTo: (ScreenRoute) -> Unit
+    navigateTo: (ScreenRoute, ScreenRoute?) -> Unit
 ) {
     val firstPart = remember { TypeAppBottomNavigation.getFirstPartList() }
     val secondPart = remember { TypeAppBottomNavigation.getSecondPartList() }
@@ -49,12 +49,12 @@ fun NavigationBottomBar(
             SubNavRow(
                 navList = firstPart,
                 currentRoute = currentRoute,
-                navigateTo = navigateTo
+                navigateTo = { route -> navigateTo(route, null) }
             )
             SubNavRow(
                 navList = secondPart,
                 currentRoute = currentRoute,
-                navigateTo = navigateTo
+                navigateTo = { route -> navigateTo(route, null) }
             )
         }
         Box(
@@ -62,7 +62,7 @@ fun NavigationBottomBar(
             contentAlignment = Alignment.Center
         ) {
             AnimationIcon(
-                onClick = { navigateTo(plusBtn.route) },
+                onClick = { navigateTo(plusBtn.route, null) },
                 description = "Plus",
                 icon = painterResource(plusBtn.icon),
                 size = 60.dp,

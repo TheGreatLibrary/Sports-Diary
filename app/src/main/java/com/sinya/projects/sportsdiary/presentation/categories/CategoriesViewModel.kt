@@ -9,6 +9,7 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -46,7 +47,6 @@ class CategoriesViewModel @Inject constructor(
             deleteCategoryUseCase(item).fold(
                 onSuccess = {
                     updateIfSuccess { it.copy(deleteDialogId = null) }
-                    loadData()
                 },
                 onFailure = { error ->
                     updateIfSuccess { it.copy(errorMessage = error.toString()) }
@@ -58,36 +58,19 @@ class CategoriesViewModel @Inject constructor(
     private fun loadData() = viewModelScope.launch {
         updateIfSuccess { it.copy(isRefreshing = true) }
 
-        getCategoryListUseCase().fold(
-            onSuccess = { list ->
-                if (_state.value is CategoriesUiState.Success) {
-                    updateIfSuccess {
-                        it.copy(
-                            categories = list,
-                            isRefreshing = false
-                        )
-                    }
-                } else {
-                    _state.value =
-                        CategoriesUiState.Success(categories = list, isRefreshing = false)
-                }
-            },
-            onFailure = { error ->
-                if (_state.value is CategoriesUiState.Success) {
-                    updateIfSuccess {
-                        it.copy(
-                            errorMessage = error.toString(),
-                            isRefreshing = false
-                        )
-                    }
-                } else {
-                    _state.value = CategoriesUiState.Success(
-                        errorMessage = error.toString(),
+        getCategoryListUseCase().collectLatest { list ->
+            if (_state.value is CategoriesUiState.Success) {
+                updateIfSuccess {
+                    it.copy(
+                        categories = list,
                         isRefreshing = false
                     )
                 }
+            } else {
+                _state.value =
+                    CategoriesUiState.Success(categories = list, isRefreshing = false)
             }
-        )
+        }
     }
 
     private fun updateIfSuccess(transform: (CategoriesUiState.Success) -> CategoriesUiState.Success) {

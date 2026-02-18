@@ -163,5 +163,23 @@
     <string name="no_one">Не указано</string>
     <string name="sort_title">Сортировать</string>
     <string name="create_category">Создание категории</string>
+    <string name="complete">Применить</string>
+    <string name="put_your_description">Введите описание</string>
+    <string name="put_your_rule">Введите правила выполнения</string>
+    <string name="force">Сила</string>
+    <string name="choose_muscle">Добавление мышц</string>
 
+    <string name="category_desc">Определяет тип упражнения</string>
+    <string name="force_desc">Показывает уровень нагрузки</string>
+    <string name="mechanic_desc">Тип движения в упражнении</string>
+    <string name="equipment_desc">Что требуется для выполнения</string>
+    <string name="level_desc">Подходит ли упражнение новичкам</string>
+    <string name="create_exercise">Создание упражнения</string>
+    <string name="secondary_muscl">Побочная мышца</string>
+    <string name="primary_muscl">Главная мышца</string>
+    <string name="custom">Пользовательские</string>
+    <string name="base_exercise">Предустановленные</string>
+    <string name="monday_16_2026">Понедельник, 16 февраль 2026</string>
+    <string name="warning_dialog_title">Предупреждение перед удалением</string>
+    <string name="dont_take_warning">Не показывать больше предупреждение</string>
 </resources>

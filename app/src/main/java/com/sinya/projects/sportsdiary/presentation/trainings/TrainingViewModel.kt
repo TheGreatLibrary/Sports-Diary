@@ -11,6 +11,7 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -69,7 +70,6 @@ class TrainingViewModel @Inject constructor(
             deleteTrainingUseCase(item).fold(
                 onSuccess = {
                     updateIfSuccess { it.copy(deleteDialogId = null) }
-                    loadData()
                 },
                 onFailure = { error ->
                     updateIfSuccess { it.copy(errorMessage = error.toString()) }
@@ -81,37 +81,19 @@ class TrainingViewModel @Inject constructor(
     private fun loadData() = viewModelScope.launch {
         updateIfSuccess { it.copy(isRefreshing = true) }
 
-        getTrainingUseCase().fold(
-            onSuccess = { list ->
-                if (_state.value is TrainingUiState.Success) {
-                    updateIfSuccess {
-                        it.copy(
-                            trainings = list,
-                            isRefreshing = false
-                        )
-                    }
-                }
-                else {
-                    _state.value = TrainingUiState.Success(trainings = list, isRefreshing = false)
-                }
-            },
-            onFailure = { error ->
-                if (_state.value is TrainingUiState.Success) {
-                    updateIfSuccess {
-                        it.copy(
-                            errorMessage = error.toString(),
-                            isRefreshing = false
-                        )
-                    }
-                }
-                else {
-                    _state.value = TrainingUiState.Success(
-                        errorMessage = error.toString(),
+        getTrainingUseCase().collectLatest { list ->
+            if (_state.value is TrainingUiState.Success) {
+                updateIfSuccess {
+                    it.copy(
+                        trainings = list,
                         isRefreshing = false
                     )
                 }
             }
-        )
+            else {
+                _state.value = TrainingUiState.Success(trainings = list, isRefreshing = false)
+            }
+        }
     }
 
     private fun updateIfSuccess(transform: (TrainingUiState.Success) -> TrainingUiState.Success) {

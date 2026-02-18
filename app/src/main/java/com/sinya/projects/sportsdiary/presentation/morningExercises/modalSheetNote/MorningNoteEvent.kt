@@ -2,7 +2,7 @@ package com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetN
 
 sealed class ModalSheetNoteEvent {
     data object OpenAddNoteField : ModalSheetNoteEvent()
-    data object AddNote : ModalSheetNoteEvent()
+    data class AddNote(val id: Int?) : ModalSheetNoteEvent()
     data class OnQueryChange(val s: String) : ModalSheetNoteEvent()
 
     data class OpenEditNoteField(val id: Int) : ModalSheetNoteEvent()

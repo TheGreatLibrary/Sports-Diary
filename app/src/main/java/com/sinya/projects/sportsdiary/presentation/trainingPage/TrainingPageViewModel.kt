@@ -5,16 +5,18 @@ import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.entity.DataTraining
 import com.sinya.projects.sportsdiary.data.database.entity.DataTypeTrainings
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
+import com.sinya.projects.sportsdiary.data.datastore.DataStoreManager
 import com.sinya.projects.sportsdiary.domain.model.BottomSheetCategoryData
 import com.sinya.projects.sportsdiary.domain.model.ExerciseDialogContent
-import com.sinya.projects.sportsdiary.domain.model.ExerciseUi
+import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
+import com.sinya.projects.sportsdiary.domain.model.SortParam
 import com.sinya.projects.sportsdiary.domain.model.addEmptySet
 import com.sinya.projects.sportsdiary.domain.model.removeSet
 import com.sinya.projects.sportsdiary.domain.model.updateSet
 import com.sinya.projects.sportsdiary.domain.useCase.CheckNameCategoryExistsUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetCategoriesListUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseDescriptionUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseListUseCase
+import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseWithSortedDataUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetExercisesByCategoryUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetSerialNumOfCategoryUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetTrainingItemUseCase
@@ -27,17 +29,19 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @HiltViewModel(assistedFactory = TrainingPageViewModel.Factory::class)
 class TrainingPageViewModel @AssistedInject constructor(
     @Assisted("id") private val id: Int?,
+    private val dataStoreManager: DataStoreManager,
 
     private val getCategoriesListUseCase: GetCategoriesListUseCase,
     private val upsertTrainingUseCase: UpsertTrainingUseCase,
@@ -49,7 +53,7 @@ class TrainingPageViewModel @AssistedInject constructor(
     private val insertCategoryUseCase: InsertCategoryWithDataUseCase,
     private val checkNameCategoryExistsUseCase: CheckNameCategoryExistsUseCase,
     private val insertDataTrainingUseCase: InsertDataTrainingUseCase,
-    private val getExerciseListUseCase: GetExerciseListUseCase
+    private val getExerciseListUseCase: GetExerciseWithSortedDataUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<TrainingPageUiState>(TrainingPageUiState.Loading)
@@ -66,15 +70,19 @@ class TrainingPageViewModel @AssistedInject constructor(
         loadData(id)
     }
 
-    fun filtered(): List<ExerciseUi> {
-        val currentState = _state.value as? TrainingPageUiState.TrainingForm ?: return listOf()
+    fun filtered(): List<ExerciseWithMuscles> {
+        val cs = _state.value as? TrainingPageUiState.TrainingForm ?: return listOf()
 
-        if (currentState.bottomSheetCategoryStatus != null) return currentState.items.searchByTerms(
-            currentState.bottomSheetCategoryStatus.query
-        ) { it.name }
-        else if (currentState.bottomSheetTrainingQuery != null) return currentState.items.searchByTerms(
-            currentState.bottomSheetTrainingQuery
-        ) { it.name }
+        val filtered = cs.modes.fold(cs.items) { exercises, mode ->
+            mode.filter(exercises)
+        }
+
+        if (cs.bottomSheetCategoryStatus != null) return filtered.searchByTerms(
+            cs.bottomSheetCategoryStatus.query, { it.name }
+        )
+        else if (cs.bottomSheetTrainingQuery != null) return filtered.searchByTerms(
+            cs.bottomSheetTrainingQuery, { it.name }
+        )
         return emptyList()
     }
 
@@ -96,9 +104,14 @@ class TrainingPageViewModel @AssistedInject constructor(
 
             TrainingPageEvent.OpenBottomSheetCategory -> updateIfForm { form ->
                 form.copy(
-                    bottomSheetCategoryStatus = BottomSheetCategoryData(),
+                    bottomSheetCategoryStatus = form.bottomSheetCategoryStatus
+                        ?: BottomSheetCategoryData(),
                     bottomSheetTrainingQuery = null,
-                    items = form.items.map { it.copy(checked = false) }
+                    items = if (form.bottomSheetCategoryStatus != null) form.items else form.items.map {
+                        it.copy(
+                            checked = false
+                        )
+                    }
                 )
             }
 
@@ -127,7 +140,7 @@ class TrainingPageViewModel @AssistedInject constructor(
                 )
             }
 
-            is TrainingPageEvent.Delete -> deleteExercise(event.id)
+            is TrainingPageEvent.Delete -> deleteExercise()
 
             is TrainingPageEvent.Toggle -> {
                 updateIfForm { categoryForm ->
@@ -147,7 +160,6 @@ class TrainingPageViewModel @AssistedInject constructor(
                 _state.value = TrainingPageUiState.Success
             }
 
-            TrainingPageEvent.UpdateCategories -> getCategoriesList()
 
             TrainingPageEvent.OnErrorShown -> updateIfForm { it.copy(errorMessage = null) }
 
@@ -155,9 +167,7 @@ class TrainingPageViewModel @AssistedInject constructor(
                 addExercises()
             }
 
-            is TrainingPageEvent.OnCreateCategory -> saveTraining {
-                createCategory(event.onDone)
-            }
+            is TrainingPageEvent.OnCreateCategory -> saveTraining { createCategory() }
 
             is TrainingPageEvent.OnNameChange -> {
                 val s = _state.value as? TrainingPageUiState.TrainingForm ?: return
@@ -165,7 +175,8 @@ class TrainingPageViewModel @AssistedInject constructor(
                 if (s.bottomSheetCategoryStatus != null) updateIfForm {
                     it.copy(
                         bottomSheetCategoryStatus = it.bottomSheetCategoryStatus!!.copy(
-                            categoryName = event.s
+                            categoryName = event.s,
+                            isError = false
                         )
                     )
                 }
@@ -185,6 +196,30 @@ class TrainingPageViewModel @AssistedInject constructor(
                     it.copy(bottomSheetTrainingQuery = event.s)
                 }
             }
+
+            is TrainingPageEvent.SortParamChange -> {
+                updateIfForm {
+                    val updatedList = it.modes.map { mode ->
+                        if (mode == event.mode) {
+                            mode.apply(event.param as SortParam)
+                        } else {
+                            mode
+                        }
+                    }
+                    it.copy(modes = updatedList)
+                }
+            }
+
+            is TrainingPageEvent.OpenDialogOnDelete -> {
+                val form = (_state.value as? TrainingPageUiState.TrainingForm) ?: return
+                if (form.trainingWarningState) {
+                    updateIfForm { it.copy(deleteDialogId = event.id) }
+                } else {
+                    deleteExercise(event.id)
+                }
+            }
+
+            is TrainingPageEvent.CheckBoxToggle -> updateIfForm { it.copy(trainingWarningState = event.state) }
         }
     }
 
@@ -225,11 +260,9 @@ class TrainingPageViewModel @AssistedInject constructor(
     }
 
     private fun loadData(id: Int?) = viewModelScope.launch {
-        withContext(Dispatchers.IO) { getTrainingEntity(id) }
-        withContext(Dispatchers.IO) { getExerciseList() }
-        withContext(Dispatchers.IO) { getCategoriesList() }
+        getTrainingEntity(id).join()
+        observeFormData()
     }
-
 
     private fun selectedIds(): List<Int> {
         val currentState = _state.value as? TrainingPageUiState.TrainingForm ?: return listOf()
@@ -263,7 +296,7 @@ class TrainingPageViewModel @AssistedInject constructor(
         )
     }
 
-    private fun createCategory(onDone: () -> Unit) = viewModelScope.launch {
+    private fun createCategory() = viewModelScope.launch {
         val s = _state.value as? TrainingPageUiState.TrainingForm ?: return@launch
 
         if (s.bottomSheetCategoryStatus != null) {
@@ -302,12 +335,11 @@ class TrainingPageViewModel @AssistedInject constructor(
                     onSuccess = {
                         updateIfForm { form ->
                             form.copy(
-                                bottomSheetTrainingQuery = null,
-                                items = form.items.map { it.copy(checked = false) },
-                                bottomSheetCategoryStatus = null
+                                bottomSheetCategoryStatus = null,
+                                bottomSheetTrainingQuery = "",
+                                items = form.items.map { it.copy(checked = false) }
                             )
                         }
-                        onDone()
                     },
                     onFailure = { error ->
                         updateIfForm {
@@ -322,17 +354,6 @@ class TrainingPageViewModel @AssistedInject constructor(
                 )
             }
         }
-    }
-
-    private fun getCategoriesList() = viewModelScope.launch {
-        getCategoriesListUseCase().fold(
-            onSuccess = { list ->
-                updateIfForm { it.copy(categories = listOf(null) + list) }
-            },
-            onFailure = { error ->
-                _state.value = TrainingPageUiState.Error(errorMessage = error.toString())
-            }
-        )
     }
 
     private fun getTrainingEntity(id: Int? = this.id) = viewModelScope.launch {
@@ -352,6 +373,7 @@ class TrainingPageViewModel @AssistedInject constructor(
                 } else {
                     _state.value = TrainingPageUiState.TrainingForm(
                         item = item,
+                        trainingWarningState = false
                     )
                 }
             },
@@ -361,10 +383,23 @@ class TrainingPageViewModel @AssistedInject constructor(
         )
     }
 
-    private fun getExerciseList() = viewModelScope.launch {
-        val items = getExerciseListUseCase().getOrElse { emptyList() }
-
-        updateIfForm { it.copy(items = items) }
+    private fun observeFormData() = viewModelScope.launch {
+        combine(
+            getCategoriesListUseCase(),
+            getExerciseListUseCase(),
+            dataStoreManager.getShowTrainingWarningState()
+        ) { values ->
+            Triple(values[0], values[1], values[2])
+        }
+            .collectLatest { (categories, exercises, warningState) ->
+                updateIfForm {
+                    it.copy(
+                        categories = listOf(null) + (categories) as List<TypeTraining?>,
+                        items = exercises as List<ExerciseWithMuscles>,
+                        trainingWarningState = warningState as Boolean
+                    )
+                }
+            }
     }
 
     private fun openDialogGuide(title: String, description: String) {
@@ -381,22 +416,23 @@ class TrainingPageViewModel @AssistedInject constructor(
 
     private fun openDialog(id: Int?) = viewModelScope.launch {
         if (id != null) {
-            getExerciseDescriptionUseCase(id).fold(
-                onSuccess = { exercise ->
+            getExerciseDescriptionUseCase(id)
+                .catch { error ->
+                    updateIfForm {
+                        it.copy(errorMessage = error.message ?: "Неизвестная ошибка")
+                    }
+                }
+                .collectLatest { exercise ->
                     updateIfForm {
                         it.copy(
                             dialogContent = ExerciseDialogContent(
-                                id = exercise.exerciseId,
+                                id = exercise.id,
                                 name = exercise.name,
                                 description = exercise.description,
                             )
                         )
                     }
-                },
-                onFailure = { error ->
-                    updateIfForm { it.copy(errorMessage = error.toString()) }
                 }
-            )
         } else {
             updateIfForm {
                 it.copy(dialogContent = null)
@@ -418,13 +454,31 @@ class TrainingPageViewModel @AssistedInject constructor(
         )
     }
 
-    private fun deleteExercise(exerciseId: Int?) {
-        val s = _state.value as? TrainingPageUiState.TrainingForm ?: return
+    private fun deleteExercise() = viewModelScope.launch {
+        val s = _state.value as? TrainingPageUiState.TrainingForm ?: return@launch
 
+        if (!s.trainingWarningState) {
+            dataStoreManager.setShowTrainingWarningState(s.trainingWarningState)
+        }
+
+        s.deleteDialogId?.let { id ->
+            updateIfForm {
+                it.copy(
+                    deleteDialogId = null,
+                    item = s.item.copy(
+                        items = s.item.items.filterNot { item -> item.id == id }
+                    )
+                )
+            }
+        }
+    }
+
+    private fun deleteExercise(id: Int?) = viewModelScope.launch {
         updateIfForm {
             it.copy(
-                item = s.item.copy(
-                    items = s.item.items.filterNot { item -> item.id == exerciseId }
+                deleteDialogId = null,
+                item = it.item.copy(
+                    items = it.item.items.filterNot { item -> item.id == id }
                 )
             )
         }

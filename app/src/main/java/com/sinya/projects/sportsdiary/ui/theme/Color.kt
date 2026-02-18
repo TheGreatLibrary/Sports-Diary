@@ -23,7 +23,7 @@ object AppColors {
     val Gray600 = Color(0xFF3E3E3E)
     val Gray400 = Color(0xFF6E6E6E)
     val Gray200 = Color(0xFF959595)
-    val Gray100 = Color(0xFFDCDCDC)
+    val Gray100 = Color(0xFFE8E8E8)
     val White = Color(0xFFFFFFFF)
     val Orange800 = Color(0xFF792E00)
     val Orange700 = Color(0xFFBE4900)
@@ -65,8 +65,8 @@ val LightColorScheme = lightColorScheme(
     secondaryContainer = Gray200, // серые контейнеры
     tertiaryContainer = Orange800, // оранжевые карточки
 
-    surface = White, // фон диалога
-    surfaceContainer = Gray100, // текстовое поле диалогового окна
+    surface = Gray100, // фон диалога
+    surfaceContainer = White, // текстовое поле диалогового окна
     onSurface = Gray400, // текст в текстовом поле диалогового окна
 
     inversePrimary = White,

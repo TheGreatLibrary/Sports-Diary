@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.text.BasicTextField
@@ -37,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 
@@ -45,15 +47,17 @@ import com.sinya.projects.sportsdiary.R
 fun CustomTextField(
     modifier: Modifier = Modifier,
     value: String,
+    height: Dp = 40.dp,
     onValueChange: (String) -> Unit,
     placeholder: String? = null,
     leadingIcon: Painter? = null,
-    onTrailingClick: () -> Unit,
+    onTrailingClick: (() -> Unit)? = null,
     shape: CornerBasedShape = MaterialTheme.shapes.small,
-    keyboardType: KeyboardType,
+    keyboardType: KeyboardType = KeyboardType.Text,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     isError: Boolean = false,
+    singleLine: Boolean = true,
     errorMessage: String? = null,
 ) {
     var focused by remember { mutableStateOf(false) }
@@ -63,12 +67,12 @@ fun CustomTextField(
         BasicTextField(
             value = value,
             onValueChange = { s -> onValueChange(s) },
-            singleLine = true,
+            singleLine = singleLine,
             textStyle = MaterialTheme.typography.bodyMedium.copy(color = contentColor),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.onPrimary),
             modifier = modifier
-                .height(40.dp)
+                .heightIn(max = height)
                 .background(containerColor, shape)
                 .border(
                     width = 1.dp,
@@ -108,16 +112,18 @@ fun CustomTextField(
                         }
                     },
                     trailingIcon = {
-                        if (value.isNotEmpty()) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear",
-                                tint = contentColor,
-                                modifier = Modifier
-                                    .size(18.dp)
-                                    .clip(MaterialTheme.shapes.extraLarge)
-                                    .clickable { onTrailingClick() },
-                            )
+                        onTrailingClick?.let {
+                            if (value.isNotEmpty()) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = "Clear",
+                                    tint = contentColor,
+                                    modifier = Modifier
+                                        .size(18.dp)
+                                        .clip(MaterialTheme.shapes.extraLarge)
+                                        .clickable { onTrailingClick() },
+                                )
+                            }
                         }
                     }
                 )

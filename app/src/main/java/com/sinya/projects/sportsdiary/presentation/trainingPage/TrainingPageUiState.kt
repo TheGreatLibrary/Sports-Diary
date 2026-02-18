@@ -3,7 +3,8 @@ package com.sinya.projects.sportsdiary.presentation.trainingPage
 import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
 import com.sinya.projects.sportsdiary.domain.model.BottomSheetCategoryData
 import com.sinya.projects.sportsdiary.domain.model.ExerciseDialogContent
-import com.sinya.projects.sportsdiary.domain.model.ExerciseUi
+import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
+import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
 import com.sinya.projects.sportsdiary.domain.model.TrainingEntity
 
 sealed interface TrainingPageUiState {
@@ -12,11 +13,18 @@ sealed interface TrainingPageUiState {
     data class TrainingForm(
         val item: TrainingEntity,
         val categories: List<TypeTraining?> = emptyList(),
-        val items: List<ExerciseUi> = emptyList(),
+        val items: List<ExerciseWithMuscles> = emptyList(),
         val calendarVisible: Boolean = false,
-
+        val trainingWarningState: Boolean,
+        val modes: List<ModeOfSorting> = listOf(
+            ModeOfSorting.Level(),
+            ModeOfSorting.Category(),
+            ModeOfSorting.Muscle(),
+            ModeOfSorting.Equipment()
+        ),
         val bottomSheetCategoryStatus: BottomSheetCategoryData? = null,
         val bottomSheetTrainingQuery: String? = "",
+        val deleteDialogId: Int? = null,
         val dialogContent: ExerciseDialogContent? = null,
         val errorMessage: String? = null
     ) : TrainingPageUiState

@@ -8,14 +8,24 @@ import com.sinya.projects.sportsdiary.data.database.dao.PlanMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.ProportionsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TrainingsDao
 import com.sinya.projects.sportsdiary.data.database.dao.TypeTrainingDao
+import com.sinya.projects.sportsdiary.data.database.entity.Categories
+import com.sinya.projects.sportsdiary.data.database.entity.CategoryTranslation
 import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
 import com.sinya.projects.sportsdiary.data.database.entity.DataPlanMorning
 import com.sinya.projects.sportsdiary.data.database.entity.DataProportions
 import com.sinya.projects.sportsdiary.data.database.entity.DataTraining
 import com.sinya.projects.sportsdiary.data.database.entity.DataTypeTrainings
+import com.sinya.projects.sportsdiary.data.database.entity.EquipmentTranslation
+import com.sinya.projects.sportsdiary.data.database.entity.Equipments
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseMuscles
 import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
 import com.sinya.projects.sportsdiary.data.database.entity.Exercises
+import com.sinya.projects.sportsdiary.data.database.entity.ForceTranslation
+import com.sinya.projects.sportsdiary.data.database.entity.Forces
+import com.sinya.projects.sportsdiary.data.database.entity.LevelTranslation
+import com.sinya.projects.sportsdiary.data.database.entity.Levels
+import com.sinya.projects.sportsdiary.data.database.entity.MechanicTranslation
+import com.sinya.projects.sportsdiary.data.database.entity.Mechanics
 import com.sinya.projects.sportsdiary.data.database.entity.MuscleTranslations
 import com.sinya.projects.sportsdiary.data.database.entity.Muscles
 import com.sinya.projects.sportsdiary.data.database.entity.PlanMornings
@@ -31,6 +41,17 @@ import com.sinya.projects.sportsdiary.data.database.entity.UnitsMeasurement
         Exercises::class,
         ExerciseTranslations::class,
         ExerciseMuscles::class,
+
+        Forces::class,
+        ForceTranslation::class,
+        Levels::class,
+        LevelTranslation::class,
+        Mechanics::class,
+        MechanicTranslation::class,
+        Equipments::class,
+        EquipmentTranslation::class,
+        Categories::class,
+        CategoryTranslation::class,
 
         Muscles::class,
         MuscleTranslations::class,
@@ -51,7 +72,7 @@ import com.sinya.projects.sportsdiary.data.database.entity.UnitsMeasurement
 
         UnitsMeasurement::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

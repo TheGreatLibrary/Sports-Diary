@@ -6,11 +6,13 @@ import com.sinya.projects.sportsdiary.data.database.entity.Proportions
 import com.sinya.projects.sportsdiary.domain.model.ProportionDialogContent
 import com.sinya.projects.sportsdiary.domain.model.ProportionItem
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import java.time.LocalDate
 
 interface ProportionRepository {
     // Proportions
-    suspend fun getProportionList(): Result<List<Proportions>>
+    fun getProportionList(): Flow<List<Proportions>>
     suspend fun deleteProportion(it: Proportions): Result<Int>
 
     // ProportionPage
@@ -24,12 +26,9 @@ class ProportionRepositoryImpl @Inject constructor(
 ) : ProportionRepository {
 
     // Proportions
-    override suspend fun getProportionList(): Result<List<Proportions>> {
-        return try {
-            val list = proportionsDao.getProportionsList()
-            Result.success(list)
-        } catch (e: Exception) {
-            Result.failure(e)
+    override fun getProportionList(): Flow<List<Proportions>> {
+        return proportionsDao.getProportionsList().catch {
+            emit(emptyList())
         }
     }
 
@@ -58,10 +57,9 @@ class ProportionRepositoryImpl @Inject constructor(
                         items = items
                     )
                 )
-            }
-            else {
-                val page = proportionsDao.getById(id) ?:
-                    return Result.failure(IllegalStateException("Proportion with id=$id not found"))
+            } else {
+                val page = proportionsDao.getById(id)
+                    ?: return Result.failure(IllegalStateException("Proportion with id=$id not found"))
 
                 val items = proportionsDao.proportionPage(id, locale)
 

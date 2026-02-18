@@ -17,6 +17,7 @@ import com.sinya.projects.sportsdiary.domain.model.ExerciseItemWithoutList
 import com.sinya.projects.sportsdiary.domain.model.Training
 import com.sinya.projects.sportsdiary.domain.model.TrainingEntity
 import com.sinya.projects.sportsdiary.domain.model.toExerciseData
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TrainingsDao {
@@ -52,7 +53,7 @@ interface TrainingsDao {
         ) AS date
         FROM trainings t LEFT JOIN type_training tt ON t.type_id = tt.id
     """)
-    suspend fun getList() : List<Training>
+    fun getList() : Flow<List<Training>>
 
     @Delete
     suspend fun deleteTraining(it: Trainings): Int
@@ -108,7 +109,15 @@ interface TrainingsDao {
     suspend fun getSerialNumOfCategory(categoryId: Int?) : String
 
     @Query("""
-        SELECT * 
+        SELECT
+            id,
+            icon,
+            is_custom,
+            force_id,
+            level_id,
+            mechanic_id,
+            equipment_id,
+            category_id
         FROM exercises e 
         JOIN exercise_translations et ON e.id = et.exercise_id
         WHERE name = :name 
@@ -213,5 +222,5 @@ interface TrainingsDao {
         WHERE date >= :startDate AND date < :endDate
         ORDER BY date
     """)
-    suspend fun getDataOfMonth(startDate: String, endDate: String) : List<Training>
+    fun getDataOfMonth(startDate: String, endDate: String) : Flow<List<Training>>
 }

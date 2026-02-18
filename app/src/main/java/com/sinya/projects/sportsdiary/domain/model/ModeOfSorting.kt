@@ -6,6 +6,7 @@ import com.sinya.projects.sportsdiary.data.database.entity.Proportions
 import com.sinya.projects.sportsdiary.data.database.entity.filterByYearMonth
 import com.sinya.projects.sportsdiary.data.database.entity.monthsForYear
 import com.sinya.projects.sportsdiary.data.database.entity.years
+import com.sinya.projects.sportsdiary.domain.enums.TypeCustom
 import com.sinya.projects.sportsdiary.ui.theme.Shapes
 
 sealed class ModeOfSorting(
@@ -300,6 +301,47 @@ sealed class ModeOfSorting(
         }
     }
 
+    data class Custom(val custom: TypeCustom = TypeCustom.ALL) : ModeOfSorting(
+        code = 5,
+        radioItem = RadioItem(null)
+    ) {
+        override fun apply(param: SortParam): ModeOfSorting =
+            when (param) {
+                is SortParam.Custom -> copy(custom = param.value)
+                else -> this
+            }
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T> filter(items: List<T>): List<T> {
+            return when (items.firstOrNull()) {
+                is ExerciseWithMuscles -> (items as List<ExerciseWithMuscles>).filterByCustom(custom) as List<T>
+                else -> items
+            }
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T, M> categories(items: List<T>, context: Context): List<FilterBuilder<M>> {
+            val categories = when (items.firstOrNull()) {
+                is ExerciseWithMuscles -> (items as List<ExerciseWithMuscles>).custom.map {
+                    val item = TypeCustom.getType(it)
+                    RadioItem(context.getString(item.stringRes), null, item as M)
+                }
+
+                else -> emptyList()
+            }
+
+            return listOf(
+                FilterBuilder(
+                    titleRes = R.string.ex_level,
+                    options = listOf(RadioItem(context.getString(TypeCustom.ALL.stringRes), null, TypeCustom.ALL as M)) + categories,
+                    selectedValue = custom as M,
+                    onSelect = { SortParam.Custom(it as TypeCustom) },
+                    shape = Shapes.extraLarge
+                )
+            )
+        }
+    }
+
     companion object {
         fun fromCode(code: Int?): ModeOfSorting =
             when (code) {
@@ -323,7 +365,8 @@ sealed class ModeOfSorting(
                 Level(""),
                 Category(""),
                 Muscle(""),
-                Equipment("")
+                Equipment(""),
+                Custom()
             ).map {
                 it.radioItem.copy(value = it.code)
             }

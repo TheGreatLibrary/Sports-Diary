@@ -23,6 +23,7 @@ sealed class ScreenRoute(val route: String) {
 
     @Serializable data object SportExercises : ScreenRoute("SportExercises")
     @Serializable data class ExercisePage(val id: Int) : ScreenRoute("ExercisePage")
+    @Serializable data class ExerciseEdit(val id: Int?) : ScreenRoute("ExerciseEdit")
 
     @Serializable data object StatisticProportions : ScreenRoute("StatisticProportions")
     @Serializable data object StatisticExercises : ScreenRoute("StatisticExercises")

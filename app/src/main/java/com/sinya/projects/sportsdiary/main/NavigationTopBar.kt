@@ -59,6 +59,7 @@ fun NavigationTopBar(
         if (action != null)
             AnimationIcon(
                 onClick = action.second,
+                shape = MaterialTheme.shapes.extraLarge,
                 description = "",
                 isSelected = true,
                 size = 22.dp,

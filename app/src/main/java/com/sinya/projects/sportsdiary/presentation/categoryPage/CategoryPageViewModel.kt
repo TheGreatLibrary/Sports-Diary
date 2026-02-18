@@ -1,16 +1,16 @@
 package com.sinya.projects.sportsdiary.presentation.categoryPage
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.data.database.entity.DataTypeTrainings
 import com.sinya.projects.sportsdiary.domain.model.CategorySheetItem
 import com.sinya.projects.sportsdiary.domain.model.ExerciseDialogContent
-import com.sinya.projects.sportsdiary.domain.model.ExerciseUi
+import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
+import com.sinya.projects.sportsdiary.domain.model.SortParam
 import com.sinya.projects.sportsdiary.domain.useCase.CheckNameCategoryExistsUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetCategoryItemUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseDescriptionUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseListUseCase
+import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseWithSortedDataUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.InsertCategoryWithDataUseCase
 import com.sinya.projects.sportsdiary.domain.useCase.UpdateCategoryDataUseCase
 import com.sinya.projects.sportsdiary.utils.searchByTerms
@@ -21,6 +21,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -32,7 +35,7 @@ class CategoryPageViewModel @AssistedInject constructor(
     private val insertCategoryUseCase: InsertCategoryWithDataUseCase,
     private val getExerciseDescriptionUseCase: GetExerciseDescriptionUseCase,
     private val updateCategoryDataUseCase: UpdateCategoryDataUseCase,
-    private val getExerciseListUseCase: GetExerciseListUseCase,
+    private val getExerciseListUseCase: GetExerciseWithSortedDataUseCase,
     private val checkNameCategoryExistsUseCase: CheckNameCategoryExistsUseCase
 ) : ViewModel() {
 
@@ -47,7 +50,7 @@ class CategoryPageViewModel @AssistedInject constructor(
     }
 
     init {
-        loadData(id)
+        getCategoryEntity()
     }
 
     fun onEvent(event: CategoryPageEvent) {
@@ -67,9 +70,7 @@ class CategoryPageViewModel @AssistedInject constructor(
                 )
             }
 
-            is CategoryPageEvent.OpenBottomSheetTraining -> {
-                saveCategory {}
-            }
+            is CategoryPageEvent.OpenBottomSheetTraining -> saveCategory {}
 
             is CategoryPageEvent.OpenDialog -> openDialog(event.id)
 
@@ -81,11 +82,30 @@ class CategoryPageViewModel @AssistedInject constructor(
                 updateCategoryData { getCategoryEntity(it) }
             }
 
-            is CategoryPageEvent.Toggle -> {
-                updateIfForm { categoryForm ->
-                    categoryForm.copy(
-                        sheetData = categoryForm.sheetData.copy(
-                            items = categoryForm.sheetData.items.map { if (it.id == event.id) it.copy(checked = !it.checked) else it }
+            is CategoryPageEvent.Toggle -> updateIfForm { categoryForm ->
+                categoryForm.copy(
+                    sheetData = categoryForm.sheetData.copy(
+                        items = categoryForm.sheetData.items.map {
+                            if (it.id == event.id) it.copy(
+                                checked = !it.checked
+                            ) else it
+                        }
+                    )
+                )
+            }
+
+            is CategoryPageEvent.SortParamChange -> {
+                updateIfForm {
+                    val updatedList = it.sheetData.modes.map { mode ->
+                        if (mode == event.mode) {
+                            mode.apply(event.param as SortParam)
+                        } else {
+                            mode
+                        }
+                    }
+                    it.copy(
+                        sheetData = it.sheetData.copy(
+                            modes = updatedList
                         )
                     )
                 }
@@ -93,25 +113,25 @@ class CategoryPageViewModel @AssistedInject constructor(
 
             is CategoryPageEvent.UpdateListTraining -> getCategoryEntity(event.id)
 
-            is CategoryPageEvent.OnQueryChange -> {
-                updateIfForm {
-                    it.copy(
-                        sheetData = it.sheetData.copy(
-                            query = event.name
-                        )
+            is CategoryPageEvent.OnQueryChange -> updateIfForm {
+                it.copy(
+                    sheetData = it.sheetData.copy(
+                        query = event.name
                     )
-                }
+                )
             }
         }
     }
 
-    private fun loadData(id: Int?) = viewModelScope.launch {
-        getCategoryEntity(id)
-    }
-
-    fun filtered(): List<ExerciseUi> {
+    fun filtered(): List<ExerciseWithMuscles> {
         val currentState = _state.value as? CategoryPageUiState.CategoryForm ?: return listOf()
-        return currentState.sheetData.items.searchByTerms(currentState.sheetData.query) { it.name }
+
+        val filtered =
+            currentState.sheetData.modes.fold(currentState.sheetData.items) { exercises, mode ->
+                mode.filter(exercises)
+            }
+
+        return filtered.searchByTerms(currentState.sheetData.query, { it.name })
     }
 
     private fun updateCategoryData(function: (Int) -> Unit) = viewModelScope.launch {
@@ -135,7 +155,7 @@ class CategoryPageViewModel @AssistedInject constructor(
     }
 
     private fun getCategoryEntity(id: Int? = this.id) = viewModelScope.launch {
-        val items = getExerciseListUseCase().getOrElse { emptyList() }
+        val items = getExerciseListUseCase().first()
 
         getCategoryItemUseCase(id).fold(
             onSuccess = { item ->
@@ -163,22 +183,23 @@ class CategoryPageViewModel @AssistedInject constructor(
 
     private fun openDialog(id: Int?) = viewModelScope.launch {
         if (id != null) {
-            getExerciseDescriptionUseCase(id).fold(
-                onSuccess = { exercise ->
+            getExerciseDescriptionUseCase(id)
+                .catch { error ->
+                    updateIfForm {
+                        it.copy(errorMessage = error.message ?: "Неизвестная ошибка")
+                    }
+                }
+                .collectLatest { exercise ->
                     updateIfForm {
                         it.copy(
                             dialogContent = ExerciseDialogContent(
-                                id = exercise.exerciseId,
+                                id = exercise.id,
                                 name = exercise.name,
                                 description = exercise.description,
                             )
                         )
                     }
-                },
-                onFailure = { error ->
-                    updateIfForm { it.copy(errorMessage = error.toString()) }
                 }
-            )
         } else {
             updateIfForm {
                 it.copy(dialogContent = null)
@@ -189,11 +210,10 @@ class CategoryPageViewModel @AssistedInject constructor(
     private fun saveCategory(function: () -> Unit) = viewModelScope.launch {
         val s = _state.value as? CategoryPageUiState.CategoryForm ?: return@launch
 
-        if (s.item.category.name.isEmpty())  updateIfForm { it.copy(isError = true) }
-        else if (checkNameCategoryExistsUseCase(s.item.category.name, s.item.category.id).getOrElse { true }){
+        if (s.item.category.name.isEmpty()) updateIfForm { it.copy(isError = true) }
+        else if (checkNameCategoryExistsUseCase(s.item.category.name, s.item.category.id).getOrElse { true }) {
             updateIfForm { it.copy(isError = true) }
-        }
-        else {
+        } else {
             val id = s.item.category.id
             val items = s.item.items.map {
                 DataTypeTrainings(
@@ -206,7 +226,6 @@ class CategoryPageViewModel @AssistedInject constructor(
             insertCategoryUseCase(s.item.category, items).fold(
                 onSuccess = { id1 ->
                     updateIfForm { it.copy(item = it.item.copy(category = it.item.category.copy(id = id1))) }
-                    Log.d("ddd", id1.toString())
                     function()
                 },
                 onFailure = { error ->
@@ -226,10 +245,8 @@ class CategoryPageViewModel @AssistedInject constructor(
     }
 
     private fun moveExercise(from: Int, to: Int) {
-        val s = _state.value as? CategoryPageUiState.CategoryForm ?: return
-
         updateIfForm {
-            val mutable = s.item.items.toMutableList()
+            val mutable = it.item.items.toMutableList()
 
             if (from !in mutable.indices) return@updateIfForm it
             if (from == to) return@updateIfForm it
@@ -238,7 +255,6 @@ class CategoryPageViewModel @AssistedInject constructor(
 
             val target = to.coerceIn(0, mutable.size)
             mutable.add(target, moved)
-
 
             it.copy(
                 item = it.item.copy(

@@ -7,54 +7,56 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.domain.model.SwitchItem
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
+import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
+import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.settings.modalSheetLocale.SettingsLanguageSheet
 import com.sinya.projects.sportsdiary.ui.features.BlockOfCards
 import com.sinya.projects.sportsdiary.ui.features.ListCardItem
+import com.sinya.projects.sportsdiary.utils.updateLocale
 import java.util.Locale
 
 @Composable
 fun SettingsScreen(
     onBackClick: () -> Unit,
-    toggleTheme: () -> Unit,
-    setLanguage: (String) -> Unit,
-    themeMode: Boolean,
-    language: String
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val stateBottomSheet = remember { mutableStateOf(false) }
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    SettingsScreenView(
-        stateBottomSheet = stateBottomSheet.value,
-        onLanguageClick = { stateBottomSheet.value = !stateBottomSheet.value },
-        onBackClick = onBackClick,
-        themeCurrent = if (themeMode) stringResource(R.string.dark_mode)
-                        else stringResource(R.string.light_mode),
-        toggleTheme = toggleTheme,
-        setLanguage = setLanguage,
-        language = language,
-        themeMode = themeMode
-    )
+    when(state) {
+        is SettingsUiState.Error -> ErrorScreen((state as SettingsUiState.Error).message)
+
+        SettingsUiState.Loading -> PlaceholderScreen()
+
+        is SettingsUiState.Success -> SettingsScreenView(
+            onBackClick = onBackClick,
+            state = state as SettingsUiState.Success,
+            onEvent = viewModel::onEvent
+        )
+    }
 }
 
 @Composable
 private fun SettingsScreenView(
-    stateBottomSheet: Boolean,
-    onLanguageClick: () -> Unit,
     onBackClick: () -> Unit,
-    themeCurrent: String,
-    toggleTheme: () -> Unit,
-    setLanguage: (String) -> Unit,
-    themeMode: Boolean,
-    language: String
+    state: SettingsUiState.Success,
+    onEvent: (SettingsEvent) -> Unit
 ) {
+    val context = LocalContext.current
+    val stateBottomSheet = remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -73,28 +75,44 @@ private fun SettingsScreenView(
                 title = stringResource(R.string.interface_block)
             ) {
                 ListCardItem(
-                    onClick = onLanguageClick,
+                    onClick = { stateBottomSheet.value = !stateBottomSheet.value },
                     title = stringResource(R.string.language_title),
-                    description = Locale(language).displayName.lowercase(),
+                    description = Locale(state.langMode).displayName.lowercase(),
                 )
                 ListCardItem(
-                    onClick = toggleTheme,
+                    onClick = { },
                     title = stringResource(R.string.theme_title),
-                    description = themeCurrent,
+                    description = if (state.themeMode) stringResource(R.string.dark_mode)
+                    else stringResource(R.string.light_mode),
                     state = SwitchItem(
-                        state = themeMode,
-                        onClick = { toggleTheme() }
+                        state = state.themeMode,
+                        onClick = { onEvent(SettingsEvent.ThemeToggle(!state.themeMode)) }
+                    )
+                )
+                ListCardItem(
+                    onClick = {  },
+                    title = stringResource(R.string.warning_dialog_title),
+                    description = if (state.showTrainingWarningState) stringResource(R.string.dark_mode)
+                    else stringResource(R.string.light_mode),
+                    state = SwitchItem(
+                        state = state.showTrainingWarningState,
+                        onClick = { onEvent(SettingsEvent.ShowTrainingWarningToggle(!state.showTrainingWarningState)) }
                     )
                 )
             }
         }
     }
 
-    if (stateBottomSheet) {
+    if (stateBottomSheet.value) {
         SettingsLanguageSheet(
-            setLanguage = setLanguage,
-            language = language,
-            onDismiss = onLanguageClick
+            setLanguage = { lang ->
+                onEvent(SettingsEvent.LanguageToggle(lang))
+                context.updateLocale(lang)
+            },
+            language = state.langMode,
+            onDismiss = {
+                stateBottomSheet.value = !stateBottomSheet.value
+            }
         )
     }
 }

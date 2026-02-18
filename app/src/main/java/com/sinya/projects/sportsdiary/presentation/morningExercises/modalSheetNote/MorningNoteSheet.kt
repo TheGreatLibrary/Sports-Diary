@@ -40,6 +40,7 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MorningNoteSheet(
+    currentPlanId: Int?,
     onDismiss: () -> Unit,
     vm: MorningNoteViewModel = hiltViewModel()
 ) {
@@ -59,6 +60,7 @@ fun MorningNoteSheet(
             is MorningNoteUiState.Error -> ErrorScreen(state.message)
             is MorningNoteUiState.Success -> MorningNoteView(
                 state = state,
+                currentPlanId = currentPlanId,
                 onEvent = vm::onEvent,
                 onDismiss = onDismiss
             )
@@ -68,13 +70,14 @@ fun MorningNoteSheet(
 
 @Composable
 private fun MorningNoteView(
+    currentPlanId: Int?,
     state: MorningNoteUiState.Success,
     onEvent: (ModalSheetNoteEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val hasData = state.items.firstOrNull { it.date == LocalDate.now().toString() } == null
     val onClickBtn = {
-        if (state.visibleAddField) onEvent(ModalSheetNoteEvent.AddNote)
+        if (state.visibleAddField) onEvent(ModalSheetNoteEvent.AddNote(currentPlanId))
         else if (state.visibleEditFieldId != null) onEvent(ModalSheetNoteEvent.EditNote(state.visibleEditFieldId))
         else onEvent(ModalSheetNoteEvent.OpenAddNoteField)
     }

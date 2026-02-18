@@ -17,6 +17,8 @@ import com.sinya.projects.sportsdiary.domain.model.TrainingEntity
 import com.sinya.projects.sportsdiary.domain.model.toItem
 import com.sinya.projects.sportsdiary.ui.features.diagram.ChartPoint
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import java.time.LocalDate
 
 interface TrainingRepository {
@@ -26,7 +28,7 @@ interface TrainingRepository {
     suspend fun getChartList(mode: TypeTime): Result<List<ChartPoint>>
 
     // Training
-    suspend fun getTrainingList(): Result<List<Training>>
+    fun getTrainingList(): Flow<List<Training>>
     suspend fun deleteTraining(it: Trainings): Result<Int>
 
     // TrainingPage
@@ -37,11 +39,11 @@ interface TrainingRepository {
     suspend fun getDataByTypeTraining(typeId: Int): Result<List<ExerciseItem>>
 
     // Calendar
-    suspend fun getList(start: String, end: String): Result<List<Training>>
+    fun getList(start: String, end: String): Flow<List<Training>>
 
     // Categories
     suspend fun deleteCategory(it: TypeTraining): Result<Int>
-    suspend fun getCategoriesList(): Result<List<TypeTraining>>
+    fun getCategoriesList(): Flow<List<TypeTraining>>
 
     // CategoryPage
 
@@ -133,13 +135,8 @@ class TrainingRepositoryImpl @Inject constructor(
 
     // Training
 
-    override suspend fun getTrainingList(): Result<List<Training>> {
-        return try {
-            val list = trainingDao.getList()
-            Result.success(list)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    override fun getTrainingList(): Flow<List<Training>> {
+        return trainingDao.getList().catch { emit(emptyList()) }
     }
 
     override suspend fun deleteTraining(it: Trainings): Result<Int> {
@@ -180,7 +177,7 @@ class TrainingRepositoryImpl @Inject constructor(
                                 }
                             )
                         }
-                    }
+                }
 
             Log.d("ddd1", list.toString())
             Result.success(list)
@@ -221,9 +218,9 @@ class TrainingRepositoryImpl @Inject constructor(
                     TrainingEntity(
                         id = training.id,
                         title = training.name,
-                        category = if (training.categoryId!=null)TypeTraining(
+                        category = if (training.categoryId != null) TypeTraining(
                             training.categoryId,
-                            training.category?:"not_category"
+                            training.category ?: "not_category"
                         ) else null,
                         date = training.date,
                         items = listData
@@ -262,12 +259,8 @@ class TrainingRepositoryImpl @Inject constructor(
 
     // Calendar
 
-    override suspend fun getList(start: String, end: String): Result<List<Training>> {
-        return try {
-            Result.success(trainingDao.getDataOfMonth(start, end))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    override fun getList(start: String, end: String): Flow<List<Training>> {
+        return trainingDao.getDataOfMonth(start, end).catch { emit(emptyList()) }
     }
 
     // Categories
@@ -280,13 +273,8 @@ class TrainingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCategoriesList(): Result<List<TypeTraining>> {
-        return try {
-            val list = typeTrainingDao.getList()
-            Result.success(list)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    override fun getCategoriesList(): Flow<List<TypeTraining>> {
+        return typeTrainingDao.getList().catch { emit(emptyList()) }
     }
 
 
@@ -298,16 +286,21 @@ class TrainingRepositoryImpl @Inject constructor(
             val category = typeTrainingDao.getById(id) ?: TypeTraining(name = "")
             val items = trainingDao.getDataOfTypeTraining(id, locale)
 
-            Result.success(CategoryEntity(
-                category = category,
-                items = items
-            ))
+            Result.success(
+                CategoryEntity(
+                    category = category,
+                    items = items
+                )
+            )
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun insertCategory(item: TypeTraining, exercises: List<DataTypeTrainings>): Result<Int> {
+    override suspend fun insertCategory(
+        item: TypeTraining,
+        exercises: List<DataTypeTrainings>
+    ): Result<Int> {
         return try {
             Result.success(typeTrainingDao.createTypeWithExercises(item, exercises))
         } catch (e: Exception) {

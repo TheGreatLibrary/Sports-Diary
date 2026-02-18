@@ -22,6 +22,8 @@ import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.domain.model.ChartState
 import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
+import kotlin.math.ceil
+import kotlin.math.max
 
 @Composable
 fun Chart(
@@ -30,8 +32,6 @@ fun Chart(
     points: List<ChartPoint>,
     onInfoClick: () -> Unit
 ) {
-
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -82,9 +82,16 @@ fun Chart(
                     xStep = 80.dp,
                 )
             }
-            val chartState = remember(points) {
-                state.copy(yMax = points.maxOf { it.yValue } )
-            }
+//            val chartState = remember(points) {
+//                state.copy(yMax = points.maxOf { it.yValue } )
+//            }
+
+            val scale = buildIntScale(points.maxOf { it.yValue })
+
+            val chartState = state.copy(
+                yMax = scale.max.toFloat(),
+                yGridLines = scale.lines
+            )
 
             ScrollableLineChart(
                 points = points,
@@ -97,3 +104,26 @@ fun Chart(
     }
 }
 
+
+data class IntScale(
+    val min: Int,
+    val max: Int,
+    val step: Int,
+    val lines: Int
+)
+
+fun buildIntScale(maxValue: Float, maxLines: Int = 5): IntScale {
+    val maxInt = ceil(maxValue).toInt().coerceAtLeast(1)
+
+    val rawStep = maxInt / maxLines
+    val step = max(1, rawStep)
+
+    val lines = ceil(maxInt / step.toFloat()).toInt()
+
+    return IntScale(
+        min = 0,
+        max = lines * step,
+        step = step,
+        lines = lines
+    )
+}

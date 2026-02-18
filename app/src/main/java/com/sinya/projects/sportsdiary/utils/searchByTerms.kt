@@ -2,9 +2,16 @@ package com.sinya.projects.sportsdiary.utils
 
 fun <T> List<T>.searchByTerms(
     query: String,
-    selector: (T) -> String
+    selector: (T) -> String,
+    isCustomSelector: ((T) -> Boolean)? = null
 ): List<T> {
-    if (query.isBlank()) return this
+    if (query.isBlank()) {
+        return if (isCustomSelector != null) {
+            this.sortedByDescending { isCustomSelector(it) }
+        } else {
+            this
+        }
+    }
 
     val terms = query.trim().lowercase()
         .split("\\s+".toRegex())
@@ -16,17 +23,20 @@ fun <T> List<T>.searchByTerms(
         var score = 0
         terms.forEach { term ->
             when {
-                // Точное совпадение слова - максимальный балл
                 text.split(" ").any { it == term } -> score += 3
-                // Начало слова - средний балл
                 text.split(" ").any { it.startsWith(term) } -> score += 2
-                // Просто содержит - минимальный балл
                 text.contains(term) -> score += 1
             }
         }
 
         if (score > 0) exercise to score else null
     }
-        .sortedByDescending { it.second }
+        .sortedWith(
+            compareByDescending<Pair<T, Int>> { (exercise, _) ->
+                isCustomSelector?.invoke(exercise) ?: false
+            }.thenByDescending { (_, score) ->
+                score
+            }
+        )
         .map { it.first }
 }

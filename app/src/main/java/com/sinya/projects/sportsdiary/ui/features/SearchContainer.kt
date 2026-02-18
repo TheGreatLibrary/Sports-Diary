@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -13,7 +14,9 @@ import com.sinya.projects.sportsdiary.R
 fun SearchContainer(
     searchQuery: String,
     onClear: () -> Unit,
-    onValueChanged: (String) -> Unit
+    onValueChanged: (String) -> Unit,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
     CustomTextField(
         value = searchQuery,
@@ -24,7 +27,7 @@ fun SearchContainer(
         shape = MaterialTheme.shapes.extraLarge,
         keyboardType = KeyboardType.Text,
         modifier = Modifier.fillMaxWidth(),
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
+        contentColor = contentColor,
+        containerColor = containerColor
     )
 }

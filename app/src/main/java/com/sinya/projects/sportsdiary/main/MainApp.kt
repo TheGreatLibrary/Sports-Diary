@@ -1,6 +1,5 @@
 package com.sinya.projects.sportsdiary.main
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.intl.Locale
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -22,6 +22,7 @@ import androidx.navigation.toRoute
 import com.sinya.projects.sportsdiary.data.datastore.AppViewModel
 import com.sinya.projects.sportsdiary.presentation.categories.CategoriesScreen
 import com.sinya.projects.sportsdiary.presentation.categoryPage.CategoryPageScreen
+import com.sinya.projects.sportsdiary.presentation.exerciseEdit.ExerciseEditScreen
 import com.sinya.projects.sportsdiary.presentation.exercisePage.ExercisePageScreen
 import com.sinya.projects.sportsdiary.presentation.exercises.ExercisesScreen
 import com.sinya.projects.sportsdiary.presentation.home.HomeScreen
@@ -35,17 +36,19 @@ import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingPageScre
 import com.sinya.projects.sportsdiary.presentation.trainings.TrainingsScreen
 import com.sinya.projects.sportsdiary.ui.features.getCurrentRoute
 import com.sinya.projects.sportsdiary.ui.theme.SportsDiaryTheme
+import com.sinya.projects.sportsdiary.utils.updateLocale
 
 @Composable
 fun MainApp(
-    updateLocale: (String) -> Unit,
     viewModel: AppViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val themeMode by viewModel.themeMode.collectAsState()
     val language by viewModel.language.collectAsState()
     val currentPlanId by viewModel.planId.collectAsState()
-    Log.d("plan", currentPlanId.toString())
-    updateLocale(language)
+
+
+    context.updateLocale(language)
     val currentLocale = remember(language) { Locale(language) }
 
     val navController = rememberNavController()
@@ -69,9 +72,12 @@ fun MainApp(
         }
     }
     val navigate = remember(navController) {
-        { route: ScreenRoute ->
+        { route: ScreenRoute, lastRoute: ScreenRoute? ->
             navController.navigate(route) {
                 launchSingleTop = true
+                if (lastRoute!=null) popUpTo(lastRoute::class) {
+                    inclusive = true
+                }
             }
         }
     }
@@ -93,11 +99,8 @@ fun MainApp(
                 NavGraph(
                     navController,
                     currentPlanId,
-                    language,
-                    themeMode,
                     onBack,
                     navigate,
-                    updateLocale,
                     Modifier.padding(paddingValue)
                 )
             }
@@ -109,11 +112,8 @@ fun MainApp(
 private fun NavGraph(
     navController: NavHostController,
     currentPlanId: Int?,
-    language: String,
-    themeMode: Boolean,
     onBack: () -> Unit,
-    navigateTo: (ScreenRoute) -> Unit,
-    updateLocale: (String) -> Unit,
+    navigateTo: (ScreenRoute, ScreenRoute?) -> Unit,
     modifier: Modifier,
     viewModel: AppViewModel = hiltViewModel()
 ) {
@@ -124,14 +124,13 @@ private fun NavGraph(
     ) {
         composable<ScreenRoute.Home> {
             HomeScreen(
-                currentPlanId = currentPlanId,
-                navigateTo = navigateTo
+                navigateTo = { route -> navigateTo(route, null) }
             )
         }
         composable<ScreenRoute.Menu> {
             MenuScreen(
                 onBackClick = onBack,
-                navigateTo = navigateTo
+                navigateTo = { route -> navigateTo(route, null) }
             )
         }
         composable<ScreenRoute.Statistic> {
@@ -140,22 +139,13 @@ private fun NavGraph(
             )
         }
         composable<ScreenRoute.Settings> {
-            SettingsScreen(
-                onBackClick = onBack,
-                toggleTheme = viewModel::toggleTheme,
-                setLanguage = { lang ->
-                    viewModel.setLanguage(lang)
-                    updateLocale(lang)
-                },
-                language = language,
-                themeMode = themeMode
-            )
+            SettingsScreen(onBackClick = onBack)
         }
 
         composable<ScreenRoute.Training> {
             TrainingsScreen(
                 onBackClick = onBack,
-                onTrainingClick = { id -> navigateTo(ScreenRoute.TrainingPage(id)) }
+                onTrainingClick = { id -> navigateTo(ScreenRoute.TrainingPage(id), null) }
             )
         }
         composable<ScreenRoute.TrainingPage> { entry ->
@@ -170,7 +160,7 @@ private fun NavGraph(
         composable<ScreenRoute.Categories> {
             CategoriesScreen(
                 onBackClick = onBack,
-                onCategoryClick = { id -> navigateTo(ScreenRoute.CategoryPage(id)) }
+                onCategoryClick = { id -> navigateTo(ScreenRoute.CategoryPage(id), null) }
             )
         }
         composable<ScreenRoute.CategoryPage> { entry ->
@@ -186,7 +176,7 @@ private fun NavGraph(
         composable<ScreenRoute.Proportions> {
             ProportionsScreen(
                 onBackClick = onBack,
-                onProportionClick = { id -> navigateTo(ScreenRoute.ProportionPage(id)) },
+                onProportionClick = { id -> navigateTo(ScreenRoute.ProportionPage(id), null) },
             )
         }
         composable<ScreenRoute.ProportionPage> { entry ->
@@ -213,7 +203,8 @@ private fun NavGraph(
         composable<ScreenRoute.SportExercises> {
             ExercisesScreen(
                 onBackClick = onBack,
-                onExerciseClick = { id -> navigateTo(ScreenRoute.ExercisePage(id)) }
+                onEditClick = { id -> navigateTo(ScreenRoute.ExerciseEdit(id), null) },
+                onExerciseClick = { id -> navigateTo(ScreenRoute.ExercisePage(id), null) }
             )
         }
         composable<ScreenRoute.ExercisePage> { entry ->
@@ -221,7 +212,17 @@ private fun NavGraph(
 
             ExercisePageScreen(
                 id = args.id,
-                onBackClick = onBack
+                onBackClick = onBack,
+                navigateToEdit = { id -> navigateTo(ScreenRoute.ExerciseEdit(id), null) }
+            )
+        }
+        composable<ScreenRoute.ExerciseEdit> { entry ->
+            val args = entry.toRoute<ScreenRoute.ExerciseEdit>()
+
+            ExerciseEditScreen(
+                id = args.id,
+                onBackClick = onBack,
+                navigateToExercisePage = { id -> navigateTo(ScreenRoute.ExercisePage(id), ScreenRoute.ExerciseEdit(id)) }
             )
         }
 

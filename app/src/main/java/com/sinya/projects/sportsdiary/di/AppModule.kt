@@ -5,6 +5,12 @@ import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sinya.projects.sportsdiary.data.database.AppDatabase
+import com.sinya.projects.sportsdiary.data.database.DatabaseMigrations.MIGRATION_1_2
+import com.sinya.projects.sportsdiary.data.database.DatabaseMigrations.MIGRATION_2_3
+import com.sinya.projects.sportsdiary.data.database.DatabaseMigrations.MIGRATION_3_4
+import com.sinya.projects.sportsdiary.data.database.DatabaseMigrations.MIGRATION_4_5
+import com.sinya.projects.sportsdiary.data.database.DatabaseMigrations.MIGRATION_5_6
+import com.sinya.projects.sportsdiary.data.database.DatabaseMigrations.MIGRATION_6_7
 import com.sinya.projects.sportsdiary.data.database.dao.DataMorningDao
 import com.sinya.projects.sportsdiary.data.database.dao.ExercisesDao
 import com.sinya.projects.sportsdiary.data.database.dao.PlanMorningDao
@@ -26,200 +32,7 @@ object AppModule {
     fun provideDatabase(
         @ApplicationContext context: Context
     ): AppDatabase {
-        val MIGRATION_1_2 = object : Migration(1, 2) { override fun migrate(db: SupportSQLiteDatabase) {} }
-        val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(db: SupportSQLiteDatabase) {
 
-                // 1. Добавляем state
-                db.execSQL("""
-                    ALTER TABLE data_training
-                    ADD COLUMN state INTEGER NOT NULL DEFAULT 1
-                """.trimIndent())
-
-                // 2. Добавляем order_index
-                db.execSQL("""
-                    ALTER TABLE data_training
-                    ADD COLUMN order_index INTEGER NOT NULL DEFAULT 0
-                """.trimIndent())
-
-                db.execSQL("""
-                    UPDATE data_training
-                    SET order_index = (
-                        SELECT COUNT(*)
-                        FROM data_training dt2
-                        WHERE dt2.training_id = data_training.training_id
-                          AND dt2.exercises_id < data_training.exercises_id
-                    )
-                """.trimIndent())
-            }
-        }
-        val MIGRATION_3_4 = object : Migration(3, 4) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-
-                db.execSQL("""
-                    ALTER TABLE data_type_trainings
-                    ADD COLUMN order_index INTEGER NOT NULL DEFAULT 0
-                """.trimIndent())
-
-                db.execSQL("""
-                    UPDATE data_type_trainings
-                    SET order_index = (
-                        SELECT COUNT(*)
-                        FROM data_type_trainings dt2
-                        WHERE dt2.type_id = data_type_trainings.type_id
-                          AND dt2.exercise_id < data_type_trainings.exercise_id
-                    )
-                """.trimIndent())
-            }
-        }
-        val MIGRATION_4_5 = object : Migration(4, 5) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("""
-                    INSERT OR IGNORE INTO type_training (id, name)
-                    VALUES (1, 'not_category')
-                """.trimIndent())
-
-                db.execSQL("""
-                    CREATE TABLE training_new (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                        serial_num INTEGER NOT NULL,
-                        type_id INTEGER NOT NULL DEFAULT 1,
-                        date TEXT NOT NULL,
-                        FOREIGN KEY (type_id) 
-                        REFERENCES type_training(id) 
-                        ON DELETE SET DEFAULT
-                    )
-                """.trimIndent())
-
-                db.execSQL("""
-                    INSERT INTO training_new (id, serial_num, type_id, date)
-                    SELECT 
-                        t.id,
-                        t.serial_num,
-                        CASE 
-                            WHEN t.type_id IN (SELECT id FROM type_training) 
-                            THEN t.type_id 
-                            ELSE 1 
-                        END as type_id,
-                        t.date
-                    FROM trainings t
-                """.trimIndent())
-
-                db.execSQL("DROP TABLE trainings")
-
-                db.execSQL("ALTER TABLE training_new RENAME TO trainings")
-
-                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_type_id ON trainings (type_id)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_date ON trainings (date DESC)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_type_id_date ON trainings (type_id, date)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_date_serial_num ON trainings (date, serial_num)")
-
-                db.execSQL("""
-                    UPDATE data_training
-                    SET training_id = 1
-                    WHERE training_id NOT IN (SELECT id FROM trainings)
-                """.trimIndent())
-
-                db.execSQL("""
-                    UPDATE data_type_trainings
-                    SET type_id = 1
-                    WHERE type_id NOT IN (SELECT id FROM type_training)
-                """.trimIndent())
-            }
-        }
-        val MIGRATION_5_6 = object : Migration(5, 6) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("""
-                    CREATE TABLE trainings_new (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                        serial_num INTEGER NOT NULL,
-                        type_id INTEGER NULL,
-                        date TEXT NOT NULL,
-                        FOREIGN KEY (type_id)
-                        REFERENCES type_training(id)
-                        ON DELETE SET NULL
-                    )""".trimIndent()
-                )
-
-                db.execSQL("""
-                    INSERT INTO trainings_new (id, serial_num, type_id, date)
-                    SELECT
-                        t.id,
-                        t.serial_num,
-                        CASE
-                            WHEN t.type_id IS NULL THEN NULL
-                            WHEN t.type_id NOT IN (SELECT id FROM type_training) THEN NULL
-                            WHEN t.type_id = 1 THEN NULL
-                            ELSE t.type_id
-                        END,
-                        t.date
-                    FROM trainings t
-                    """.trimIndent()
-                )
-
-                db.execSQL("DROP TABLE trainings")
-
-                db.execSQL("ALTER TABLE trainings_new RENAME TO trainings")
-
-                db.execSQL("DELETE FROM type_training WHERE id = 1")
-
-                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_type_id ON trainings (type_id)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_date ON trainings (date DESC)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_type_id_date ON trainings (type_id, date)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS index_trainings_date_serial_num ON trainings (date, serial_num)")
-
-                db.execSQL("""
-                    DELETE FROM data_training
-                    WHERE training_id NOT IN (SELECT id FROM trainings)
-                    """.trimIndent()
-                )
-
-                db.execSQL("""
-                    DELETE FROM data_type_trainings
-                    WHERE type_id NOT IN (SELECT id FROM type_training)
-                    """.trimIndent()
-                )
-
-                db.execSQL("""
-                    CREATE TABLE data_mornings_new (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                        note TEXT,
-                        date TEXT NOT NULL,
-                        plan_id INTEGER NULL,
-                        FOREIGN KEY (plan_id)
-                        REFERENCES plan_mornings(id)
-                        ON DELETE SET NULL
-                    )""".trimIndent()
-                )
-
-                db.execSQL("""
-                    INSERT INTO data_mornings_new (id, note, date, plan_id)
-                    SELECT
-                        id,
-                        note,
-                        date,
-                        CASE
-                            WHEN plan_id NOT IN (SELECT id FROM plan_mornings) THEN NULL
-                            ELSE plan_id
-                        END
-                    FROM data_mornings
-                    """.trimIndent()
-                )
-
-                db.execSQL("DROP TABLE data_mornings")
-                db.execSQL("ALTER TABLE data_mornings_new RENAME TO data_mornings")
-
-                db.execSQL("CREATE INDEX IF NOT EXISTS index_data_mornings_plan_id ON data_mornings (plan_id)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS index_data_mornings_date ON data_mornings (date DESC)")
-                db.execSQL("CREATE INDEX IF NOT EXISTS index_data_mornings_date_plan_id ON data_mornings (date, plan_id)")
-
-                db.execSQL("""
-                    DELETE FROM plan_mornings
-                    WHERE id = 0
-                    """.trimIndent()
-                )
-            }
-        }
 
         return Room.databaseBuilder(
             context,
@@ -232,6 +45,7 @@ object AppModule {
         .addMigrations(MIGRATION_3_4)
         .addMigrations(MIGRATION_4_5)
         .addMigrations(MIGRATION_5_6)
+        .addMigrations(MIGRATION_6_7)
         .build()
     }
 

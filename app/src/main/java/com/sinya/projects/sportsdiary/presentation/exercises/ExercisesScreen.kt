@@ -14,6 +14,8 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,13 +42,16 @@ import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
 import com.sinya.projects.sportsdiary.ui.features.SearchContainer
 import com.sinya.projects.sportsdiary.ui.features.SortedRow
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
+import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
+import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
 import kotlinx.coroutines.launch
 
 @Composable
 fun ExercisesScreen(
     viewModel: ExercisesViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    onExerciseClick: (Int) -> Unit
+    onExerciseClick: (Int) -> Unit,
+    onEditClick: (Int?) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -57,7 +63,8 @@ fun ExercisesScreen(
             exercises = viewModel.filtered(),
             onEvent = viewModel::onEvent,
             onBackClick = onBackClick,
-            onExerciseClick = onExerciseClick
+            onExerciseClick = onExerciseClick,
+            onEditClick = onEditClick
         )
 
         is ExercisesUiState.Error -> ErrorScreen((state as ExercisesUiState.Error).message)
@@ -71,13 +78,15 @@ private fun ExercisesScreenView(
     exercises: List<ExerciseWithMuscles>,
     onEvent: (ExercisesEvent) -> Unit,
     onBackClick: () -> Unit,
-    onExerciseClick: (Int) -> Unit
+    onEditClick: (Int?) -> Unit,
+    onExerciseClick: (Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
+    val pullToRefreshState = rememberPullToRefreshState()
     val scaffoldState = rememberBottomSheetScaffoldState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(state.errorMessage) {
+    LaunchedEffect(state.errorMessage, state.isRefreshing) {
         state.errorMessage?.let { message ->
             snackbarHostState.showSnackbar(
                 message = message,
@@ -85,19 +94,29 @@ private fun ExercisesScreenView(
             )
             onEvent(ExercisesEvent.OnErrorShown)
         }
+        if (!state.isRefreshing) {
+            pullToRefreshState.endRefresh()
+        }
+    }
+
+    if (pullToRefreshState.isRefreshing && !state.isRefreshing) {
+        LaunchedEffect(Unit) {
+            onEvent(ExercisesEvent.ReloadData)
+        }
     }
 
     ScaffoldBottomSheet(
         scaffoldState = scaffoldState,
         sheetContent = {
             ExercisesSheetContent(
+                scaffoldState = scaffoldState,
                 list = state.selectedModes,
                 exercises = state.exercises,
                 onEvent = onEvent
             )
         }
     ) {
-        Box {
+        Box(Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -105,9 +124,11 @@ private fun ExercisesScreenView(
             ) {
                 item {
                     NavigationTopBar(
-                        type = TypeAppTopNavigation.WithoutIcon(
+                        type = TypeAppTopNavigation.WithIcon(
                             onBackClick = onBackClick,
-                            title = stringResource(R.string.sport_exercises_title)
+                            title = stringResource(R.string.sport_exercises_title),
+                            painter = R.drawable.ic_plus,
+                            onClick = { onEditClick(null) }
                         )
                     )
                     Spacer(Modifier.height(20.dp))
@@ -131,7 +152,8 @@ private fun ExercisesScreenView(
                     SearchContainer(
                         searchQuery = state.query,
                         onClear = { onEvent(ExercisesEvent.OnQueryChange("")) },
-                        onValueChanged = { s -> onEvent(ExercisesEvent.OnQueryChange(s)) }
+                        onValueChanged = { s -> onEvent(ExercisesEvent.OnQueryChange(s)) },
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
                     )
                     Spacer(Modifier.height(20.dp))
 
@@ -157,7 +179,7 @@ private fun ExercisesScreenView(
                         maxLines = 1,
                         description = item.muscles.joinToString(", "),
                         onTrainingClick = { onExerciseClick(item.id) },
-                        onDelete = { },
+                        onDelete = { onEvent(ExercisesEvent.OpenDialog(item.id)) },
                     )
                 }
 
@@ -166,6 +188,23 @@ private fun ExercisesScreenView(
                 }
             }
 
+            state.deleteDialogId?.let {
+                GuideDialog(
+                    onDismiss = { onEvent(ExercisesEvent.OpenDialog(null)) },
+                    content = {
+                        DeleteDialogView(
+                            onSuccess = { onEvent(ExercisesEvent.Delete) },
+                            onBack = { onEvent(ExercisesEvent.OpenDialog(null)) }
+                        )
+                    }
+                )
+            }
+
+            PullToRefreshContainer(
+                modifier = Modifier.align(Alignment.TopCenter),
+                state = pullToRefreshState,
+            )
+            
             SnackbarHost(
                 hostState = snackbarHostState,
                 modifier = Modifier

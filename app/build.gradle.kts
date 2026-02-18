@@ -16,15 +16,16 @@ android {
         applicationId = "com.sinya.projects.sportsdiary"
         minSdk = 26
         targetSdk = 35
-        versionCode = 12
-        versionName = "1.2.3"
+        versionCode = 13
+        versionName = "1.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -50,6 +51,11 @@ android {
 }
 
 dependencies {
+    // AndroidTest
+    androidTestImplementation("androidx.room:room-testing:2.7.1") // или твоя версия Room
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+
     // work manager for widget
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("androidx.hilt:hilt-work:1.1.0")

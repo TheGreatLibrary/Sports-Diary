@@ -6,10 +6,12 @@ import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
 import com.sinya.projects.sportsdiary.data.database.entity.PlanMornings
 import com.sinya.projects.sportsdiary.domain.model.MorningDay
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import java.time.LocalDate
 
 interface MorningRepository {
-    suspend fun getList(start: String, end: String): Result<List<MorningDay>>
+    fun getList(start: String, end: String): Flow<List<MorningDay>>
     suspend fun getNotes(): List<DataMorning>
     suspend fun insertMorning(item: DataMorning)
     suspend fun updateMorning(item: DataMorning)
@@ -29,12 +31,8 @@ class MorningRepositoryImpl @Inject constructor(
     private val dataMorningDao: DataMorningDao,
     private val planMorningDao: PlanMorningDao
 ) : MorningRepository {
-    override suspend fun getList(start: String, end: String): Result<List<MorningDay>> {
-        return try {
-            Result.success(dataMorningDao.getDataOfMonth(start, end))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    override fun getList(start: String, end: String): Flow<List<MorningDay>> {
+        return dataMorningDao.getDataOfMonth(start, end).catch { emit(emptyList()) }
     }
 
     override suspend fun getNotes(): List<DataMorning> {
@@ -117,10 +115,9 @@ class MorningRepositoryImpl @Inject constructor(
             val newItem = dataMorningDao.getByDate(item.date)
 
             if (morningState) {
-                if (newItem!=null) {
+                if (newItem != null) {
                     dataMorningDao.updateMorningExercise(newItem.copy(note = item.note))
-                }
-                else dataMorningDao.insertMorningComplete(item)
+                } else dataMorningDao.insertMorningComplete(item)
             } else newItem?.let {
                 dataMorningDao.deleteMorning(newItem)
             }

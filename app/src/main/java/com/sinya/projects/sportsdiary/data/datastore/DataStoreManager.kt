@@ -20,6 +20,7 @@ class DataStoreManager @Inject constructor(
 ) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
+    private val SHOW_TRAINING_WARNING = booleanPreferencesKey("show_training_warning")
     private val THEME_MODE = booleanPreferencesKey("theme_mode")
     private val LANG_MODE = stringPreferencesKey("lang_mode")
     private val PLAN_MORNING_ID = intPreferencesKey("plan_morning_id")
@@ -31,12 +32,14 @@ class DataStoreManager @Inject constructor(
     }
 
     private fun <T> read(key: Preferences.Key<T>, defaultValue: T): Flow<T> = context.dataStore.data
-        .map { settings ->
-            settings[key] ?: defaultValue
-        }
+        .map { settings -> settings[key] ?: defaultValue
+    }
 
     suspend fun setThemeMode(value: Boolean) = save(THEME_MODE, value)
     fun getThemeMode(): Flow<Boolean> = read(THEME_MODE, true)
+
+    suspend fun setShowTrainingWarningState(value: Boolean) = save(SHOW_TRAINING_WARNING, value)
+    fun getShowTrainingWarningState(): Flow<Boolean> = read(SHOW_TRAINING_WARNING, true)
 
     suspend fun setLangMode(value: String) = save(LANG_MODE, value)
     fun getLangMode(): Flow<String> = read(LANG_MODE, "ru")

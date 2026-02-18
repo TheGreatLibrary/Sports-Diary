@@ -34,14 +34,9 @@ import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 
 @Composable
 fun HomeScreen(
-    currentPlanId: Int?,
     navigateTo: (ScreenRoute) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(true) {
-        viewModel.loadMonth()
-    }
-
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (val currentState = state) {
@@ -49,7 +44,6 @@ fun HomeScreen(
 
         is HomeUiState.Success -> {
             HomeScreenView(
-                currentPlanId = currentPlanId,
                 state = currentState,
                 onEvent = viewModel::onEvent,
                 navigateTo = navigateTo
@@ -60,7 +54,6 @@ fun HomeScreen(
 
 @Composable
 private fun HomeScreenView(
-    currentPlanId: Int?,
     state: HomeUiState.Success,
     onEvent: (HomeEvent) -> Unit,
     navigateTo: (ScreenRoute) -> Unit
@@ -88,12 +81,12 @@ private fun HomeScreenView(
         ) {
             Calendar(
                 onExtended = { onEvent(HomeEvent.OnExtended(!state.calendarExpanded)) },
-                onButtonMorningClick = { date, state ->
+                onButtonMorningClick = { date, morningState ->
                     onEvent(
                         HomeEvent.OnButtonMorningClick(
                             date,
-                            state,
-                            currentPlanId
+                            morningState,
+                            state.currentPlanId
                         )
                     )
                 },

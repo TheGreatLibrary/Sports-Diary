@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
 import com.sinya.projects.sportsdiary.domain.model.MorningDay
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DataMorningDao {
@@ -19,7 +20,7 @@ interface DataMorningDao {
         WHERE date >= :startDate AND date < :endDate
         ORDER BY date
     """)
-    suspend fun getDataOfMonth(startDate: String, endDate: String) : List<MorningDay>
+    fun getDataOfMonth(startDate: String, endDate: String) : Flow<List<MorningDay>>
 
     @Query("""
     SELECT id, date

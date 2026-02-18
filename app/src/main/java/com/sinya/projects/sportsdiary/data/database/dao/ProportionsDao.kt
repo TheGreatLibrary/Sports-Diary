@@ -12,6 +12,7 @@ import com.sinya.projects.sportsdiary.data.database.entity.Proportions
 import com.sinya.projects.sportsdiary.domain.model.ProportionDialogContent
 import com.sinya.projects.sportsdiary.domain.model.ProportionItem
 import com.sinya.projects.sportsdiary.domain.model.ProportionRow
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProportionsDao {
@@ -29,7 +30,7 @@ interface ProportionsDao {
         FROM proportions p
     """
     )
-    suspend fun getProportionsList(): List<Proportions>
+    fun getProportionsList(): Flow<List<Proportions>>
 
     @Delete
     suspend fun deleteProportion(it: Proportions): Int

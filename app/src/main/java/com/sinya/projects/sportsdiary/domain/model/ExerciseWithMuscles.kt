@@ -1,13 +1,23 @@
 package com.sinya.projects.sportsdiary.domain.model
 
+import androidx.compose.runtime.Stable
+import com.sinya.projects.sportsdiary.domain.enums.TypeCustom
+
+@Stable
 data class ExerciseWithMuscles(
     val id: Int,
     val name: String,
     val level: String?,
     val equipment: String?,
     val category: String?,
-    val muscles: List<String>
-)
+    val muscles: List<String>,
+    val checked: Boolean = false,
+    val isCustom: Boolean = false
+) {
+    val musclesText: String by lazy {
+        muscles.joinToString(", ")
+    }
+}
 
 fun List<ExerciseWithMuscles>.filterByCategory(category: String?): List<ExerciseWithMuscles> {
     return this
@@ -32,6 +42,13 @@ fun List<ExerciseWithMuscles>.filterByLevel(level: String?): List<ExerciseWithMu
         }
 }
 
+fun List<ExerciseWithMuscles>.filterByCustom(isCustom: TypeCustom): List<ExerciseWithMuscles> {
+    return this
+        .filter { training ->
+            training.isCustom == isCustom.state || (isCustom == TypeCustom.ALL)
+        }
+}
+
 fun List<ExerciseWithMuscles>.filterByEquipment(equipment: String?): List<ExerciseWithMuscles> {
     return this
         .filter { training ->
@@ -43,6 +60,11 @@ fun List<ExerciseWithMuscles>.filterByEquipment(equipment: String?): List<Exerci
 val List<ExerciseWithMuscles>.categories: List<String?>
     get() = this
         .map { it.category }
+        .distinct()
+
+val List<ExerciseWithMuscles>.custom: List<Boolean?>
+    get() = this
+        .map { it.isCustom }
         .distinct()
 
 val List<ExerciseWithMuscles>.equipment: List<String?>

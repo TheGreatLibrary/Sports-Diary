@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -33,10 +34,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.domain.model.ExerciseUi
+import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
 import com.sinya.projects.sportsdiary.main.NavigationTopBar
-import com.sinya.projects.sportsdiary.presentation.categoryPage.components.ExerciseSheetContent
 import com.sinya.projects.sportsdiary.presentation.categoryPage.components.DragOverlay
+import com.sinya.projects.sportsdiary.presentation.categoryPage.components.ExerciseSheetContent
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
@@ -85,7 +86,7 @@ fun CategoryPageScreen(
 @Composable
 private fun CategoryPageView(
     state: CategoryPageUiState.CategoryForm,
-    filtered: List<ExerciseUi>,
+    filtered: List<ExerciseWithMuscles>,
     onEvent: (CategoryPageEvent) -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -100,6 +101,14 @@ private fun CategoryPageView(
         idProvided = { it.id }
     ) { from, to -> onEvent(CategoryPageEvent.MoveExercise(from, to)) }
 
+    val context = LocalContext.current
+    val modesFlattened = remember(state.sheetData.items, state.sheetData.modes) {
+        state.sheetData.modes.flatMap { mode ->
+            mode.categories<Any, Any>(state.sheetData.items, context).map { filter ->
+                filter to mode
+            }
+        }
+    }
 
     LaunchedEffect(state.errorMessage) {
         state.errorMessage?.let { message ->
@@ -113,13 +122,25 @@ private fun CategoryPageView(
 
     ScaffoldBottomSheet(
         scaffoldState = scaffoldState,
-        sheetContent = { ExerciseSheetContent(
-            query = state.sheetData.query,
-            filtered = filtered,
-            onQueryChange = { s -> onEvent(CategoryPageEvent.OnQueryChange(s)) },
-            onToggle =  { id -> onEvent(CategoryPageEvent.Toggle(id)) },
-            onClickSuccess = { onEvent(CategoryPageEvent.AddExercise) },
-            scaffoldState = scaffoldState) }
+        sheetContent = {
+            ExerciseSheetContent(
+                query = state.sheetData.query,
+                filtered = filtered,
+                onQueryChange = { s -> onEvent(CategoryPageEvent.OnQueryChange(s)) },
+                onToggle = { id -> onEvent(CategoryPageEvent.Toggle(id)) },
+                onClickSuccess = { onEvent(CategoryPageEvent.AddExercise) },
+                scaffoldState = scaffoldState,
+                modesFlattened = modesFlattened,
+                onModeClick = { mode, value ->
+                    onEvent(
+                        CategoryPageEvent.SortParamChange(
+                            mode,
+                            value
+                        )
+                    )
+                }
+            )
+        }
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -215,7 +236,8 @@ private fun CategoryPageView(
             ) {
                 SwipeCardContent(
                     modifier = Modifier.padding(horizontal = 8.dp),
-                    title = state.item.items.find { it.id == reorderState.draggedItemId }?.title ?: "",
+                    title = state.item.items.find { it.id == reorderState.draggedItemId }?.title
+                        ?: "",
                     description = null,
                     onTrainingClick = { }
                 )

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <color name="green">#FF39754C</color>
+    <color name="background_widget">#FF1C1C1C</color>
+    <color name="gray_btn">#FF6E6E6E</color>
 </resources>

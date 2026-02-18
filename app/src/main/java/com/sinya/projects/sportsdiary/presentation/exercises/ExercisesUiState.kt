@@ -13,9 +13,12 @@ sealed interface ExercisesUiState {
             ModeOfSorting.Level(),
             ModeOfSorting.Category(),
             ModeOfSorting.Muscle(),
-            ModeOfSorting.Equipment()
+            ModeOfSorting.Equipment(),
+            ModeOfSorting.Custom()
         ),
-        val errorMessage: String? = null,
+        val isRefreshing: Boolean = false,
+        val deleteDialogId: Int? = null,
+        val errorMessage: String? = null
     ) : ExercisesUiState
 
     data class Error(val message: String) : ExercisesUiState

@@ -60,7 +60,7 @@ class MorningNoteViewModel @Inject constructor(
                             id = 0,
                             note = currentState.query,
                             date = LocalDate.now().toString(),
-                            planId = 0
+                            planId = event.id
                         )
                     )
                     _state.value = currentState.copy(

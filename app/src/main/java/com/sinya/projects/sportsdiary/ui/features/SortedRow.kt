@@ -9,8 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -25,6 +29,10 @@ fun <T> SortedRow(
     radioOptions: List<RadioItem<T>>,
     onOptionSelected: (T) -> Unit,
     shape: Shape,
+    selectedContentColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    unselectedContentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    selectedContainerColor: Color = MaterialTheme.colorScheme.onPrimary,
+    unselectedContainerColor: Color = MaterialTheme.colorScheme.primaryContainer,
 ) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
@@ -45,20 +53,15 @@ fun <T> SortedRow(
         radioOptions.forEach { item ->
             val isSelected = selectedOption == item.value
 
-            val contentColor = if (isSelected) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.onPrimary
-            }
+            val contentColor = if (isSelected) selectedContentColor
+                                        else unselectedContentColor
 
-            val backgroundColor = if (isSelected) {
-                MaterialTheme.colorScheme.onPrimary
-            } else {
-                MaterialTheme.colorScheme.primaryContainer
-            }
+            val backgroundColor = if (isSelected) selectedContainerColor
+                                            else unselectedContainerColor
 
             RadioButton(
-                modifier = modifier ?: Modifier.weight(1f)
+                modifier = modifier ?: Modifier
+                    .weight(1f)
                     .padding(vertical = 4.dp, horizontal = 4.dp),
                 text = item.text,
                 painter = item.icon?.let { painterResource(it) },

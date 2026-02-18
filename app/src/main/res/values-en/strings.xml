@@ -167,4 +167,22 @@
     <string name="put_your_title">Enter category name</string>
     <string name="category_name_is_empty">Category name is required and must be unique</string>
     <string name="add">Add</string>
+
+    <string name="complete">Apply</string>
+    <string name="put_your_description">Enter description</string>
+    <string name="put_your_rule">Enter execution rules</string>
+    <string name="force">Force</string>
+    <string name="choose_muscle">Add muscles</string>
+
+    <string name="category_desc">Defines the type of exercise</string>
+    <string name="force_desc">Shows the level of load</string>
+    <string name="mechanic_desc">Type of movement in the exercise</string>
+    <string name="equipment_desc">What is required to perform</string>
+    <string name="level_desc">Whether the exercise is suitable for beginners</string>
+    <string name="create_exercise">Create exercise</string>
+    <string name="secondary_muscl">Secondary muscle</string>
+    <string name="primary_muscl">Primary muscle</string>
+    <string name="custom">Custom</string>
+    <string name="base_exercise">Preset</string>
+    <string name="monday_16_2026">Monday, 16 February 2026</string>
 </resources>
