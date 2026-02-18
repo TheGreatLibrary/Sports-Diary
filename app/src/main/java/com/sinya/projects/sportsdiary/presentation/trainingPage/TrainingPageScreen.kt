@@ -44,7 +44,6 @@ import com.sinya.projects.sportsdiary.presentation.trainingPage.components.Categ
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.CustomDropdownMenu
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.SwipeTrainingCard
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.SwipeTrainingCardContent
-import com.sinya.projects.sportsdiary.presentation.trainings.TrainingEvent
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.DateCard
 import com.sinya.projects.sportsdiary.ui.features.DatePickerModal

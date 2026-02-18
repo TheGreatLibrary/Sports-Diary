@@ -1,15 +1,14 @@
 package com.sinya.projects.sportsdiary.widgets.calendarWidget
 
-import com.sinya.projects.sportsdiary.domain.repository.MorningRepository
-import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
 import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
 import com.sinya.projects.sportsdiary.domain.model.MonthCalendarResult
+import com.sinya.projects.sportsdiary.domain.repository.MorningRepository
+import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 
 class GetWidgetDataUseCase @Inject constructor(

@@ -5,7 +5,6 @@ import com.sinya.projects.sportsdiary.data.database.entity.EquipmentTranslation
 import com.sinya.projects.sportsdiary.data.database.entity.ForceTranslation
 import com.sinya.projects.sportsdiary.data.database.entity.LevelTranslation
 import com.sinya.projects.sportsdiary.data.database.entity.MechanicTranslation
-import com.sinya.projects.sportsdiary.presentation.categoryPage.CategoryPageEvent
 
 sealed interface ExerciseEditEvent {
     data class OnNameChange(val s: String) : ExerciseEditEvent

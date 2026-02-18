@@ -33,9 +33,7 @@ import com.sinya.projects.sportsdiary.ui.features.ModalSheetButtons
 import com.sinya.projects.sportsdiary.ui.features.SearchContainer
 import com.sinya.projects.sportsdiary.ui.features.SortBlock
 import com.sinya.projects.sportsdiary.ui.features.rememberScrollDirection
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

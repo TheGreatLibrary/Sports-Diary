@@ -2,8 +2,6 @@ package com.sinya.projects.sportsdiary.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sinya.projects.sportsdiary.data.database.AppDatabase
 import com.sinya.projects.sportsdiary.data.database.DatabaseMigrations.MIGRATION_1_2
 import com.sinya.projects.sportsdiary.data.database.DatabaseMigrations.MIGRATION_2_3

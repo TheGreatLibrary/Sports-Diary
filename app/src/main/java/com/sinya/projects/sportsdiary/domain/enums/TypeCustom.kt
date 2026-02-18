@@ -13,9 +13,9 @@ enum class TypeCustom(
     companion object {
         fun getType(state: Boolean?): TypeCustom {
             return when (state) {
-                true -> TypeCustom.CUSTOM
-                false -> TypeCustom.BASED
-                else -> TypeCustom.ALL
+                true -> CUSTOM
+                false -> BASED
+                else -> ALL
             }
         }
     }

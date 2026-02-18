@@ -360,15 +360,5 @@ sealed class ModeOfSorting(
                 it.copy(value = i)
             }
 
-        fun exercisesModes(): List<RadioItem<Int?>> =
-            listOf(
-                Level(""),
-                Category(""),
-                Muscle(""),
-                Equipment(""),
-                Custom()
-            ).map {
-                it.radioItem.copy(value = it.code)
-            }
     }
 }
