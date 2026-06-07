@@ -72,7 +72,7 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.entity.UnitsMeasurement
 
         UnitsMeasurement::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

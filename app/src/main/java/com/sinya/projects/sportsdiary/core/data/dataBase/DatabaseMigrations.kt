@@ -1,6 +1,7 @@
 package com.sinya.projects.sportsdiary.core.data.dataBase
 
 import androidx.room.migration.Migration
+import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 object DatabaseMigrations {
@@ -439,4 +440,13 @@ object DatabaseMigrations {
             }
         }
     }
+
+    val MIGRATION_7_8 = object : Migration(7, 8) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("""
+                UPDATE data_training SET state = 1
+                """.trimIndent())
+        }
+    }
+
 }
