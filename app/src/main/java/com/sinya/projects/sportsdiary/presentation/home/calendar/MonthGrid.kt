@@ -16,37 +16,30 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
+import com.sinya.projects.sportsdiary.core.domain.model.DayOfMonth
 import java.time.LocalDate
 
 @Composable
 fun MonthGrid(
-    days: List<DayOfMonth>,
+    days: List<List<DayOfMonth>>,
     pickDay: (LocalDate) -> Unit,
-    expanded: Boolean,
     today: LocalDate
 ) {
-    val weeks = remember(days) { days.chunked(7) }
-    val currentWeekIndex = remember(days, today) {
-        weeks.indexOfFirst { row -> row.any { it.date == today } }.let { if (it == -1) 0 else it }
-    }
-    val rows = if (expanded) weeks else listOf(weeks[currentWeekIndex])
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize(animationSpec = tween(220, easing = FastOutSlowInEasing)),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        rows.forEach { row ->
+        days.forEach { row ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -67,6 +60,7 @@ fun MonthGrid(
                                     color = if (isToday) MaterialTheme.colorScheme.onPrimary
                                     else MaterialTheme.colorScheme.secondaryContainer
                                 )
+                                .clip(MaterialTheme.shapes.extraLarge)
                                 .clickable { pickDay(dayCell.date) }
                                 .border(
                                     width = 2.dp,

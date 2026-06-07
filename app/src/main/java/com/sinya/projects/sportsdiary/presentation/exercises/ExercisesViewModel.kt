@@ -2,11 +2,11 @@ package com.sinya.projects.sportsdiary.presentation.exercises
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
-import com.sinya.projects.sportsdiary.domain.model.SortParam
-import com.sinya.projects.sportsdiary.domain.useCase.DeleteCustomExerciseUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseWithSortedDataUseCase
-import com.sinya.projects.sportsdiary.utils.searchByTerms
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
+import com.sinya.projects.sportsdiary.core.domain.model.SortParam
+import com.sinya.projects.sportsdiary.core.domain.useCase.DeleteCustomExerciseUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetExerciseWithSortedDataUseCase
+import com.sinya.projects.sportsdiary.core.utils.searchByTerms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

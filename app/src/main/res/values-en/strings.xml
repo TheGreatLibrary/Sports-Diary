@@ -41,7 +41,7 @@
     <string name="years">Years</string>
 
     <string name="January">Jan</string>
-    <string name="Februaby">Feb</string>
+    <string name="February">Feb</string>
     <string name="March">Mar</string>
     <string name="April">Apr</string>
     <string name="May">May</string>
@@ -187,4 +187,5 @@
     <string name="monday_16_2026">Monday, 16 February 2026</string>
     <string name="warning_dialog_title">Warning Before Deletion</string>
     <string name="dont_take_warning">Don\'t show this warning again</string>
+    <string name="exercise_name_is_empty">Exercise name is required and must be unique</string>
 </resources>

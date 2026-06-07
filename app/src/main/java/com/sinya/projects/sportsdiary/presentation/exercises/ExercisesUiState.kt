@@ -1,7 +1,7 @@
 package com.sinya.projects.sportsdiary.presentation.exercises
 
-import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
-import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
+import com.sinya.projects.sportsdiary.core.domain.model.ModeOfSorting
 
 sealed interface ExercisesUiState {
     data object Loading : ExercisesUiState

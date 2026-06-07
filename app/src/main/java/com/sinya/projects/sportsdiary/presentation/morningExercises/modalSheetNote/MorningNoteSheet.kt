@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,7 +29,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
@@ -40,12 +42,11 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MorningNoteSheet(
-    currentPlanId: Int?,
     onDismiss: () -> Unit,
     vm: MorningNoteViewModel = hiltViewModel()
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
+    val state by vm.state.collectAsStateWithLifecycle()
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
@@ -53,14 +54,12 @@ fun MorningNoteSheet(
         contentColor = MaterialTheme.colorScheme.onPrimary,
         containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = { BottomSheetDefaults.DragHandle() },
-        windowInsets = BottomSheetDefaults.windowInsets,
     ) {
-        when (val state = vm.state.value) {
+        when (state) {
             is MorningNoteUiState.Loading -> PlaceholderScreen()
-            is MorningNoteUiState.Error -> ErrorScreen(state.message)
+            is MorningNoteUiState.Error -> ErrorScreen((state as MorningNoteUiState.Error).message)
             is MorningNoteUiState.Success -> MorningNoteView(
-                state = state,
-                currentPlanId = currentPlanId,
+                state = state as MorningNoteUiState.Success,
                 onEvent = vm::onEvent,
                 onDismiss = onDismiss
             )
@@ -70,14 +69,13 @@ fun MorningNoteSheet(
 
 @Composable
 private fun MorningNoteView(
-    currentPlanId: Int?,
     state: MorningNoteUiState.Success,
     onEvent: (ModalSheetNoteEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val hasData = state.items.firstOrNull { it.date == LocalDate.now().toString() } == null
     val onClickBtn = {
-        if (state.visibleAddField) onEvent(ModalSheetNoteEvent.AddNote(currentPlanId))
+        if (state.visibleAddField) onEvent(ModalSheetNoteEvent.AddNote)
         else if (state.visibleEditFieldId != null) onEvent(ModalSheetNoteEvent.EditNote(state.visibleEditFieldId))
         else onEvent(ModalSheetNoteEvent.OpenAddNoteField)
     }

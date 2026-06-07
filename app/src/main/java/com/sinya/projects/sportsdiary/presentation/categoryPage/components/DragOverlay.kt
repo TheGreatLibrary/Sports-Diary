@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import com.sinya.projects.sportsdiary.domain.model.ReorderState
+import com.sinya.projects.sportsdiary.core.domain.model.ReorderState
 
 @Composable
 fun DragOverlay(

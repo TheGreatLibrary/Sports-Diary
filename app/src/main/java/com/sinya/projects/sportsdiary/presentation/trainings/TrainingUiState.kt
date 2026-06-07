@@ -1,7 +1,7 @@
 package com.sinya.projects.sportsdiary.presentation.trainings
 
-import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
-import com.sinya.projects.sportsdiary.domain.model.Training
+import com.sinya.projects.sportsdiary.core.domain.model.ModeOfSorting
+import com.sinya.projects.sportsdiary.core.domain.model.Training
 
 sealed interface TrainingUiState {
     data object Loading : TrainingUiState

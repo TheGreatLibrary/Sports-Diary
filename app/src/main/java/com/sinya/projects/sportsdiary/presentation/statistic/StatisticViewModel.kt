@@ -2,10 +2,10 @@ package com.sinya.projects.sportsdiary.presentation.statistic
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.domain.enums.TypeTime
-import com.sinya.projects.sportsdiary.domain.useCase.GetCountTrainingUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetSummaryWeightTrainingUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetTrainingChartUseCase
+import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetCountTrainingUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetSummaryWeightTrainingUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetTrainingChartUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

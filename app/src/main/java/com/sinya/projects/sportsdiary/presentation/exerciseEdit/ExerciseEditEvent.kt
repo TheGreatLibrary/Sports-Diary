@@ -1,10 +1,10 @@
 package com.sinya.projects.sportsdiary.presentation.exerciseEdit
 
-import com.sinya.projects.sportsdiary.data.database.entity.CategoryTranslation
-import com.sinya.projects.sportsdiary.data.database.entity.EquipmentTranslation
-import com.sinya.projects.sportsdiary.data.database.entity.ForceTranslation
-import com.sinya.projects.sportsdiary.data.database.entity.LevelTranslation
-import com.sinya.projects.sportsdiary.data.database.entity.MechanicTranslation
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.CategoryTranslation
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.EquipmentTranslation
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.ForceTranslation
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.LevelTranslation
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.MechanicTranslation
 
 sealed interface ExerciseEditEvent {
     data class OnNameChange(val s: String) : ExerciseEditEvent

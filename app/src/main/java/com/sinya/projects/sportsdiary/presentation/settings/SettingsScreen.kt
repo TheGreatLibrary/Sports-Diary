@@ -1,11 +1,7 @@
 package com.sinya.projects.sportsdiary.presentation.settings
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,15 +13,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.domain.model.SwitchItem
-import com.sinya.projects.sportsdiary.main.NavigationTopBar
+import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.SwitchItem
+import com.sinya.projects.sportsdiary.core.utils.updateLocale
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.settings.modalSheetLocale.SettingsLanguageSheet
 import com.sinya.projects.sportsdiary.ui.features.BlockOfCards
 import com.sinya.projects.sportsdiary.ui.features.ListCardItem
-import com.sinya.projects.sportsdiary.utils.updateLocale
+import com.sinya.projects.sportsdiary.ui.features.ScreenColumn
 import java.util.Locale
 
 @Composable
@@ -35,7 +31,7 @@ fun SettingsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    when(state) {
+    when (state) {
         is SettingsUiState.Error -> ErrorScreen((state as SettingsUiState.Error).message)
 
         SettingsUiState.Loading -> PlaceholderScreen()
@@ -57,49 +53,39 @@ private fun SettingsScreenView(
     val context = LocalContext.current
     val stateBottomSheet = remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 50.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        NavigationTopBar(
-            type = TypeAppTopNavigation.WithoutIcon(
-                onBackClick = onBackClick,
-                title = stringResource(R.string.settings_title)
-            )
+    ScreenColumn(
+        navigationType = TypeAppTopNavigation.WithoutIcon(
+            onBackClick = onBackClick,
+            title = stringResource(R.string.settings_title)
         )
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            BlockOfCards(
-                title = stringResource(R.string.interface_block)
-            ) {
-                ListCardItem(
-                    onClick = { stateBottomSheet.value = !stateBottomSheet.value },
-                    title = stringResource(R.string.language_title),
-                    description = Locale(state.langMode).displayName.lowercase(),
+    ) {
+        BlockOfCards(
+            title = stringResource(R.string.interface_block)
+        ) {
+            ListCardItem(
+                onClick = { stateBottomSheet.value = !stateBottomSheet.value },
+                title = stringResource(R.string.language_title),
+                description = Locale(state.langMode).displayName.lowercase(),
+            )
+            ListCardItem(
+                onClick = { },
+                title = stringResource(R.string.theme_title),
+                description = if (state.themeMode) stringResource(R.string.dark_mode)
+                else stringResource(R.string.light_mode),
+                state = SwitchItem(
+                    state = state.themeMode,
+                    onClick = { onEvent(SettingsEvent.ThemeToggle(!state.themeMode)) }
                 )
-                ListCardItem(
-                    onClick = { },
-                    title = stringResource(R.string.theme_title),
-                    description = if (state.themeMode) stringResource(R.string.dark_mode)
-                    else stringResource(R.string.light_mode),
-                    state = SwitchItem(
-                        state = state.themeMode,
-                        onClick = { onEvent(SettingsEvent.ThemeToggle(!state.themeMode)) }
-                    )
+            )
+            ListCardItem(
+                onClick = { },
+                title = stringResource(R.string.warning_dialog_title),
+                state = SwitchItem(
+                    state = state.showTrainingWarningState,
+                    onClick = { onEvent(SettingsEvent.ShowTrainingWarningToggle(!state.showTrainingWarningState)) }
                 )
-                ListCardItem(
-                    onClick = {  },
-                    title = stringResource(R.string.warning_dialog_title),
-                    description = if (state.showTrainingWarningState) stringResource(R.string.dark_mode)
-                    else stringResource(R.string.light_mode),
-                    state = SwitchItem(
-                        state = state.showTrainingWarningState,
-                        onClick = { onEvent(SettingsEvent.ShowTrainingWarningToggle(!state.showTrainingWarningState)) }
-                    )
-                )
-            }
+            )
+            Spacer(Modifier.height(80.dp))
         }
     }
 

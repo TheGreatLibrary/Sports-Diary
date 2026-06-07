@@ -1,6 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.trainings
 
-import com.sinya.projects.sportsdiary.domain.model.SortParam
+import com.sinya.projects.sportsdiary.core.domain.model.SortParam
 
 sealed interface TrainingEvent {
     data class ModeChange(val code: Int?) : TrainingEvent

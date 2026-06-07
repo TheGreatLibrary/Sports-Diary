@@ -2,29 +2,30 @@ package com.sinya.projects.sportsdiary.presentation.trainingPage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.data.database.entity.DataTraining
-import com.sinya.projects.sportsdiary.data.database.entity.DataTypeTrainings
-import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
-import com.sinya.projects.sportsdiary.data.datastore.DataStoreManager
-import com.sinya.projects.sportsdiary.domain.model.BottomSheetCategoryData
-import com.sinya.projects.sportsdiary.domain.model.ExerciseDialogContent
-import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
-import com.sinya.projects.sportsdiary.domain.model.SortParam
-import com.sinya.projects.sportsdiary.domain.model.addEmptySet
-import com.sinya.projects.sportsdiary.domain.model.removeSet
-import com.sinya.projects.sportsdiary.domain.model.updateSet
-import com.sinya.projects.sportsdiary.domain.useCase.CheckNameCategoryExistsUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetCategoriesListUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseDescriptionUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseWithSortedDataUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetExercisesByCategoryUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetSerialNumOfCategoryUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetTrainingItemUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.InsertCategoryWithDataUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.InsertDataTrainingUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.UpsertTrainingUseCase
-import com.sinya.projects.sportsdiary.utils.parseMillisToDateTime
-import com.sinya.projects.sportsdiary.utils.searchByTerms
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataTraining
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataTypeTrainings
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.TypeTraining
+import com.sinya.projects.sportsdiary.core.domain.model.BottomSheetCategoryData
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseDialogContent
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
+import com.sinya.projects.sportsdiary.core.domain.model.SortParam
+import com.sinya.projects.sportsdiary.core.domain.model.UiConfig
+import com.sinya.projects.sportsdiary.core.domain.model.addEmptySet
+import com.sinya.projects.sportsdiary.core.domain.model.removeSet
+import com.sinya.projects.sportsdiary.core.domain.model.updateSet
+import com.sinya.projects.sportsdiary.core.domain.useCase.CheckNameCategoryExistsUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetCategoriesListUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetExerciseDescriptionUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetExerciseWithSortedDataUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetExercisesByCategoryUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetSerialNumOfCategoryUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetTrainingItemUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.InsertCategoryWithDataUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.InsertDataTrainingUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.UpsertTrainingUseCase
+import com.sinya.projects.sportsdiary.core.utils.parseMillisToDateTime
+import com.sinya.projects.sportsdiary.core.utils.searchByTerms
+import com.sinya.projects.wordle.data.local.datastore.SettingsEngine
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -41,7 +42,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = TrainingPageViewModel.Factory::class)
 class TrainingPageViewModel @AssistedInject constructor(
     @Assisted("id") private val id: Int?,
-    private val dataStoreManager: DataStoreManager,
+    private val settingsEngine: SettingsEngine,
 
     private val getCategoriesListUseCase: GetCategoriesListUseCase,
     private val upsertTrainingUseCase: UpsertTrainingUseCase,
@@ -220,6 +221,17 @@ class TrainingPageViewModel @AssistedInject constructor(
             }
 
             is TrainingPageEvent.CheckBoxToggle -> updateIfForm { it.copy(trainingWarningState = event.state) }
+            is TrainingPageEvent.VisibleExercise -> updateIfForm {
+                it.copy(
+                    item = it.item.copy(
+                        items = it.item.items.map { item ->
+                            if (item.id == event.id) {
+                                item.copy(state = event.value)
+                            } else item
+                        }
+                    )
+                )
+            }
         }
     }
 
@@ -387,16 +399,16 @@ class TrainingPageViewModel @AssistedInject constructor(
         combine(
             getCategoriesListUseCase(),
             getExerciseListUseCase(),
-            dataStoreManager.getShowTrainingWarningState()
+            settingsEngine.uiState
         ) { values ->
             Triple(values[0], values[1], values[2])
         }
-            .collectLatest { (categories, exercises, warningState) ->
+            .collectLatest { (categories, exercises, config) ->
                 updateIfForm {
                     it.copy(
                         categories = listOf(null) + (categories) as List<TypeTraining?>,
                         items = exercises as List<ExerciseWithMuscles>,
-                        trainingWarningState = warningState as Boolean
+                        trainingWarningState = (config as UiConfig).trainingWarning
                     )
                 }
             }
@@ -458,7 +470,7 @@ class TrainingPageViewModel @AssistedInject constructor(
         val s = _state.value as? TrainingPageUiState.TrainingForm ?: return@launch
 
         if (!s.trainingWarningState) {
-            dataStoreManager.setShowTrainingWarningState(s.trainingWarningState)
+            settingsEngine.setTrainingWarning(s.trainingWarningState)
         }
 
         s.deleteDialogId?.let { id ->

@@ -23,13 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.domain.model.ExerciseItemData
-import com.sinya.projects.sportsdiary.domain.model.coloringText
-import com.sinya.projects.sportsdiary.domain.model.toColoringRepsList
-import com.sinya.projects.sportsdiary.domain.model.toColoringWeightList
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItemData
+import com.sinya.projects.sportsdiary.core.domain.model.coloringText
+import com.sinya.projects.sportsdiary.core.domain.model.toColoringRepsList
+import com.sinya.projects.sportsdiary.core.domain.model.toColoringWeightList
 import com.sinya.projects.sportsdiary.ui.features.SummaryPill
-import com.sinya.projects.sportsdiary.utils.deltaFloat
-import com.sinya.projects.sportsdiary.utils.deltaInt
+import com.sinya.projects.sportsdiary.core.utils.deltaFloat
+import com.sinya.projects.sportsdiary.core.utils.deltaInt
 
 @Composable
 fun TrainingCardContent(

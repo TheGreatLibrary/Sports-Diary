@@ -17,13 +17,13 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.domain.model.SwitchItem
+import com.sinya.projects.sportsdiary.core.domain.model.SwitchItem
 
 @Composable
 fun ListCardItem(
     onClick: () -> Unit,
     title: String,
-    description: String,
+    description: String? = null,
     state: SwitchItem? = null
 ) {
     AnimationCard(onClick = onClick) {
@@ -38,11 +38,13 @@ fun ListCardItem(
 @Composable
 private fun CardItemContent(
     title: String,
-    description: String,
+    description: String?,
     state: SwitchItem? = null
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 18.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp, horizontal = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -54,16 +56,18 @@ private fun CardItemContent(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onPrimary,
-                maxLines = 1,
+                maxLines = if (description != null) 1 else 2,
                 overflow = TextOverflow.Ellipsis,
             )
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSecondary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            if (description != null) {
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
         state?.let {
             Switch(

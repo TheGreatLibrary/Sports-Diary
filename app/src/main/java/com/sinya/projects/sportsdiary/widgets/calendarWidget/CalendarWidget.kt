@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.widgets.calendarWidget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -41,9 +42,9 @@ import androidx.glance.text.TextAlign
 import androidx.glance.unit.ColorProvider
 import com.sinya.projects.sportsdiary.App
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
-import com.sinya.projects.sportsdiary.data.datastore.DataStoreManager
-import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataMorning
+import com.sinya.projects.sportsdiary.core.data.dataStore.DataStoreManager
+import com.sinya.projects.sportsdiary.core.domain.model.DayOfMonth
 import com.sinya.projects.sportsdiary.ui.themeWidget.WidgetColors
 import com.sinya.projects.sportsdiary.ui.themeWidget.WidgetType
 import dagger.hilt.EntryPoint
@@ -210,6 +211,7 @@ class CalendarWidget : GlanceAppWidget() {
     }
 
 
+    @SuppressLint("RestrictedApi")
     @Composable
     private fun CalendarRow(days: List<DayOfMonth>, today: LocalDate) {
         Row(modifier = GlanceModifier.fillMaxWidth()) {

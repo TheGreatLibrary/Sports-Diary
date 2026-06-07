@@ -1,6 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.exercises
 
-import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
+import com.sinya.projects.sportsdiary.core.domain.model.ModeOfSorting
 
 sealed interface ExercisesEvent {
     data class OnQueryChange(val s: String) : ExercisesEvent

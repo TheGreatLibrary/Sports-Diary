@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,7 +31,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
@@ -41,12 +43,11 @@ import com.sinya.projects.sportsdiary.ui.features.CustomTextFieldWithLabel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MorningPlanSheet(
-    currentPlanId: Int?,
-    onPlanClick: (Int?) -> Unit,
     onDismiss: () -> Unit,
     vm: MorningPlanViewModel = hiltViewModel()
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val state by vm.state.collectAsStateWithLifecycle()
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -55,17 +56,14 @@ fun MorningPlanSheet(
         contentColor = MaterialTheme.colorScheme.onPrimary,
         containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = { BottomSheetDefaults.DragHandle() },
-        windowInsets = BottomSheetDefaults.windowInsets,
     ) {
-        when (val state = vm.state.value) {
+        when (state) {
             is MorningPlanUiState.Loading -> PlaceholderScreen()
-            is MorningPlanUiState.Error -> ErrorScreen(state.message)
+            is MorningPlanUiState.Error -> ErrorScreen((state as MorningPlanUiState.Error).message)
             is MorningPlanUiState.Success -> MorningPlanView(
-                state = state,
+                state = state as MorningPlanUiState.Success,
                 onEvent = vm::onEvent,
-                onDismiss = onDismiss,
-                currentPlanId = currentPlanId,
-                onPlanClick = onPlanClick,
+                onDismiss = onDismiss
             )
         }
     }
@@ -73,8 +71,6 @@ fun MorningPlanSheet(
 
 @Composable
 private fun MorningPlanView(
-    currentPlanId: Int?,
-    onPlanClick: (Int?) -> Unit,
     state: MorningPlanUiState.Success,
     onEvent: (ModalSheetPlanEvent) -> Unit,
     onDismiss: () -> Unit,
@@ -117,8 +113,8 @@ private fun MorningPlanView(
                     ) {
                         Row {
                             RadioButton(
-                                selected = it?.id == currentPlanId,
-                                onClick = { onPlanClick(it?.id) }
+                                selected = it?.id == state.currentPlanId,
+                                onClick = { onEvent(ModalSheetPlanEvent.OnPlanClick(it?.id)) }
                             )
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -167,7 +163,6 @@ private fun MorningPlanView(
                                         AnimationIcon(
                                             onClick = {
                                                 onEvent(ModalSheetPlanEvent.DeletePlan(it.id))
-                                                onPlanClick(null)
                                             },
                                             icon = painterResource(R.drawable.morn_trash),
                                             description = "delete",

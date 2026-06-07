@@ -16,8 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.model.Training
-import com.sinya.projects.sportsdiary.main.ScreenRoute
+import com.sinya.projects.sportsdiary.core.domain.model.Training
+import com.sinya.projects.sportsdiary.navigation.ScreenRoute
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
 import kotlinx.coroutines.launch
 

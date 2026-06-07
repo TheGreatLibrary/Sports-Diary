@@ -19,11 +19,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.enums.TypeTime
-import com.sinya.projects.sportsdiary.domain.model.ChartState
+import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
+import com.sinya.projects.sportsdiary.core.domain.model.ChartState
 import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
 import kotlin.math.ceil
-import kotlin.math.max
 
 @Composable
 fun Chart(
@@ -115,9 +114,7 @@ data class IntScale(
 fun buildIntScale(maxValue: Float, maxLines: Int = 5): IntScale {
     val maxInt = ceil(maxValue).toInt().coerceAtLeast(1)
 
-    val rawStep = maxInt / maxLines
-    val step = max(1, rawStep)
-
+    val step = ceil(maxInt / maxLines.toFloat()).toInt().coerceAtLeast(1)
     val lines = ceil(maxInt / step.toFloat()).toInt()
 
     return IntScale(

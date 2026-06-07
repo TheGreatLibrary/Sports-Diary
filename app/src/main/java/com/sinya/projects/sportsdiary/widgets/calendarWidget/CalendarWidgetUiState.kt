@@ -1,6 +1,6 @@
 package com.sinya.projects.sportsdiary.widgets.calendarWidget
 
-import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
+import com.sinya.projects.sportsdiary.core.domain.model.DayOfMonth
 import java.time.LocalDate
 
 data class CalendarWidgetUiState(

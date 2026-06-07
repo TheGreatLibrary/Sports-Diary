@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +41,6 @@ fun SettingsLanguageSheet(
         contentColor = MaterialTheme.colorScheme.onPrimary,
         containerColor = MaterialTheme.colorScheme.background,
         dragHandle = { BottomSheetDefaults.DragHandle() },
-        windowInsets = BottomSheetDefaults.windowInsets,
     ) {
         Column(
             Modifier
@@ -67,7 +67,7 @@ fun SettingsLanguageSheet(
                             onClick = { setLanguage(it) }
                         )
                         Text(
-                            text = Locale(it).displayName.lowercase(Locale.getDefault()),
+                            text = Locale(it).displayName.lowercase(LocalLocale.current.platformLocale),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onPrimary
                         )

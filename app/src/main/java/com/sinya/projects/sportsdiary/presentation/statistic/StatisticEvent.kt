@@ -1,6 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.statistic
 
-import com.sinya.projects.sportsdiary.domain.enums.TypeTime
+import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
 
 sealed interface StatisticEvent {
     data class OnSelectTimePeriod(val mode: TypeTime) : StatisticEvent

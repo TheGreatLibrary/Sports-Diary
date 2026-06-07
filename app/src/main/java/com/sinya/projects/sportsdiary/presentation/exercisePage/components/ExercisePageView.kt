@@ -2,10 +2,8 @@ package com.sinya.projects.sportsdiary.presentation.exercisePage.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.main.NavigationTopBar
-import com.sinya.projects.sportsdiary.presentation.exercisePage.ExercisePageUiState
+import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.presentation.exerciseEdit.components.CharacteristicRow
 import com.sinya.projects.sportsdiary.presentation.exerciseEdit.components.InfoCard
+import com.sinya.projects.sportsdiary.presentation.exercisePage.ExercisePageUiState
+import com.sinya.projects.sportsdiary.ui.features.ScreenColumn
 
 @Composable
 fun ExercisePageView(
@@ -26,23 +24,14 @@ fun ExercisePageView(
     onBackClick: () -> Unit,
     navigateToEdit: (Int) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(start = 16.dp, top = 50.dp, end = 16.dp, bottom = 40.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ScreenColumn(
+        navigationType = if (state.exercise.isCustom) TypeAppTopNavigation.WithIcon(
+            onBackClick = onBackClick,
+            title = "",
+            painter = R.drawable.icon_edit,
+            onClick = { navigateToEdit(state.exercise.id) }
+        ) else TypeAppTopNavigation.WithoutIcon(onBackClick = onBackClick, title = "")
     ) {
-        NavigationTopBar(
-            type = if (state.exercise.isCustom) TypeAppTopNavigation.WithIcon(
-                onBackClick = onBackClick,
-                title = "",
-                painter = R.drawable.icon_edit,
-                onClick = { navigateToEdit(state.exercise.id) }
-            ) else TypeAppTopNavigation.WithoutIcon(onBackClick = onBackClick, title = "")
-        )
-
-        // Заголовок
         Text(
             text = state.exercise.name,
             style = MaterialTheme.typography.displaySmall,
@@ -139,6 +128,7 @@ fun ExercisePageView(
                 }
             }
         }
+        Spacer(Modifier.height(80.dp))
     }
 }
 

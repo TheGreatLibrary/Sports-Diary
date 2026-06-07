@@ -1,6 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.proportions
 
-import com.sinya.projects.sportsdiary.domain.model.SortParam
+import com.sinya.projects.sportsdiary.core.domain.model.SortParam
 
 sealed interface ProportionsEvent {
     data class OpenDialog(val id: Int?) : ProportionsEvent

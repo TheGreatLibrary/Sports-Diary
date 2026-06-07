@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.domain.model.RadioItem
+import com.sinya.projects.sportsdiary.core.domain.model.RadioItem
 
 @Composable
 fun <T> MuscleWithRadioButton(

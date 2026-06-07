@@ -1,11 +1,11 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage
 
-import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
-import com.sinya.projects.sportsdiary.domain.model.BottomSheetCategoryData
-import com.sinya.projects.sportsdiary.domain.model.ExerciseDialogContent
-import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
-import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
-import com.sinya.projects.sportsdiary.domain.model.TrainingEntity
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.TypeTraining
+import com.sinya.projects.sportsdiary.core.domain.model.BottomSheetCategoryData
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseDialogContent
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
+import com.sinya.projects.sportsdiary.core.domain.model.ModeOfSorting
+import com.sinya.projects.sportsdiary.core.domain.model.TrainingEntity
 
 sealed interface TrainingPageUiState {
     data object Loading : TrainingPageUiState

@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.model.ExerciseItem
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItem
 import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
 import com.sinya.projects.sportsdiary.ui.features.SwipeCardBackground
 
@@ -39,6 +39,7 @@ fun SwipeTrainingCard(
     onMinusClick: (Int) -> Unit,
     onEditSet: (Int, Int, String?, Boolean) -> Unit,
     onDeleteSet: (Int, Int) -> Unit,
+    onVisibleClick: (Int, Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -63,7 +64,8 @@ fun SwipeTrainingCard(
                 onInfoClick = onInfoClick,
                 onPlusClick = onPlusClick,
                 onEditSet = onEditSet,
-                onDeleteSet = onDeleteSet
+                onDeleteSet = onDeleteSet,
+                onVisibleClick = onVisibleClick
             )
         }
     )
@@ -79,10 +81,11 @@ fun SwipeTrainingCardContent(
     onPlusClick: (Int) -> Unit,
     onEditSet: (Int, Int, String?, Boolean) -> Unit,
     onDeleteSet: (Int, Int) -> Unit,
+    onVisibleClick: (Int, Int) -> Unit
 ) {
     Column(
         modifier = modifier
-            .padding(bottom = 20.dp)
+            .padding(bottom = 12.dp)
             .clip(shape = MaterialTheme.shapes.small)
             .clickable { onExpanded(!expanded) },
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -93,7 +96,8 @@ fun SwipeTrainingCardContent(
                 1 -> painterResource(R.drawable.ic_eye)
                 else -> painterResource(R.drawable.ic_eye_no)
             },
-            onInfoClick = { onInfoClick(item.id) }
+            onInfoClick = { onInfoClick(item.id) },
+            onVisibleClick = { onVisibleClick(if (item.state==1) 0 else 1, item.id) }
         )
         TrainingCardContent(
             id = item.id,
@@ -112,8 +116,9 @@ fun SwipeTrainingCardContent(
 @Composable
 fun HeaderTraining(
     title: String,
-    iconEye: Painter?,
+    iconEye: Painter,
     onInfoClick: () -> Unit,
+    onVisibleClick: () -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -126,15 +131,15 @@ fun HeaderTraining(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-//        AnimationIcon(
-//            onClick = onInfoClick,
-//            icon = iconEye,
-//            description = "eye",
-//            isSelected = true,
-//            size = 25.dp,
-//            selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-//            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
-//        )
+        AnimationIcon(
+            onClick = onVisibleClick,
+            icon = iconEye,
+            description = "eye",
+            isSelected = true,
+            size = 25.dp,
+            selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
         AnimationIcon(
             onClick = onInfoClick,
             icon = painterResource(R.drawable.ic_info),

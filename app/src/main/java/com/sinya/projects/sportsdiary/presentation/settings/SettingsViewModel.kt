@@ -2,51 +2,39 @@ package com.sinya.projects.sportsdiary.presentation.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.data.datastore.DataStoreManager
+import com.sinya.projects.wordle.data.local.datastore.SettingsEngine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val dataStoreManager: DataStoreManager
-): ViewModel() {
+    private val settingsEngine: SettingsEngine
+) : ViewModel() {
 
-    private val _state = MutableStateFlow<SettingsUiState>(SettingsUiState.Loading)
-    val state: StateFlow<SettingsUiState> = _state.asStateFlow()
-
-    init {
-        loadData()
-    }
-
-    private fun loadData() = viewModelScope.launch {
-        combine(
-            dataStoreManager.getLangMode(),
-            dataStoreManager.getThemeMode(),
-            dataStoreManager.getShowTrainingWarningState()
-        ) { langMode, themeMode, showTrainingWarningState ->
+    val state: StateFlow<SettingsUiState> = settingsEngine.uiState
+        .map { config ->
             SettingsUiState.Success(
-                langMode = langMode,
-                themeMode = themeMode,
-                showTrainingWarningState = showTrainingWarningState
+                langMode = config.language,
+                themeMode = config.dark,
+                showTrainingWarningState = config.trainingWarning
             )
         }
-        .collect { newState ->
-            _state.value = newState
-        }
-    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = SettingsUiState.Loading
+        )
 
     fun onEvent(event: SettingsEvent) = viewModelScope.launch {
-        when(event) {
-            is SettingsEvent.LanguageToggle -> dataStoreManager.setLangMode(event.lang)
-
-            is SettingsEvent.ShowTrainingWarningToggle -> dataStoreManager.setShowTrainingWarningState(event.state)
-
-            is SettingsEvent.ThemeToggle -> dataStoreManager.setThemeMode(event.state)
+        when (event) {
+            is SettingsEvent.LanguageToggle -> settingsEngine.setLang(event.lang)
+            is SettingsEvent.ShowTrainingWarningToggle -> settingsEngine.setTrainingWarning(event.state)
+            is SettingsEvent.ThemeToggle -> settingsEngine.setDark(event.state)
         }
     }
 }

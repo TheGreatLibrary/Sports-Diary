@@ -2,10 +2,10 @@ package com.sinya.projects.sportsdiary.presentation.proportions
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.data.database.entity.Proportions
-import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
-import com.sinya.projects.sportsdiary.domain.useCase.DeleteProportionUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetProportionsUseCase
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Proportions
+import com.sinya.projects.sportsdiary.core.domain.model.ModeOfSorting
+import com.sinya.projects.sportsdiary.core.domain.useCase.DeleteProportionUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetProportionsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

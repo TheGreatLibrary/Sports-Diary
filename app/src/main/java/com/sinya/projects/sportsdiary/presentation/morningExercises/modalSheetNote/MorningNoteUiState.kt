@@ -1,15 +1,18 @@
 package com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetNote
 
-import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataMorning
 
-sealed class MorningNoteUiState {
-    data object Loading : MorningNoteUiState()
+sealed interface MorningNoteUiState {
+    data object Loading : MorningNoteUiState
+
     data class Success(
         val items: List<DataMorning> = emptyList(),
         val visibleEditFieldId: Int? = null,
         val visibleAddField: Boolean = false,
-        val query: String = ""
-    ) : MorningNoteUiState()
-    data class Error(val message: String) : MorningNoteUiState()
+        val query: String = "",
+        val currentPlanId: Int? = null
+    ) : MorningNoteUiState
+
+    data class Error(val message: String) : MorningNoteUiState
 }
 

@@ -1,114 +1,153 @@
 package com.sinya.projects.sportsdiary.presentation.morningExercises
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.main.NavigationTopBar
+import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetNote.MorningNoteSheet
 import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetPlan.MorningPlanSheet
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.ui.features.CardWithArrow
+import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
+import com.sinya.projects.sportsdiary.ui.features.ScreenColumn
+import com.sinya.projects.sportsdiary.ui.features.StatisticCard
 
 @Composable
 fun MorningExercisesScreen(
     vm: MorningExercisesViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    currentPlanId: Int?,
-    onPlanClick: (Int?) -> Unit
 ) {
-    when (val state = vm.state.value) {
+    val state by vm.state.collectAsStateWithLifecycle()
+
+    when (state) {
         is MorningExercisesUiState.Loading -> PlaceholderScreen()
         is MorningExercisesUiState.Success -> MorningExercisesView(
-            state = state,
+            state = state as MorningExercisesUiState.Success,
             onEvent = vm::onEvent,
-            onBackClick = onBackClick,
-            currentPlanId = currentPlanId,
-            onPlanClick = onPlanClick
+            onBackClick = onBackClick
         )
-        is MorningExercisesUiState.Error -> ErrorScreen(state.message)
+
+        is MorningExercisesUiState.Error -> ErrorScreen(
+            (state as MorningExercisesUiState.Error).message
+        )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MorningExercisesView(
     state: MorningExercisesUiState.Success,
-    onEvent: (MorningExercisesUiEvent) -> Unit,
+    onEvent: (MorningExercisesEvent) -> Unit,
     onBackClick: () -> Unit,
-    currentPlanId: Int?,
-    onPlanClick: (Int?) -> Unit
+    fontStyle: TextStyle = MaterialTheme.typography.displayLarge
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(start = 16.dp, top = 50.dp, end = 16.dp, bottom = 40.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberStandardBottomSheetState(
+            initialValue = SheetValue.PartiallyExpanded,
+            skipHiddenState = false
+        )
+    )
+    LaunchedEffect(state.noteExpanded) {
+        if (state.noteExpanded) {
+            scaffoldState.bottomSheetState.partialExpand()
+        }
+    }
+
+    var fontSize by remember { mutableStateOf(fontStyle.fontSize) }
+    val onTextLayout: (TextLayoutResult) -> Unit = remember {
+        { result ->
+            if (result.didOverflowWidth) {
+                fontSize = (fontSize.value * 0.9f).sp.value
+                    .coerceAtLeast(12.sp.value).sp
+            }
+        }
+    }
+
+    ScaffoldBottomSheet(
+        scaffoldState = scaffoldState,
+        sheetContent = {
+            if (state.noteExpanded) {
+                MorningNoteSheet(
+                    onDismiss = { onEvent(MorningExercisesEvent.OnNoteExpanded(false)) }
+                )
+            }
+            else if (state.planExpanded) {
+                MorningPlanSheet(
+                    onDismiss = { onEvent(MorningExercisesEvent.OnPlanExpanded(false)) }
+                )
+            }
+        }
     ) {
-        NavigationTopBar(
-            type = TypeAppTopNavigation.WithoutIcon(
+        ScreenColumn(
+            navigationType = TypeAppTopNavigation.WithoutIcon(
                 onBackClick = onBackClick,
                 title = stringResource(R.string.morning_exercises_title)
             )
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Max),
-            horizontalArrangement = Arrangement.spacedBy(17.dp)
         ) {
-            StatCard(
-                modifier = Modifier.weight(1f),
-                title = stringResource(R.string.count_completed_mornings),
-                count = state.countTraining.toString()
-            )
-            StatCard(
-                modifier = Modifier.weight(1f),
-                title = stringResource(R.string.series_of_completed_mornings),
-                count = state.seriesScope.toString()
-            )
-        }
-        CardWithArrow(
-            title = stringResource(R.string.data_of_morning_exercises),
-            onClick = {
-                onEvent(MorningExercisesUiEvent.OnPlanExpanded(true))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                StatisticCard(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    title = stringResource(R.string.count_completed_mornings),
+                    count = state.countTraining.toString(),
+                    fontSize = fontSize,
+                    onTextLayout = onTextLayout
+                )
+                StatisticCard(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    title = stringResource(R.string.series_of_completed_mornings),
+                    count = state.seriesScope.toString(),
+                    fontSize = fontSize,
+                    onTextLayout = onTextLayout
+                )
             }
-        )
-        CardWithArrow(
-            title = stringResource(R.string.note_of_morning_exercises),
-            onClick = {
-                onEvent(MorningExercisesUiEvent.OnNoteExpanded(true))
-            }
-        )
-
-        if (state.noteExpanded) {
-            MorningNoteSheet(
-                currentPlanId = currentPlanId,
-                onDismiss = { onEvent(MorningExercisesUiEvent.OnNoteExpanded(false))}
+            CardWithArrow(
+                title = stringResource(R.string.data_of_morning_exercises),
+                onClick = {
+                    onEvent(MorningExercisesEvent.OnPlanExpanded(true))
+                }
             )
-        }
-
-        if (state.planExpanded) {
-            MorningPlanSheet(
-                currentPlanId = currentPlanId,
-                onPlanClick = onPlanClick,
-                onDismiss = { onEvent(MorningExercisesUiEvent.OnPlanExpanded(false))}
+            CardWithArrow(
+                title = stringResource(R.string.note_of_morning_exercises),
+                onClick = {
+                    onEvent(MorningExercisesEvent.OnNoteExpanded(true))
+                }
             )
+
+            Spacer(Modifier.height(80.dp))
         }
     }
 }

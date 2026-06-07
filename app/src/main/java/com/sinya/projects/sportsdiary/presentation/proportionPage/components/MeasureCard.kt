@@ -4,16 +4,15 @@ import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.domain.model.ProportionRow
+import com.sinya.projects.sportsdiary.core.domain.model.ProportionRow
 import com.sinya.projects.sportsdiary.ui.features.HeaderInfo
 import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.CompactUnitField
-import com.sinya.projects.sportsdiary.utils.deltaFloat
-import com.sinya.projects.sportsdiary.utils.getString
+import com.sinya.projects.sportsdiary.core.utils.deltaFloat
+import com.sinya.projects.sportsdiary.core.utils.getString
 
 @Composable
 fun MeasureCard(
@@ -24,7 +23,7 @@ fun MeasureCard(
     context: Context
 ) {
     Column(
-        modifier = Modifier.padding(bottom = 8.dp),
+        modifier = Modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         HeaderInfo(

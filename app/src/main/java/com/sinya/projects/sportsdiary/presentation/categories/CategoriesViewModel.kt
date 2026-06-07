@@ -2,8 +2,8 @@ package com.sinya.projects.sportsdiary.presentation.categories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.domain.useCase.DeleteCategoryUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetCategoriesListUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.DeleteCategoryUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetCategoriesListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

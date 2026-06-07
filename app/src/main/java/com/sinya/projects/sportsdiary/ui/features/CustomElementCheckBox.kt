@@ -1,5 +1,7 @@
 package com.sinya.projects.sportsdiary.ui.features
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +13,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,13 +25,12 @@ fun CustomElementCheckBox(
     title: String,
     description: String,
     checked: Boolean,
-    maxLines: Int = Int.MAX_VALUE,
     onEvent: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-
+    val opened = remember { mutableStateOf(false) }
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).animateContentSize(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
@@ -42,11 +44,14 @@ fun CustomElementCheckBox(
         )
         Column(
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            modifier = Modifier.clickable {
+                opened.value = !opened.value
+            }
         ) {
             Text(
                 text = title,
-                maxLines = maxLines,
+                maxLines = if (opened.value) Int.MAX_VALUE else 1,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onPrimary,
                 overflow = TextOverflow.Ellipsis
@@ -55,7 +60,7 @@ fun CustomElementCheckBox(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSecondary,
-                maxLines = maxLines,
+                maxLines = if (opened.value) Int.MAX_VALUE else 1,
                 overflow = TextOverflow.Ellipsis
             )
         }

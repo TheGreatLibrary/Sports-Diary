@@ -1,7 +1,7 @@
 package com.sinya.projects.sportsdiary.presentation.exercisePage
 
-import com.sinya.projects.sportsdiary.domain.model.ExerciseMusclesData
-import com.sinya.projects.sportsdiary.domain.model.ExerciseWithFullData
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseMusclesData
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithFullData
 
 sealed interface ExercisePageUiState {
     data object Loading : ExercisePageUiState

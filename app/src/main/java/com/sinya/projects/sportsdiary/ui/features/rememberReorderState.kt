@@ -3,7 +3,7 @@ package com.sinya.projects.sportsdiary.ui.features
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.sinya.projects.sportsdiary.domain.model.ReorderState
+import com.sinya.projects.sportsdiary.core.domain.model.ReorderState
 import kotlinx.coroutines.CoroutineScope
 
 @Composable

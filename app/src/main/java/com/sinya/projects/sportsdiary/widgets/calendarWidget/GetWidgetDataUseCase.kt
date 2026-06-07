@@ -1,9 +1,9 @@
 package com.sinya.projects.sportsdiary.widgets.calendarWidget
 
-import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
-import com.sinya.projects.sportsdiary.domain.model.MonthCalendarResult
-import com.sinya.projects.sportsdiary.domain.repository.MorningRepository
-import com.sinya.projects.sportsdiary.domain.repository.TrainingRepository
+import com.sinya.projects.sportsdiary.core.domain.model.DayOfMonth
+import com.sinya.projects.sportsdiary.core.domain.model.MonthCalendarResult
+import com.sinya.projects.sportsdiary.core.domain.repository.MorningRepository
+import com.sinya.projects.sportsdiary.core.domain.repository.TrainingRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first

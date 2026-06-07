@@ -1,6 +1,6 @@
 package com.sinya.projects.sportsdiary.ui.features.diagram
 
-import com.sinya.projects.sportsdiary.domain.enums.TypeTime
+import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle

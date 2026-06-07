@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -19,29 +22,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastFirstOrNull
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
+import com.sinya.projects.sportsdiary.core.domain.model.DayOfMonth
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
 import java.time.LocalDate
 
 @Composable
 fun CalendarBody(
     onButtonMorningClick: (LocalDate, Boolean) -> Unit,
-    daysNumber: List<DayOfMonth>,
+    daysNumber: List<List<DayOfMonth>>,
     pickDay: (LocalDate) -> Unit,
-    expandedCalendar: Boolean,
     date: LocalDate
 ) {
     val morningState by remember(daysNumber, date) {
         derivedStateOf {
-            daysNumber.fastFirstOrNull { it.date == date }?.morningState ?: false
+            daysNumber
+                .flatten()  // ← разворачиваем строки в плоский список
+                .firstOrNull { it.date == date }
+                ?.morningState
+                ?: false
         }
     }
+
     val highlightMonth by remember(date) {
         derivedStateOf {
             val currentDate = LocalDate.now()
-            date.year == currentDate.year && date.monthValue == currentDate.monthValue && date.dayOfWeek == currentDate.dayOfWeek
+            date.year == currentDate.year &&
+                    date.monthValue == currentDate.monthValue &&
+                    date.dayOfMonth == currentDate.dayOfMonth  // ← dayOfMonth, не dayOfWeek
         }
     }
 
@@ -53,7 +61,8 @@ fun CalendarBody(
                 shape = MaterialTheme.shapes.medium
             )
             .clip(MaterialTheme.shapes.medium)
-            .padding(top = 50.dp, bottom = 24.dp, start = 16.dp, end = 16.dp),
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .padding(top = 16.dp, bottom = 24.dp, start = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         CalendarHeader(today = date)
@@ -66,7 +75,6 @@ fun CalendarBody(
         MonthPager(
             days = daysNumber,
             pickDay = pickDay,
-            expanded = expandedCalendar,
             today = date
         )
 

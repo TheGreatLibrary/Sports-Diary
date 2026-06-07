@@ -1,7 +1,7 @@
 package com.sinya.projects.sportsdiary.presentation.statistic
 
-import com.sinya.projects.sportsdiary.data.database.entity.ExerciseTranslations
-import com.sinya.projects.sportsdiary.domain.enums.TypeTime
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.ExerciseTranslations
+import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.ui.features.diagram.ChartPoint
 
 sealed interface StatisticUiState {

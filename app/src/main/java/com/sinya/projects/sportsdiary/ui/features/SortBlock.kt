@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.domain.model.RadioItem
+import com.sinya.projects.sportsdiary.core.domain.model.RadioItem
 
 @Composable
 fun <T> SortBlock(

@@ -1,11 +1,9 @@
 package com.sinya.projects.sportsdiary.presentation.proportionPage
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -23,18 +21,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.domain.model.buildMeasureItemsFromKeys
-import com.sinya.projects.sportsdiary.main.NavigationTopBar
+import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.buildMeasureItemsFromKeys
+import com.sinya.projects.sportsdiary.core.utils.getDrawableId
+import com.sinya.projects.sportsdiary.core.utils.getString
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.proportionPage.components.MeasureCard
 import com.sinya.projects.sportsdiary.ui.features.DateCard
 import com.sinya.projects.sportsdiary.ui.features.DatePickerModal
+import com.sinya.projects.sportsdiary.ui.features.ScreenLazyColumn
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
-import com.sinya.projects.sportsdiary.utils.getDrawableId
-import com.sinya.projects.sportsdiary.utils.getString
 
 @Composable
 fun ProportionPageScreen(
@@ -88,27 +86,21 @@ private fun ProportionPageView(
     }
 
     Box {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 16.dp, top = 50.dp, end = 16.dp),
+        ScreenLazyColumn(
+            arrangement = Arrangement.spacedBy(8.dp),
+            navigationType = TypeAppTopNavigation.WithIcon(
+                onBackClick = onBackClick,
+                title = if (state.item.title.isNotEmpty()) stringResource(R.string.proportion_number, state.item.title)
+                else stringResource(R.string.measurement),
+                painter = R.drawable.nav_save,
+                onClick = { onEvent(ProportionPageEvent.Save) }
+            )
         ) {
             item {
-                NavigationTopBar(
-                    type = TypeAppTopNavigation.WithIcon(
-                        onBackClick = onBackClick,
-                        title = if (state.item.title.isNotEmpty()) stringResource(R.string.proportion_number, state.item.title)
-                                else stringResource(R.string.measurement),
-                        painter = R.drawable.nav_save,
-                        onClick = { onEvent(ProportionPageEvent.Save) }
-                    )
-                )
-                Spacer(Modifier.height(20.dp))
                 DateCard(
                     onDateClick = { onEvent(ProportionPageEvent.CalendarState(true)) },
                     date = state.item.date
                 )
-                Spacer(Modifier.height(20.dp))
             }
 
             items(

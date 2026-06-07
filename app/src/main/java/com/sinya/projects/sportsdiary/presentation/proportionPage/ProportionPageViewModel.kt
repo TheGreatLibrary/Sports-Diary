@@ -2,10 +2,10 @@ package com.sinya.projects.sportsdiary.presentation.proportionPage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.domain.useCase.GetMeasurementDataUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetProportionItemUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.UpsertProportionUseCase
-import com.sinya.projects.sportsdiary.utils.parseMillisToDateTime
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetMeasurementDataUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetProportionItemUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.UpsertProportionUseCase
+import com.sinya.projects.sportsdiary.core.utils.parseMillisToDateTime
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

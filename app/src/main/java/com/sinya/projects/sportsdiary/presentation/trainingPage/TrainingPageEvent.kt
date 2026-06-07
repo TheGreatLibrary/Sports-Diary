@@ -1,7 +1,7 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage
 
-import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
-import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.TypeTraining
+import com.sinya.projects.sportsdiary.core.domain.model.ModeOfSorting
 
 sealed interface TrainingPageEvent {
     data object OpenBottomSheetCategory : TrainingPageEvent
@@ -32,4 +32,5 @@ sealed interface TrainingPageEvent {
     data object AddExercise : TrainingPageEvent
     data class CheckBoxToggle(val state: Boolean) : TrainingPageEvent
     data class SortParamChange(val mode: ModeOfSorting, val param: Any) : TrainingPageEvent
+    data class VisibleExercise(val value: Int, val id: Int) : TrainingPageEvent
 }

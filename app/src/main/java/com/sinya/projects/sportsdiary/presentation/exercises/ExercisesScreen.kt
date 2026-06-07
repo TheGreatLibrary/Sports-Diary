@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.exercises
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +15,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
@@ -25,25 +26,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
-import com.sinya.projects.sportsdiary.domain.model.RadioItem
-import com.sinya.projects.sportsdiary.main.NavigationTopBar
+import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
-import com.sinya.projects.sportsdiary.presentation.exercises.components.ExercisesSheetContent
+import com.sinya.projects.sportsdiary.presentation.exercises.components.ExercisesHeader
+import com.sinya.projects.sportsdiary.presentation.exercises.components.SortedExercisesSheetContent
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
-import com.sinya.projects.sportsdiary.ui.features.SearchContainer
-import com.sinya.projects.sportsdiary.ui.features.SortedRow
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
 import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
+import com.sinya.projects.sportsdiary.ui.features.smartHeader.rememberSmartHeaderManager
+import com.sinya.projects.sportsdiary.ui.features.smartHeader.smartHeader
 import kotlinx.coroutines.launch
 
 @Composable
@@ -84,9 +85,19 @@ private fun ExercisesScreenView(
     val scope = rememberCoroutineScope()
     val pullToRefreshState = rememberPullToRefreshState()
     val scaffoldState = rememberBottomSheetScaffoldState()
+    val manager = rememberSmartHeaderManager()
+    val smartHeader = manager.rememberScrollDirection()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(state.errorMessage, state.isRefreshing) {
+    val density = LocalDensity.current
+
+    val headerVisibleHeightDp = with(density) {
+        (smartHeader.headerHeightPx + smartHeader.headerOffsetPx)
+            .coerceAtLeast(0f)
+            .toDp()
+    }
+
+    LaunchedEffect(state.errorMessage) {
         state.errorMessage?.let { message ->
             snackbarHostState.showSnackbar(
                 message = message,
@@ -94,21 +105,12 @@ private fun ExercisesScreenView(
             )
             onEvent(ExercisesEvent.OnErrorShown)
         }
-        if (!state.isRefreshing) {
-            pullToRefreshState.endRefresh()
-        }
-    }
-
-    if (pullToRefreshState.isRefreshing && !state.isRefreshing) {
-        LaunchedEffect(Unit) {
-            onEvent(ExercisesEvent.ReloadData)
-        }
     }
 
     ScaffoldBottomSheet(
         scaffoldState = scaffoldState,
         sheetContent = {
-            ExercisesSheetContent(
+            SortedExercisesSheetContent(
                 scaffoldState = scaffoldState,
                 list = state.selectedModes,
                 exercises = state.exercises,
@@ -116,55 +118,33 @@ private fun ExercisesScreenView(
             )
         }
     ) {
-        Box(Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) {
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { onEvent(ExercisesEvent.ReloadData) },
+            state = pullToRefreshState,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .nestedScroll(smartHeader.headerScrollConnection),
+            contentAlignment = Alignment.TopCenter
+        ) {
+
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 16.dp, end = 16.dp, top = 50.dp),
+                modifier = Modifier.padding(top = headerVisibleHeightDp),
+                state = smartHeader.listState,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 item {
-                    NavigationTopBar(
-                        type = TypeAppTopNavigation.WithIcon(
-                            onBackClick = onBackClick,
-                            title = stringResource(R.string.sport_exercises_title),
-                            painter = R.drawable.ic_plus,
-                            onClick = { onEditClick(null) }
-                        )
-                    )
-                    Spacer(Modifier.height(20.dp))
-                }
-
-                item {
-                    SortedRow(
-                        modifier = Modifier.padding(4.dp),
-                        title = stringResource(R.string.sort_title),
-                        radioOptions = listOf(RadioItem(null, R.drawable.icon_sort, 0)),
-                        selectedOption = 0,
-                        onOptionSelected = {
-                            scope.launch { scaffoldState.bottomSheetState.expand() }
-                        },
-                        shape = MaterialTheme.shapes.extraSmall,
-                    )
-                    Spacer(Modifier.height(15.dp))
-                }
-
-                item {
-                    SearchContainer(
-                        searchQuery = state.query,
-                        onClear = { onEvent(ExercisesEvent.OnQueryChange("")) },
-                        onValueChanged = { s -> onEvent(ExercisesEvent.OnQueryChange(s)) },
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                    Spacer(Modifier.height(20.dp))
-
                     if (exercises.isEmpty()) {
-                        Text(
-                            text = stringResource(R.string.nothing_found),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
+                        Box(Modifier.fillMaxSize()) {
+                            Text(
+                                text = stringResource(R.string.nothing_found),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
 
@@ -173,7 +153,7 @@ private fun ExercisesScreenView(
                     key = { it.id }
                 ) { item ->
                     SwipeCard(
-                        modifier = Modifier.padding(bottom = 8.dp),
+                        modifier = Modifier,
                         id = item.id,
                         title = item.name,
                         maxLines = 1,
@@ -188,6 +168,19 @@ private fun ExercisesScreenView(
                 }
             }
 
+            ExercisesHeader(
+                modifier = Modifier.smartHeader(manager),
+                query = state.query,
+                onQueryChange = { s -> onEvent(ExercisesEvent.OnQueryChange(s)) },
+                onOptionSelected = { scope.launch { scaffoldState.bottomSheetState.expand() } },
+                navigationType = TypeAppTopNavigation.WithIcon(
+                    onBackClick = onBackClick,
+                    title = stringResource(R.string.sport_exercises_title),
+                    painter = R.drawable.ic_plus,
+                    onClick = { onEditClick(null) }
+                )
+            )
+
             state.deleteDialogId?.let {
                 GuideDialog(
                     onDismiss = { onEvent(ExercisesEvent.OpenDialog(null)) },
@@ -200,11 +193,6 @@ private fun ExercisesScreenView(
                 )
             }
 
-            PullToRefreshContainer(
-                modifier = Modifier.align(Alignment.TopCenter),
-                state = pullToRefreshState,
-            )
-            
             SnackbarHost(
                 hostState = snackbarHostState,
                 modifier = Modifier

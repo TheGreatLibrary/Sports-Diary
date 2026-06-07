@@ -5,13 +5,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -33,17 +30,17 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.domain.enums.TypeTime
-import com.sinya.projects.sportsdiary.domain.model.RadioItem
-import com.sinya.projects.sportsdiary.main.NavigationTopBar
+import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
+import com.sinya.projects.sportsdiary.core.domain.model.RadioItem
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.ui.features.RadioButtons
 import com.sinya.projects.sportsdiary.ui.features.StatisticCard
 import com.sinya.projects.sportsdiary.ui.features.diagram.Chart
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDiagramView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
-import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
+import com.sinya.projects.sportsdiary.ui.features.ScreenColumn
 
 @Composable
 fun StatisticScreen(
@@ -72,7 +69,7 @@ private fun StatisticScreenView(
     onEvent: (StatisticEvent) -> Unit,
     radioOptions: List<RadioItem<TypeTime>> = listOf(
         RadioItem(stringResource(R.string.days), null, TypeTime.DAYS),
-        RadioItem( stringResource(R.string.months), null, TypeTime.MONTHS),
+        RadioItem(stringResource(R.string.months), null, TypeTime.MONTHS),
         RadioItem(stringResource(R.string.years), null, TypeTime.YEARS)
     ),
     fontStyle: TextStyle = MaterialTheme.typography.displayLarge
@@ -99,20 +96,12 @@ private fun StatisticScreenView(
     }
 
     Box {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 50.dp, horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            NavigationTopBar(
-                type = TypeAppTopNavigation.WithoutIcon(
-                    onBackClick = onBackClick,
-                    title = stringResource(R.string.statistic_title)
-                )
+        ScreenColumn(
+            navigationType = TypeAppTopNavigation.WithoutIcon(
+                onBackClick = onBackClick,
+                title = stringResource(R.string.statistic_title)
             )
-
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -156,6 +145,9 @@ private fun StatisticScreenView(
                     points = state.chartList
                 )
             }
+            Spacer(Modifier.height(80.dp))
+
+
 
             if (state.dialogState) {
                 GuideDialog(
@@ -163,7 +155,7 @@ private fun StatisticScreenView(
                     content = {
                         GuideDiagramView(
                             title = stringResource(R.string.note),
-                            image = if (Locale.getDefault()
+                            image = if (LocalLocale.current.platformLocale
                                     .toString() == "ru"
                             ) painterResource(R.drawable.graph_guide_ru)
                             else painterResource(R.drawable.graph_guide_en)
@@ -173,12 +165,10 @@ private fun StatisticScreenView(
             }
         }
 
-
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
                 .align(Alignment.TopCenter)
         )
     }
-
 }

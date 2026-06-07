@@ -2,12 +2,12 @@ package com.sinya.projects.sportsdiary.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.data.database.entity.DataMorning
-import com.sinya.projects.sportsdiary.data.datastore.DataStoreManager
-import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
-import com.sinya.projects.sportsdiary.domain.useCase.GetMorningListUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetTrainingRangeListUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.MarkDayMorningExerciseUseCase
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataMorning
+import com.sinya.projects.sportsdiary.core.domain.model.DayOfMonth
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetMorningListUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetTrainingRangeListUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.MarkDayMorningExerciseUseCase
+import com.sinya.projects.wordle.data.local.datastore.SettingsEngine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,12 +20,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val dataStoreManager: DataStoreManager,
+    private val settingsEngine: SettingsEngine,
     private val markDayMorningExerciseUseCase: MarkDayMorningExerciseUseCase,
     private val getMorningListUseCase: GetMorningListUseCase,
     private val getTrainingListUseCase: GetTrainingRangeListUseCase
@@ -59,7 +60,24 @@ class HomeViewModel @Inject constructor(
             )
 
             is HomeEvent.OnShift -> {
-                _selectedDate.value = _selectedDate.value.plusMonths(event.index)
+                val oldDate = _selectedDate.value
+                val newDate = oldDate.plusMonths(event.index)
+                val newLength = newDate.lengthOfMonth()
+                val oldLength = oldDate.lengthOfMonth()
+                val oldDay = oldDate.dayOfMonth
+
+                val newDay = when {
+                    event.index > 0 -> {
+                        val offsetFromStart = oldDay.coerceAtMost(7)
+                        offsetFromStart.coerceAtMost(newLength)
+                    }
+                    else -> {
+                        val offsetFromEnd = (oldLength - oldDay + 1).coerceAtMost(7)
+                        (newLength - offsetFromEnd + 1).coerceIn(1, newLength)
+                    }
+                }
+
+                _selectedDate.value = LocalDate.of(newDate.year, newDate.monthValue, newDay)
             }
 
             is HomeEvent.PickDay -> {
@@ -106,15 +124,17 @@ class HomeViewModel @Inject constructor(
     private fun loadMonthDataFlow(date: LocalDate): Flow<HomeUiState.Success> {
         val firstOfMonth = LocalDate.of(date.year, date.monthValue, 1)
         val start = firstOfMonth.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-        val daysCount = 35
-        val endExclusive = start.plusDays(daysCount.toLong())
+        val lastOfMonth = LocalDate.of(date.year, date.monthValue, date.lengthOfMonth())
+        val finish = lastOfMonth.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
+
+        val daysCount = ChronoUnit.DAYS.between(start, finish).toInt() + 1
 
         return combine(
-            dataStoreManager.getPlanMorningId(),
-            getTrainingListUseCase(start.toString(), endExclusive.toString()),
-            getMorningListUseCase(start.toString(), endExclusive.toString()),
+            settingsEngine.uiState,
+            getTrainingListUseCase(start.toString(), finish.toString()),
+            getMorningListUseCase(start.toString(), finish.toString()),
             getTrainingListUseCase(date.toString(), date.plusDays(1).toString())
-        ) { planId, trainingListMonth, morningList, trainingListDay ->
+        ) { config, trainingListMonth, morningList, trainingListDay ->
 
             val morningDates = morningList.map { it.date }.toHashSet()
             val trainingDates = trainingListMonth.map { it.date }.toHashSet()
@@ -138,7 +158,7 @@ class HomeViewModel @Inject constructor(
 
             HomeUiState.Success(
                 date = date,
-                currentPlanId = planId,
+                currentPlanId = config.planMorningId,
                 monthDays = monthDays,
                 trainingList = trainingListDay,
                 calendarExpanded = currentExpanded,

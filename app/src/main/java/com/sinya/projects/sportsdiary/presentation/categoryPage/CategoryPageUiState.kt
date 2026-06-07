@@ -1,8 +1,8 @@
 package com.sinya.projects.sportsdiary.presentation.categoryPage
 
-import com.sinya.projects.sportsdiary.domain.model.CategoryEntity
-import com.sinya.projects.sportsdiary.domain.model.CategorySheetItem
-import com.sinya.projects.sportsdiary.domain.model.ExerciseDialogContent
+import com.sinya.projects.sportsdiary.core.domain.model.CategoryEntity
+import com.sinya.projects.sportsdiary.core.domain.model.CategorySheetItem
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseDialogContent
 
 sealed interface CategoryPageUiState {
     data object Loading : CategoryPageUiState
@@ -10,7 +10,6 @@ sealed interface CategoryPageUiState {
     data class CategoryForm(
         val item: CategoryEntity,
         val sheetData: CategorySheetItem,
-
         val dialogContent: ExerciseDialogContent? = null,
         val errorMessage: String? = null,
         val isError: Boolean = false

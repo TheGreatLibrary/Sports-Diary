@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -26,11 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.main.ScreenRoute
+import com.sinya.projects.sportsdiary.navigation.ScreenRoute
 import com.sinya.projects.sportsdiary.presentation.home.calendar.Calendar
 import com.sinya.projects.sportsdiary.presentation.home.components.MiniHomeCard
 import com.sinya.projects.sportsdiary.presentation.home.components.TrainingHomeCard
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import kotlin.collections.emptyList
 
 @Composable
 fun HomeScreen(
@@ -77,7 +79,7 @@ private fun HomeScreenView(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 150.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(5.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Calendar(
                 onExtended = { onEvent(HomeEvent.OnExtended(!state.calendarExpanded)) },
@@ -97,7 +99,7 @@ private fun HomeScreenView(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 TrainingHomeCard(
@@ -134,6 +136,7 @@ private fun HomeScreenView(
                         colorCard = MaterialTheme.colorScheme.tertiary
                     )
                 }
+                Spacer(Modifier.height(80.dp))
             }
         }
 

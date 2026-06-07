@@ -1,6 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.categoryPage
 
-import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
+import com.sinya.projects.sportsdiary.core.domain.model.ModeOfSorting
 
 sealed interface CategoryPageEvent {
     data object OpenBottomSheetTraining : CategoryPageEvent

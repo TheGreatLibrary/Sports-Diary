@@ -1,6 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.categories
 
-import com.sinya.projects.sportsdiary.data.database.entity.TypeTraining
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.TypeTraining
 
 sealed interface CategoriesUiState {
     data object Loading : CategoriesUiState

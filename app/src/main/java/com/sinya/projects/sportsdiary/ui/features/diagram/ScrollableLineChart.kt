@@ -16,8 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -27,13 +27,11 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.enums.TypeTime
-import com.sinya.projects.sportsdiary.domain.model.ChartState
+import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
+import com.sinya.projects.sportsdiary.core.domain.model.ChartState
 import kotlin.math.roundToInt
 
 @Composable
@@ -67,6 +65,13 @@ fun ScrollableLineChart(
     }
     val labels = remember(points, timeMode) {
         points.parseDateByMode(timeMode)
+    }
+
+    LaunchedEffect(points.size) {
+        if (points.isNotEmpty()) {
+            val maxScroll = scrollState.maxValue
+            scrollState.animateScrollTo(maxScroll)
+        }
     }
 
     BoxWithConstraints(modifier) {

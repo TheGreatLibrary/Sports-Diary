@@ -16,8 +16,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.model.Training
-import com.sinya.projects.sportsdiary.main.ScreenRoute
+import com.sinya.projects.sportsdiary.core.domain.model.Training
+import com.sinya.projects.sportsdiary.core.domain.model.localDateOrNull
+import com.sinya.projects.sportsdiary.navigation.ScreenRoute
+import com.sinya.projects.sportsdiary.presentation.trainings.dateFmt
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
 import kotlinx.coroutines.launch
 
@@ -73,6 +75,8 @@ private fun TrainingItem(
     item: Training,
     onClick: (Int) -> Unit
 ) {
+    val dateText = item.localDateOrNull()?.format(dateFmt) ?: item.date
+
     AnimationCard(
         modifier = Modifier.fillMaxWidth(),
         onClick = { onClick(item.id) },
@@ -84,7 +88,7 @@ private fun TrainingItem(
                 R.string.workout_type_training,
                 item.category ?: stringResource(R.string.not_category),
                 item.name,
-                item.date
+                dateText
             ),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer,

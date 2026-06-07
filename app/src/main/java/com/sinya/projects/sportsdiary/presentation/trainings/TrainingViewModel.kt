@@ -2,10 +2,10 @@ package com.sinya.projects.sportsdiary.presentation.trainings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.data.database.entity.Trainings
-import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
-import com.sinya.projects.sportsdiary.domain.useCase.DeleteTrainingUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetTrainingListUseCase
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Trainings
+import com.sinya.projects.sportsdiary.core.domain.model.ModeOfSorting
+import com.sinya.projects.sportsdiary.core.domain.useCase.DeleteTrainingUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetTrainingListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

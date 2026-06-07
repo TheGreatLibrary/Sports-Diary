@@ -40,7 +40,7 @@
     <string name="years">Года</string>
 
     <string name="January">Янв</string>
-    <string name="Februaby">Фев</string>
+    <string name="February">Фев</string>
     <string name="March">Мар</string>
     <string name="April">Апр</string>
     <string name="May">Май</string>
@@ -151,7 +151,7 @@
     <string name="categories_description">Список категорий тренировок</string>
 
 
-    <string name="category_description">Категория - тип тренировки, который подразумевает определенный набор упражнений, порядок выполнения и количество повторений с весом, которые задает пользователь</string>
+    <string name="category_description">Категория - это тип тренировки с определенным набор упражнений, порядком их выполнения и количеством повторений с весом, которые задает пользователь</string>
     <string name="put_your_text">Введите название</string>
     <string name="choose_exercises">Добавление упражнений</string>
     <string name="put_your_title">Введите название</string>
@@ -182,4 +182,5 @@
     <string name="monday_16_2026">Понедельник, 16 февраль 2026</string>
     <string name="warning_dialog_title">Предупреждение перед удалением</string>
     <string name="dont_take_warning">Не показывать больше предупреждение</string>
+    <string name="exercise_name_is_empty">Название упражнения пустое или дублируется</string>
 </resources>

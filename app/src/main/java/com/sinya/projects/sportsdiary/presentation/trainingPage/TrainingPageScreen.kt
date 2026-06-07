@@ -1,14 +1,13 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage
 
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,9 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
-import com.sinya.projects.sportsdiary.main.NavigationTopBar
+import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
 import com.sinya.projects.sportsdiary.presentation.categoryPage.components.DragOverlay
 import com.sinya.projects.sportsdiary.presentation.categoryPage.components.ExerciseSheetContent
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
@@ -48,6 +46,7 @@ import com.sinya.projects.sportsdiary.ui.features.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.DateCard
 import com.sinya.projects.sportsdiary.ui.features.DatePickerModal
 import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
+import com.sinya.projects.sportsdiary.ui.features.ScreenLazyColumn
 import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
@@ -99,7 +98,6 @@ private fun TrainingPage(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
-//    val scaffoldState = rememberBottomSheetScaffoldState()
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
             initialValue = SheetValue.PartiallyExpanded,
@@ -188,34 +186,25 @@ private fun TrainingPage(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            LazyColumn(
-                state = listState,
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                item {
-                    Spacer(Modifier.height(40.dp))
-                    NavigationTopBar(
-                        type = TypeAppTopNavigation.WithIcon(
-                            onBackClick = onBackClick,
-                            title = if (state.item.title.isNotEmpty()) stringResource(
-                                R.string.training_number,
-                                state.item.title
-                            )
-                            else stringResource(R.string.training_title),
-                            painter = R.drawable.nav_save,
-                            onClick = { onEvent(TrainingPageEvent.Save) }
-                        )
+            ScreenLazyColumn(
+                list = listState,
+                arrangement = Arrangement.spacedBy(8.dp),
+                navigationType = TypeAppTopNavigation.WithIcon(
+                    onBackClick = onBackClick,
+                    title = if (state.item.title.isNotEmpty()) stringResource(
+                        R.string.training_number,
+                        state.item.title
                     )
-                    Spacer(Modifier.height(20.dp))
-                }
-
+                    else stringResource(R.string.training_title),
+                    painter = R.drawable.nav_save,
+                    onClick = { onEvent(TrainingPageEvent.Save) }
+                )
+            ) {
                 item {
                     DateCard(
                         onDateClick = { onEvent(TrainingPageEvent.CalendarState(true)) },
                         date = state.item.date
                     )
-                    Spacer(Modifier.height(8.dp))
                     CustomDropdownMenu(
                         items = state.categories,
                         title = title,
@@ -279,6 +268,9 @@ private fun TrainingPage(
                         },
                         onDeleteSet = { id, index1 ->
                             onEvent(TrainingPageEvent.DeleteSet(id, index1))
+                        },
+                        onVisibleClick = { value, id ->
+                            onEvent(TrainingPageEvent.VisibleExercise(value, id))
                         }
                     )
                 }
@@ -298,7 +290,7 @@ private fun TrainingPage(
                             text = stringResource(R.string.add_exercise),
                         )
                     }
-                    Spacer(Modifier.height(80.dp))
+                    Spacer(Modifier.height(180.dp))
                 }
             }
 
@@ -317,7 +309,8 @@ private fun TrainingPage(
                     onInfoClick = {},
                     onPlusClick = {},
                     onEditSet = { _, _, _, _ -> },
-                    onDeleteSet = { _, _ -> }
+                    onDeleteSet = { _, _ -> },
+                    onVisibleClick = { _, _ -> }
                 )
             }
 

@@ -14,15 +14,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.sinya.projects.sportsdiary.domain.model.DayOfMonth
+import com.sinya.projects.sportsdiary.core.domain.model.DayOfMonth
 import java.time.LocalDate
 
 @SuppressLint("UnusedContentLambdaTargetStateParameter")
 @Composable
 fun MonthPager(
-    days: List<DayOfMonth>,
+    days: List<List<DayOfMonth>>,
     pickDay: (LocalDate) -> Unit,
-    expanded: Boolean,
     today: LocalDate
 ) {
     var lastYm by remember { mutableIntStateOf(today.year) }
@@ -54,7 +53,6 @@ fun MonthPager(
         MonthGrid(
             days = days,
             pickDay,
-            expanded = expanded,
             today = today
         )
     }

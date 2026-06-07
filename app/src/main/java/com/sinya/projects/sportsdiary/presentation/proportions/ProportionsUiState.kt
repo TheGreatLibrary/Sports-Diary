@@ -1,7 +1,7 @@
 package com.sinya.projects.sportsdiary.presentation.proportions
 
-import com.sinya.projects.sportsdiary.data.database.entity.Proportions
-import com.sinya.projects.sportsdiary.domain.model.ModeOfSorting
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Proportions
+import com.sinya.projects.sportsdiary.core.domain.model.ModeOfSorting
 
 sealed interface ProportionsUiState {
     data object Loading : ProportionsUiState

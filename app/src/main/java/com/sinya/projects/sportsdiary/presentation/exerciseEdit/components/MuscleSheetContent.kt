@@ -21,8 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.model.ExerciseMusclesData
-import com.sinya.projects.sportsdiary.domain.model.RadioItem
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseMusclesData
+import com.sinya.projects.sportsdiary.core.domain.model.RadioItem
 import com.sinya.projects.sportsdiary.ui.features.ModalSheetButtons
 import kotlinx.coroutines.launch
 

@@ -1,7 +1,7 @@
 package com.sinya.projects.sportsdiary.presentation.proportionPage
 
-import com.sinya.projects.sportsdiary.domain.model.ProportionDialogContent
-import com.sinya.projects.sportsdiary.domain.model.ProportionItem
+import com.sinya.projects.sportsdiary.core.domain.model.ProportionDialogContent
+import com.sinya.projects.sportsdiary.core.domain.model.ProportionItem
 
 sealed interface ProportionPageUiState {
     data object Loading : ProportionPageUiState

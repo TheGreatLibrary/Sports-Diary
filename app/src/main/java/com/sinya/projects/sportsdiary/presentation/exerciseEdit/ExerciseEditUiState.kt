@@ -1,13 +1,13 @@
 package com.sinya.projects.sportsdiary.presentation.exerciseEdit
 
-import com.sinya.projects.sportsdiary.data.database.entity.CategoryTranslation
-import com.sinya.projects.sportsdiary.data.database.entity.EquipmentTranslation
-import com.sinya.projects.sportsdiary.data.database.entity.ForceTranslation
-import com.sinya.projects.sportsdiary.data.database.entity.LevelTranslation
-import com.sinya.projects.sportsdiary.data.database.entity.MechanicTranslation
-import com.sinya.projects.sportsdiary.domain.model.ExerciseDialogContent
-import com.sinya.projects.sportsdiary.domain.model.ExerciseEditItem
-import com.sinya.projects.sportsdiary.domain.model.ExerciseMusclesData
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.CategoryTranslation
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.EquipmentTranslation
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.ForceTranslation
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.LevelTranslation
+import com.sinya.projects.sportsdiary.core.data.dataBase.entity.MechanicTranslation
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseDialogContent
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseEditItem
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseMusclesData
 
 sealed interface ExerciseEditUiState {
     data object Loading : ExerciseEditUiState

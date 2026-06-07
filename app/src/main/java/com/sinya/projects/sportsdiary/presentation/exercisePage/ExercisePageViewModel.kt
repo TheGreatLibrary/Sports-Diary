@@ -2,8 +2,8 @@ package com.sinya.projects.sportsdiary.presentation.exercisePage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseDescriptionUseCase
-import com.sinya.projects.sportsdiary.domain.useCase.GetExerciseMusclesUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetExerciseDescriptionUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetExerciseMusclesUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

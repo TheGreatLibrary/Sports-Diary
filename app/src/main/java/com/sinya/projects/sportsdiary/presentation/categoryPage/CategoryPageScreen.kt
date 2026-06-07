@@ -1,14 +1,13 @@
 package com.sinya.projects.sportsdiary.presentation.categoryPage
 
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,9 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.domain.model.ExerciseWithMuscles
-import com.sinya.projects.sportsdiary.main.NavigationTopBar
+import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
 import com.sinya.projects.sportsdiary.presentation.categoryPage.components.DragOverlay
 import com.sinya.projects.sportsdiary.presentation.categoryPage.components.ExerciseSheetContent
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
@@ -43,6 +41,7 @@ import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.CustomTextField
 import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
+import com.sinya.projects.sportsdiary.ui.features.ScreenLazyColumn
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
 import com.sinya.projects.sportsdiary.ui.features.SwipeCardContent
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
@@ -145,30 +144,22 @@ private fun CategoryPageView(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            LazyColumn(
-                state = listState,
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
-                modifier = Modifier.fillMaxSize()
+            ScreenLazyColumn(
+                list = listState,
+                arrangement = Arrangement.spacedBy(8.dp),
+                navigationType = TypeAppTopNavigation.WithIcon(
+                    onBackClick = onBackClick,
+                    title = state.item.category.name,
+                    painter = R.drawable.nav_save,
+                    onClick = { onEvent(CategoryPageEvent.Save) }
+                )
             ) {
-                item {
-                    Spacer(Modifier.height(40.dp))
-                    NavigationTopBar(
-                        type = TypeAppTopNavigation.WithIcon(
-                            onBackClick = onBackClick,
-                            title = state.item.category.name,
-                            painter = R.drawable.nav_save,
-                            onClick = { onEvent(CategoryPageEvent.Save) }
-                        )
-                    )
-                    Spacer(Modifier.height(20.dp))
-                }
-
                 item {
                     CustomTextField(
                         value = state.item.category.name,
                         onValueChange = { s -> onEvent(CategoryPageEvent.OnValueChange(s)) },
                         onTrailingClick = { onEvent(CategoryPageEvent.OnValueChange("")) },
-                        placeholder = stringResource(R.string.put_your_title),
+                        placeholder = stringResource(R.string.category_name),
                         shape = MaterialTheme.shapes.extraLarge,
                         keyboardType = KeyboardType.Text,
                         modifier = Modifier.fillMaxWidth(),
@@ -177,7 +168,6 @@ private fun CategoryPageView(
                         isError = state.isError,
                         errorMessage = stringResource(R.string.category_name_is_empty)
                     )
-                    Spacer(Modifier.height(20.dp))
                 }
 
                 items(
@@ -189,7 +179,6 @@ private fun CategoryPageView(
 
                     SwipeCard(
                         modifier = Modifier
-                            .padding(bottom = 8.dp)
                             .animateItem(fadeInSpec = null, fadeOutSpec = null)
                             .alpha(if (isDragging) 0f else 1f)
                             .pointerInput(item.id) {

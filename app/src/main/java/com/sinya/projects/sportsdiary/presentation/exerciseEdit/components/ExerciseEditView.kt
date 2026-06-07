@@ -3,11 +3,8 @@ package com.sinya.projects.sportsdiary.presentation.exerciseEdit.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -22,13 +19,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.domain.enums.TypeAppTopNavigation
-import com.sinya.projects.sportsdiary.main.NavigationTopBar
+import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.presentation.exerciseEdit.ExerciseEditEvent
 import com.sinya.projects.sportsdiary.presentation.exerciseEdit.ExerciseEditUiState
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.CustomTextField
 import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
+import com.sinya.projects.sportsdiary.ui.features.ScreenLazyColumn
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
@@ -59,23 +56,15 @@ fun ExerciseEditView(
             )
         }
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 16.dp, top = 50.dp, end = 16.dp, bottom = 40.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ScreenLazyColumn(
+            arrangement = Arrangement.spacedBy(8.dp),
+            navigationType = TypeAppTopNavigation.WithIcon(
+                onBackClick = onBackClick,
+                title = stringResource(R.string.create_exercise),
+                painter = R.drawable.nav_save,
+                onClick = { onEvent(ExerciseEditEvent.Save) }
+            )
         ) {
-            item {
-                NavigationTopBar(
-                    type = TypeAppTopNavigation.WithIcon(
-                        onBackClick = onBackClick,
-                        title = stringResource(R.string.create_exercise),
-                        painter = R.drawable.nav_save,
-                        onClick = { onEvent(ExerciseEditEvent.Save) }
-                    )
-                )
-            }
-
             item {
                 CustomTextField(
                     value = state.exercise.name,
@@ -86,7 +75,7 @@ fun ExerciseEditView(
                     contentColor = MaterialTheme.colorScheme.onSurface,
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     isError = state.exercise.isError,
-                    errorMessage = stringResource(R.string.category_name_is_empty),
+                    errorMessage = stringResource(R.string.exercise_name_is_empty),
                     shape = MaterialTheme.shapes.extraLarge
                 )
             }
@@ -173,11 +162,10 @@ fun ExerciseEditView(
                         text = stringResource(R.string.add_exercise),
                     )
                 }
-                Spacer(Modifier.height(80.dp))
             }
 
             item {
-                Spacer(Modifier.height(100.dp))
+                Spacer(Modifier.height(180.dp))
             }
         }
 
