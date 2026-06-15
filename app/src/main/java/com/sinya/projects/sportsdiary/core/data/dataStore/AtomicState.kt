@@ -1,4 +1,4 @@
-package com.sinya.projects.wordle.data.local.datastore
+package com.sinya.projects.sportsdiary.core.data.dataStore
 
 import androidx.compose.runtime.Stable
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -4,7 +4,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.sinya.projects.wordle.data.local.datastore.SettingsEngine
+import com.sinya.projects.sportsdiary.core.data.dataStore.SettingsEngine
+import java.time.format.DateTimeFormatter
 
 
 @Composable
@@ -26,4 +27,8 @@ fun SportsDiaryTheme(
 
 val LocalSettingsEngine = staticCompositionLocalOf<SettingsEngine> {
     error("SettingsEngine not provided")
+}
+
+val LocalDateFormat = staticCompositionLocalOf<DateTimeFormatter> {
+    error("DateTimeFormatter not provider")
 }

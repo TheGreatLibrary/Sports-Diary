@@ -1,6 +1,5 @@
-package com.sinya.projects.wordle.data.local.datastore
+package com.sinya.projects.sportsdiary.core.data.dataStore
 
-import com.sinya.projects.sportsdiary.core.data.dataStore.DataStoreManager
 import com.sinya.projects.sportsdiary.core.domain.model.UiConfig
 import jakarta.inject.Inject
 import jakarta.inject.Singleton

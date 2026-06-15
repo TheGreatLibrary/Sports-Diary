@@ -16,10 +16,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.presentation.exerciseEdit.ExerciseEditEvent
 import com.sinya.projects.sportsdiary.presentation.exerciseEdit.ExerciseEditUiState
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
@@ -58,9 +59,9 @@ fun ExerciseEditView(
     ) {
         ScreenLazyColumn(
             arrangement = Arrangement.spacedBy(8.dp),
-            navigationType = TypeAppTopNavigation.WithIcon(
+            navigationType = TypeTopNavigation.WithIcon(
                 onBackClick = onBackClick,
-                title = stringResource(R.string.create_exercise),
+                title = stringResource(R.string.create_exercise_title),
                 painter = R.drawable.nav_save,
                 onClick = { onEvent(ExerciseEditEvent.Save) }
             )
@@ -76,7 +77,8 @@ fun ExerciseEditView(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     isError = state.exercise.isError,
                     errorMessage = stringResource(R.string.exercise_name_is_empty),
-                    shape = MaterialTheme.shapes.extraLarge
+                    shape = MaterialTheme.shapes.extraLarge,
+                    focusRequester = state.focusRequesters[0]
                 )
             }
 
@@ -90,6 +92,7 @@ fun ExerciseEditView(
                     contentColor = MaterialTheme.colorScheme.onSurface,
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     singleLine = false,
+                    focusRequester = state.focusRequesters[1]
                 )
             }
 
@@ -101,8 +104,10 @@ fun ExerciseEditView(
                     singleLine = false,
                     height = 160.dp,
                     modifier = Modifier.fillMaxWidth(),
+                    imeAction = ImeAction.Done,
                     contentColor = MaterialTheme.colorScheme.onSurface,
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    focusRequester = state.focusRequesters[2]
                 )
             }
 
@@ -120,7 +125,7 @@ fun ExerciseEditView(
                 )
                 if (!state.muscles.any { it.checked }) {
                     Text(
-                        text = stringResource(R.string.nothing_found),
+                        text = stringResource(R.string.not_found_data),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyLarge,

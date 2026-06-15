@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.text.BasicTextField
@@ -27,11 +28,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,7 +58,9 @@ fun CustomTextField(
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     isError: Boolean = false,
+    imeAction: ImeAction = ImeAction.Next,
     singleLine: Boolean = true,
+    focusRequester: FocusRequester = FocusRequester(),
     errorMessage: String? = null,
 ) {
     var focused by remember { mutableStateOf(false) }
@@ -66,16 +72,21 @@ fun CustomTextField(
             onValueChange = { s -> onValueChange(s) },
             singleLine = singleLine,
             textStyle = MaterialTheme.typography.bodyMedium.copy(color = contentColor),
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardType,
+                imeAction = imeAction
+            ),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.onPrimary),
             modifier = modifier
                 .heightIn(max = height)
+                .focusRequester(focusRequester)
                 .background(containerColor, shape)
                 .border(
                     width = 1.dp,
                     color = if (isError) MaterialTheme.colorScheme.secondary else Color.Transparent,
                     shape = shape
                 )
+                .padding(horizontal = 8.dp)
                 .onFocusChanged { focused = it.isFocused },
             decorationBox = { inner ->
                 TextFieldDefaults.DecorationBox(
@@ -98,31 +109,32 @@ fun CustomTextField(
                             )
                         }
                     },
-                    leadingIcon = {
+                    leadingIcon =
                         leadingIcon?.let {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_search),
-                                contentDescription = "voice",
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                    },
-                    trailingIcon = {
-                        onTrailingClick?.let {
-                            if (value.isNotEmpty()) {
+                            {
                                 Icon(
-                                    painter = painterResource(R.drawable.morn_trash),
-                                    contentDescription = "Clear",
-                                    tint = contentColor,
-                                    modifier = Modifier
-                                        .size(18.dp)
-                                        .clip(MaterialTheme.shapes.extraLarge)
-                                        .clickable { onTrailingClick() },
+                                    painter = leadingIcon,
+                                    contentDescription = "voice",
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier.size(18.dp)
                                 )
                             }
-                        }
-                    }
+                        },
+//                    trailingIcon = {
+//                        onTrailingClick?.let {
+//                            if (value.isNotEmpty()) {
+//                                Icon(
+//                                    painter = painterResource(R.drawable.morn_trash),
+//                                    contentDescription = "Clear",
+//                                    tint = contentColor,
+//                                    modifier = Modifier
+//                                        .size(18.dp)
+//                                        .clip(MaterialTheme.shapes.extraLarge)
+//                                        .clickable { onTrailingClick() },
+//                                )
+//                            }
+//                        }
+//                    }
                 )
             }
         )
@@ -146,6 +158,8 @@ fun CustomTextFieldWithLabel(
     onValueChange: (String) -> Unit,
     onTrailingClick: () -> Unit,
     keyboardType: KeyboardType,
+    imeAction: ImeAction = ImeAction.Next,
+    focusRequester: FocusRequester = FocusRequester(),
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer
 ) {
@@ -165,8 +179,10 @@ fun CustomTextFieldWithLabel(
             onTrailingClick = onTrailingClick,
             keyboardType = keyboardType,
             modifier = modifier,
+            imeAction = imeAction,
             contentColor = contentColor,
-            containerColor = containerColor
+            containerColor = containerColor,
+            focusRequester = focusRequester
         )
     }
 }

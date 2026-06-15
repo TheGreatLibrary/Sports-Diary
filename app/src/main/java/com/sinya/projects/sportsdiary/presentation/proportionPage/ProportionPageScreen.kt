@@ -6,28 +6,27 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.buildMeasureItemsFromKeys
 import com.sinya.projects.sportsdiary.core.utils.getDrawableId
 import com.sinya.projects.sportsdiary.core.utils.getString
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.proportionPage.components.MeasureCard
+import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.DateCard
 import com.sinya.projects.sportsdiary.ui.features.DatePickerModal
 import com.sinya.projects.sportsdiary.ui.features.ScreenLazyColumn
@@ -88,7 +87,7 @@ private fun ProportionPageView(
     Box {
         ScreenLazyColumn(
             arrangement = Arrangement.spacedBy(8.dp),
-            navigationType = TypeAppTopNavigation.WithIcon(
+            navigationType = TypeTopNavigation.WithIcon(
                 onBackClick = onBackClick,
                 title = if (state.item.title.isNotEmpty()) stringResource(R.string.proportion_number, state.item.title)
                 else stringResource(R.string.measurement),
@@ -112,7 +111,7 @@ private fun ProportionPageView(
                     onInfoClick = { onEvent(ProportionPageEvent.OpenDialog(item.infoId)) },
                     items = item.items,
                     onValueChange = { id, str -> onEvent(ProportionPageEvent.OnChangeValue(id, str)) },
-                    context = context
+                    context = context,
                 )
             }
 
@@ -147,11 +146,6 @@ private fun ProportionPageView(
             )
         }
 
-
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-        )
+        CustomSnackbar(snackbarHostState)
     }
 }

@@ -19,11 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.ScreenLazyColumn
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
 import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
@@ -74,13 +75,12 @@ private fun CategoriesScreenView(
         isRefreshing = state.isRefreshing,
         onRefresh = { onEvent(CategoriesEvent.ReloadData) },
         state = pullToRefreshState,
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter
     ) {
         ScreenLazyColumn(
             arrangement = Arrangement.spacedBy(8.dp),
-            navigationType = TypeAppTopNavigation.WithIcon(
+            navigationType = TypeTopNavigation.WithIcon(
                 onBackClick = onBackClick,
                 title = stringResource(R.string.categories_title),
                 painter = R.drawable.ic_plus,
@@ -117,10 +117,6 @@ private fun CategoriesScreenView(
             )
         }
 
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-        )
+        CustomSnackbar(snackbarHostState)
     }
 }

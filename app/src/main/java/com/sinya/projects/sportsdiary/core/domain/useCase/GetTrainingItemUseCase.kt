@@ -7,7 +7,7 @@ import jakarta.inject.Inject
 class GetTrainingItemUseCase @Inject constructor(
     private val trainingRepo: TrainingRepository
 ) {
-    suspend operator fun invoke(id: Int?): Result<TrainingEntity> {
-        return trainingRepo.getById(id)
+    suspend operator fun invoke(id: Int?, date: String?): Result<TrainingEntity> {
+        return trainingRepo.getById(id, date)
     }
 }

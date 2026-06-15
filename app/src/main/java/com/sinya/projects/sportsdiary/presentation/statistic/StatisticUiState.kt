@@ -1,8 +1,8 @@
 package com.sinya.projects.sportsdiary.presentation.statistic
 
-import com.sinya.projects.sportsdiary.core.data.dataBase.entity.ExerciseTranslations
+import androidx.annotation.StringRes
 import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
-import com.sinya.projects.sportsdiary.ui.features.diagram.ChartPoint
+import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartLine
 
 sealed interface StatisticUiState {
     data object Loading : StatisticUiState
@@ -10,11 +10,9 @@ sealed interface StatisticUiState {
     data class Success(
         val countTrain: Int = 0,
         val countWeight: Float = 0f,
-        val exercises: List<ExerciseTranslations> = emptyList(),
         val timeMode: TypeTime = TypeTime.DAYS,
-        val chartList: List<ChartPoint> = emptyList(),
+        val chartList: List<ChartLine> = emptyList(),
         val chartLoading: Boolean = true,
-        val dialogState: Boolean = false,
-        val errorMessage: String? = null
+        @StringRes val errorMessage: Int? = null,
     ) : StatisticUiState
 }

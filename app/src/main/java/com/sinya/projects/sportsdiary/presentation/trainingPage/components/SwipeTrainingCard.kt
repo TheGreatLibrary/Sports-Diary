@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
+import com.sinya.projects.sportsdiary.core.domain.enums.TrainingMode
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItem
 import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
 import com.sinya.projects.sportsdiary.ui.features.SwipeCardBackground
@@ -39,12 +40,15 @@ fun SwipeTrainingCard(
     onMinusClick: (Int) -> Unit,
     onEditSet: (Int, Int, String?, Boolean) -> Unit,
     onDeleteSet: (Int, Int) -> Unit,
+    onModeClick: (TrainingMode, Int) -> Unit,
     onVisibleClick: (Int, Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     SwipeToDismissBox(
-        modifier = Modifier.fillMaxWidth().then(modifier),
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier),
         state = rememberSwipeToDismissBoxState(
             confirmValueChange = {
                 if (it == SwipeToDismissBoxValue.EndToStart) {
@@ -65,7 +69,8 @@ fun SwipeTrainingCard(
                 onPlusClick = onPlusClick,
                 onEditSet = onEditSet,
                 onDeleteSet = onDeleteSet,
-                onVisibleClick = onVisibleClick
+                onVisibleClick = onVisibleClick,
+                onModeClick = onModeClick
             )
         }
     )
@@ -81,6 +86,7 @@ fun SwipeTrainingCardContent(
     onPlusClick: (Int) -> Unit,
     onEditSet: (Int, Int, String?, Boolean) -> Unit,
     onDeleteSet: (Int, Int) -> Unit,
+    onModeClick: (TrainingMode, Int) -> Unit,
     onVisibleClick: (Int, Int) -> Unit
 ) {
     Column(
@@ -92,11 +98,17 @@ fun SwipeTrainingCardContent(
     ) {
         HeaderTraining(
             title = item.title,
+            mode = item.mode,
             iconEye = when (item.state) {
                 1 -> painterResource(R.drawable.ic_eye)
                 else -> painterResource(R.drawable.ic_eye_no)
             },
             onInfoClick = { onInfoClick(item.id) },
+            onModeClick = { when(item.mode) {
+                TrainingMode.COUNT -> onModeClick(TrainingMode.TIME, item.id)
+                TrainingMode.TIME -> onModeClick(TrainingMode.COUNT, item.id)
+            }
+            },
             onVisibleClick = { onVisibleClick(if (item.state==1) 0 else 1, item.id) }
         )
         TrainingCardContent(
@@ -104,7 +116,10 @@ fun SwipeTrainingCardContent(
             expanded = expanded,
             onExpanded = onExpanded,
             items = item.item,
-            repsUnit = stringResource(R.string.count),
+            repsUnit = when(item.mode) {
+                TrainingMode.COUNT -> stringResource(R.string.count)
+                TrainingMode.TIME -> stringResource(R.string.second)
+            },
             weightUnit = stringResource(R.string.kg),
             onEditSet = onEditSet,
             onPlusClick = onPlusClick,
@@ -117,7 +132,9 @@ fun SwipeTrainingCardContent(
 fun HeaderTraining(
     title: String,
     iconEye: Painter,
+    mode: TrainingMode,
     onInfoClick: () -> Unit,
+    onModeClick: () -> Unit,
     onVisibleClick: () -> Unit,
 ) {
     Row(
@@ -132,8 +149,20 @@ fun HeaderTraining(
             overflow = TextOverflow.Ellipsis,
         )
         AnimationIcon(
+            onClick = onModeClick,
+            painter = when(mode) {
+                TrainingMode.COUNT -> painterResource(R.drawable.train_muscul)
+                TrainingMode.TIME -> painterResource(R.drawable.train_time)
+            },
+            description = "mode",
+            isSelected = true,
+            size = 25.dp,
+            selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
+        AnimationIcon(
             onClick = onVisibleClick,
-            icon = iconEye,
+            painter = iconEye,
             description = "eye",
             isSelected = true,
             size = 25.dp,
@@ -142,7 +171,7 @@ fun HeaderTraining(
         )
         AnimationIcon(
             onClick = onInfoClick,
-            icon = painterResource(R.drawable.ic_info),
+            painter = painterResource(R.drawable.ic_info),
             description = "Info",
             isSelected = true,
             size = 25.dp,

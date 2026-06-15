@@ -25,7 +25,7 @@ import com.sinya.projects.sportsdiary.core.domain.useCase.InsertDataTrainingUseC
 import com.sinya.projects.sportsdiary.core.domain.useCase.UpsertTrainingUseCase
 import com.sinya.projects.sportsdiary.core.utils.parseMillisToDateTime
 import com.sinya.projects.sportsdiary.core.utils.searchByTerms
-import com.sinya.projects.wordle.data.local.datastore.SettingsEngine
+import com.sinya.projects.sportsdiary.core.data.dataStore.SettingsEngine
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -42,6 +42,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = TrainingPageViewModel.Factory::class)
 class TrainingPageViewModel @AssistedInject constructor(
     @Assisted("id") private val id: Int?,
+    @Assisted("date") private val date: String?,
     private val settingsEngine: SettingsEngine,
 
     private val getCategoriesListUseCase: GetCategoriesListUseCase,
@@ -63,12 +64,13 @@ class TrainingPageViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("id") id: Int?
+            @Assisted("id") id: Int?,
+            @Assisted("date") date: String?
         ): TrainingPageViewModel
     }
 
     init {
-        loadData(id)
+        loadData()
     }
 
     fun filtered(): List<ExerciseWithMuscles> {
@@ -232,6 +234,18 @@ class TrainingPageViewModel @AssistedInject constructor(
                     )
                 )
             }
+
+            is TrainingPageEvent.ToggleMode -> updateIfForm {
+                it.copy(
+                    item = it.item.copy(
+                        items = it.item.items.map { item ->
+                            if (item.id == event.id) {
+                                item.copy(mode = event.mode)
+                            } else item
+                        }
+                    )
+                )
+            }
         }
     }
 
@@ -271,7 +285,7 @@ class TrainingPageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun loadData(id: Int?) = viewModelScope.launch {
+    private fun loadData() = viewModelScope.launch {
         getTrainingEntity(id).join()
         observeFormData()
     }
@@ -369,7 +383,7 @@ class TrainingPageViewModel @AssistedInject constructor(
     }
 
     private fun getTrainingEntity(id: Int? = this.id) = viewModelScope.launch {
-        getTrainingItemUseCase(id).fold(
+        getTrainingItemUseCase(id, date).fold(
             onSuccess = { item ->
                 if (_state.value is TrainingPageUiState.TrainingForm) {
                     updateIfForm {

@@ -12,14 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.navigation.NavigationTopBar
 
 @Composable
 fun ScreenColumn(
     modifier: Modifier = Modifier,
     arrangement: Arrangement.Vertical = Arrangement.spacedBy(16.dp, Alignment.Top),
-    navigationType: TypeAppTopNavigation? = null,
+    navigationType: TypeTopNavigation? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(

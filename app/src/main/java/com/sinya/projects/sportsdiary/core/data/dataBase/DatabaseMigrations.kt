@@ -449,4 +449,18 @@ object DatabaseMigrations {
         }
     }
 
+    val MIGRATION_8_9 = object : Migration(8, 9) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("""
+                    ALTER TABLE data_training
+                    ADD COLUMN mode INTEGER NOT NULL DEFAULT 0
+                """.trimIndent())
+
+            db.execSQL("""
+                    ALTER TABLE data_type_trainings
+                    ADD COLUMN mode INTEGER NOT NULL DEFAULT 0
+                """.trimIndent())
+        }
+    }
+
 }

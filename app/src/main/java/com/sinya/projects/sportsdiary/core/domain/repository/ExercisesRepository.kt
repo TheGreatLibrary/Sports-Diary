@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.core.domain.repository
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.ExercisesDao
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.CategoryTranslation
@@ -13,11 +14,14 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.entity.MechanicTranslat
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseMusclesData
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithFullData
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
+import com.sinya.projects.sportsdiary.ui.features.DropdownCheckboxItem
+import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartLine
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
+import kotlin.random.Random
 
 interface ExercisesRepository {
     // Exercises
@@ -54,6 +58,7 @@ interface ExercisesRepository {
     suspend fun getEquipments(language: String = Locale.current.language): Result<List<EquipmentTranslation>>
     suspend fun getCategories(language: String = Locale.current.language): Result<List<CategoryTranslation>>
     suspend fun getMuscles(language: String = Locale.current.language): Result<List<ExerciseMusclesData>>
+    suspend fun getExercises(language: String = Locale.current.language): Result<List<DropdownCheckboxItem>>
 }
 
 class ExercisesRepositoryImpl @Inject constructor(
@@ -170,6 +175,15 @@ class ExercisesRepositoryImpl @Inject constructor(
     override suspend fun getMuscles(language: String): Result<List<ExerciseMusclesData>> {
         return try {
             Result.success(exercisesDao.getMuscles(language))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getExercises(language: String): Result<List<DropdownCheckboxItem>> {
+        return try {
+            val result = exercisesDao.getExercisesTitles(language)
+            Result.success(result)
         } catch (e: Exception) {
             Result.failure(e)
         }

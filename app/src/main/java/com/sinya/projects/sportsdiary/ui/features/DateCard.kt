@@ -14,15 +14,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sinya.projects.sportsdiary.R
+import com.sinya.projects.sportsdiary.ui.theme.LocalDateFormat
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun DateCard(
     onDateClick: () -> Unit,
     date: String
 ) {
-    val formatter = remember { DateTimeFormatter.ofPattern("dd.MM.yyyy") }
+    val formatter = LocalDateFormat.current
     val currentDate = remember(date) { LocalDate.parse(date).format(formatter) }
     
     Row(
@@ -37,7 +37,7 @@ fun DateCard(
         )
         AnimationIcon(
             onClick = onDateClick,
-            icon = painterResource(R.drawable.ic_calendar),
+            painter = painterResource(R.drawable.ic_calendar),
             size = 28.dp,
             selectedContainerColor = Color.Transparent
         )

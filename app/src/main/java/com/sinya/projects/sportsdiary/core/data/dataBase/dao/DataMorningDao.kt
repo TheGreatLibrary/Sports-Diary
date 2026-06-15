@@ -17,7 +17,7 @@ interface DataMorningDao {
     @Query("""
         SELECT id, date
         FROM data_mornings
-        WHERE date >= :startDate AND date < :endDate
+        WHERE date >= :startDate AND date <= :endDate
         ORDER BY date
     """)
     fun getDataOfMonth(startDate: String, endDate: String) : Flow<List<MorningDay>>

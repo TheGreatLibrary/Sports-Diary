@@ -15,6 +15,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,7 +24,10 @@ import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import java.util.Locale
 import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.unit.sp
+import com.sinya.projects.sportsdiary.core.domain.enums.TypeLanguages
 
+@Suppress("DEPRECATION")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsLanguageSheet(
@@ -32,7 +36,7 @@ fun SettingsLanguageSheet(
     onDismiss: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val optionsLang =listOf("ru", "en") /// !!!
+    val optionsLang = remember { TypeLanguages.entries }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -45,7 +49,7 @@ fun SettingsLanguageSheet(
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 40.dp),
+                .padding(start = 16.dp, end = 16.dp, bottom = 40.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
@@ -55,22 +59,31 @@ fun SettingsLanguageSheet(
                 modifier = Modifier.fillMaxWidth()
             )
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                optionsLang.forEach {
+                optionsLang.forEach { languages ->
                     Row(
-                        modifier = Modifier.fillMaxWidth().clickable { setLanguage(it) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { setLanguage(languages.code) },
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         RadioButton(
-                            modifier = Modifier.size(30.dp),
-                            selected = it == language,
-                            onClick = { setLanguage(it) }
+                            selected = languages.code == language,
+                            onClick = { setLanguage(language) }
                         )
-                        Text(
-                            text = Locale(it).displayName.lowercase(LocalLocale.current.platformLocale),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
+
+                        Column {
+                            Text(
+                                text = Locale(languages.code).displayName.replaceFirstChar { it.uppercaseChar() },
+                                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.sp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                            Text(
+                                text = Locale(languages.code).getDisplayName(Locale("en")),
+                                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
+                                color = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
                     }
                 }
             }

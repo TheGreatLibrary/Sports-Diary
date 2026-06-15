@@ -24,14 +24,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.navigation.ScreenRoute
-import com.sinya.projects.sportsdiary.presentation.home.calendar.Calendar
+import com.sinya.projects.sportsdiary.presentation.home.components.calendar.Calendar
 import com.sinya.projects.sportsdiary.presentation.home.components.MiniHomeCard
 import com.sinya.projects.sportsdiary.presentation.home.components.TrainingHomeCard
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import kotlin.collections.emptyList
 
 @Composable
@@ -105,7 +106,7 @@ private fun HomeScreenView(
                 TrainingHomeCard(
                     list = state.trainingList,
                     onCardClick = { navigateTo(ScreenRoute.Training) },
-                    onPlusClick = { navigateTo(ScreenRoute.TrainingPage()) },
+                    onPlusClick = { navigateTo(ScreenRoute.TrainingPage(null, state.date.toString())) },
                     onItemClick = { id -> navigateTo(ScreenRoute.TrainingPage(id)) },
                 )
                 Row(
@@ -140,10 +141,6 @@ private fun HomeScreenView(
             }
         }
 
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-        )
+        CustomSnackbar(snackbarHostState)
     }
 }

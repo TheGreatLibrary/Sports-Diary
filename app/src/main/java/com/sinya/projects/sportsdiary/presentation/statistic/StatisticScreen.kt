@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.statistic
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,33 +19,33 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.core.domain.model.RadioItem
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.ui.features.CardWithArrow
+import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.RadioButtons
-import com.sinya.projects.sportsdiary.ui.features.StatisticCard
-import com.sinya.projects.sportsdiary.ui.features.diagram.Chart
-import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDiagramView
-import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
-import androidx.compose.ui.platform.LocalLocale
 import com.sinya.projects.sportsdiary.ui.features.ScreenColumn
+import com.sinya.projects.sportsdiary.ui.features.StatisticCard
+import com.sinya.projects.sportsdiary.ui.features.chart.MultipleChart
+import com.sinya.projects.sportsdiary.ui.features.chart.utils.ChartDataUtils
 
 @Composable
 fun StatisticScreen(
     onBackClick: () -> Unit,
-    viewModel: StatisticViewModel = hiltViewModel()
+    viewModel: StatisticViewModel = hiltViewModel(),
+    navigateToStatisticDiagram: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -55,6 +55,7 @@ fun StatisticScreen(
         is StatisticUiState.Success -> {
             StatisticScreenView(
                 onBackClick = onBackClick,
+                navigateToStatisticDiagram = navigateToStatisticDiagram,
                 state = state as StatisticUiState.Success,
                 onEvent = viewModel::onEvent
             )
@@ -62,9 +63,11 @@ fun StatisticScreen(
     }
 }
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 private fun StatisticScreenView(
     onBackClick: () -> Unit,
+    navigateToStatisticDiagram: () -> Unit,
     state: StatisticUiState.Success,
     onEvent: (StatisticEvent) -> Unit,
     radioOptions: List<RadioItem<TypeTime>> = listOf(
@@ -74,6 +77,7 @@ private fun StatisticScreenView(
     ),
     fontStyle: TextStyle = MaterialTheme.typography.displayLarge
 ) {
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var fontSize by remember { mutableStateOf(fontStyle.fontSize) }
     val onTextLayout: (TextLayoutResult) -> Unit = remember {
@@ -88,16 +92,16 @@ private fun StatisticScreenView(
     LaunchedEffect(state.errorMessage) {
         state.errorMessage?.let { message ->
             snackbarHostState.showSnackbar(
-                message = message,
+                message = context.getString(message),
                 duration = SnackbarDuration.Short
             )
-            onEvent(StatisticEvent.OnErrorShown)
+            onEvent(StatisticEvent.OnMessage(null))
         }
     }
 
     Box {
         ScreenColumn(
-            navigationType = TypeAppTopNavigation.WithoutIcon(
+            navigationType = TypeTopNavigation.WithoutIcon(
                 onBackClick = onBackClick,
                 title = stringResource(R.string.statistic_title)
             )
@@ -106,7 +110,7 @@ private fun StatisticScreenView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(IntrinsicSize.Max),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 StatisticCard(
                     modifier = Modifier
@@ -138,37 +142,26 @@ private fun StatisticScreenView(
                     onOptionSelected = { mode -> onEvent(StatisticEvent.OnSelectTimePeriod(mode)) },
                     shape = MaterialTheme.shapes.extraLarge
                 )
-                Chart(
+                MultipleChart(
                     title = stringResource(R.string.effect_of_training),
-                    onInfoClick = { onEvent(StatisticEvent.OnDialogState(true)) },
-                    timeMode = state.timeMode,
-                    points = state.chartList
-                )
-            }
-            Spacer(Modifier.height(80.dp))
-
-
-
-            if (state.dialogState) {
-                GuideDialog(
-                    onDismiss = { onEvent(StatisticEvent.OnDialogState(false)) },
-                    content = {
-                        GuideDiagramView(
-                            title = stringResource(R.string.note),
-                            image = if (LocalLocale.current.platformLocale
-                                    .toString() == "ru"
-                            ) painterResource(R.drawable.graph_guide_ru)
-                            else painterResource(R.drawable.graph_guide_en)
+                    onInfoClick = { onEvent(StatisticEvent.OnMessage(R.string.diagram_training)) },
+                    axisData = remember(state.chartList) {
+                        ChartDataUtils.createAxisDataWithDate(
+                            state.chartList,
+                            state.timeMode
                         )
-                    }
+                    },
                 )
             }
+
+            CardWithArrow(
+                title = stringResource(R.string.statistic_diagram_title),
+                onClick = navigateToStatisticDiagram
+            )
+
+            Spacer(Modifier.height(80.dp))
         }
 
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-        )
+        CustomSnackbar(snackbarHostState)
     }
 }

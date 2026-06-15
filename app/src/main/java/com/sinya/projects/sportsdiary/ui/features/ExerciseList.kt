@@ -35,7 +35,7 @@ fun ExerciseList(
     ) {
         if (filtered.isEmpty()) {
             Text(
-                text = stringResource(R.string.nothing_found),
+                text = stringResource(R.string.not_found_data),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyLarge,

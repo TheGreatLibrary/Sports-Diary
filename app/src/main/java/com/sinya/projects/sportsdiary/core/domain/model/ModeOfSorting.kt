@@ -122,7 +122,7 @@ sealed class ModeOfSorting(
             val categories = when (items.firstOrNull()) {
                 is Training -> Pair(
                     (items as List<Training>).categories,
-                    R.string.categories
+                    R.string.categories_title
                 )
                 is ExerciseWithMuscles -> Pair(
                     (items as List<ExerciseWithMuscles>).allMuscles,
@@ -130,7 +130,7 @@ sealed class ModeOfSorting(
                 )
                 else -> Pair(
                     emptyList(),
-                    R.string.categories
+                    R.string.categories_title
                 )
             }
 
@@ -195,7 +195,7 @@ sealed class ModeOfSorting(
 
             return listOf(
                 FilterBuilder(
-                    titleRes = R.string.categories,
+                    titleRes = R.string.categories_title,
                     options = listOf(RadioItem(all, null, "" as M)) + categories,
                     selectedValue = category as M,
                     onSelect = { SortParam.Category(it as String?) },

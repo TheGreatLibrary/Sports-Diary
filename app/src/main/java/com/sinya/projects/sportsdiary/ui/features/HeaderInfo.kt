@@ -34,7 +34,7 @@ fun HeaderInfo(
         AnimationIcon(
             onClick = onInfoClick,
             description = "Info",
-            icon = painterResource(R.drawable.ic_info),
+            painter = painterResource(R.drawable.ic_info),
             isSelected = true,
             size = 18.dp,
             selectedContainerColor = Color.Transparent,

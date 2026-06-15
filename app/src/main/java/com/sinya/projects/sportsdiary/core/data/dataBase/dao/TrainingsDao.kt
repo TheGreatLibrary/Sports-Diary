@@ -10,6 +10,7 @@ import androidx.room.Upsert
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataTraining
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Exercises
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Trainings
+import com.sinya.projects.sportsdiary.core.domain.model.ChartDataExercises
 import com.sinya.projects.sportsdiary.core.domain.model.ChartDataTrainings
 import com.sinya.projects.sportsdiary.core.domain.model.DataTrainings
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseData
@@ -17,6 +18,8 @@ import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItemWithoutList
 import com.sinya.projects.sportsdiary.core.domain.model.Training
 import com.sinya.projects.sportsdiary.core.domain.model.TrainingEntity
 import com.sinya.projects.sportsdiary.core.domain.model.toExerciseData
+import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartLine
+import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartPoint
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -31,6 +34,7 @@ interface TrainingsDao {
         SELECT
             count_result AS count, 
             weight_result AS weight,
+            mode AS mode,
             strftime('%Y-%m-%d', t.date) AS date
         FROM trainings t JOIN data_training d ON t.id = d.training_id
         WHERE d.state = 1
@@ -91,6 +95,7 @@ interface TrainingsDao {
                     exerciseId = getExerciseId(it.title)?.id ?: 0,
                     countResult = it.toExerciseData().countResult,
                     weightResult = it.toExerciseData().weightResult,
+                    mode = it.mode.mode,
                     state = it.state,
                     orderIndex = it.orderIndex
                 )
@@ -149,6 +154,7 @@ interface TrainingsDao {
       SELECT 
         e.id,
         et.name AS title,
+        d.mode AS mode,
         d.order_index AS orderIndex
       FROM data_type_trainings d
       JOIN exercises e ON e.id = d.exercise_id
@@ -167,6 +173,7 @@ interface TrainingsDao {
             COALESCE(prev_d.count_result, '') AS prevCountResult,
             COALESCE(prev_d.weight_result, '') AS prevWeightResult,
             COALESCE(d.state, 1) AS state,
+            COALESCE(d.mode, prev_d.mode) AS mode,
             d.order_index AS orderIndex
         FROM trainings t
         JOIN data_training d ON d.training_id = t.id
@@ -193,6 +200,7 @@ interface TrainingsDao {
             COALESCE(d.count_result, '0/0/0/0') AS prevCountResult,
             COALESCE(d.weight_result, '0/0/0/0') AS prevWeightResult,
             COALESCE(d.state, 1) AS state,
+            COALESCE(d.mode,dc.mode ) AS mode,
             dc.order_index AS orderIndex
         FROM exercises e
         JOIN data_type_trainings dc ON dc.exercise_id = e.id
@@ -224,8 +232,24 @@ interface TrainingsDao {
             strftime('%Y-%m-%d', 'now','localtime')
         ) AS date
         FROM trainings t LEFT JOIN type_training tt ON t.type_id = tt.id
-        WHERE date >= :startDate AND date < :endDate
+        WHERE date >= :startDate AND date <= :endDate
         ORDER BY date
     """)
     fun getDataOfMonth(startDate: String, endDate: String) : Flow<List<Training>>
+    @Query("""
+          SELECT
+            d.exercises_id AS exerciseId,
+            count_result AS count, 
+            weight_result AS weight,
+            serial_num AS trainingNumber,
+            mode AS mode,
+             strftime('%Y-%m-%d', t.date) AS date,
+            COALESCE(tt.name, "") AS categoryName
+        FROM trainings t 
+        JOIN data_training d ON t.id = d.training_id
+        LEFT JOIN type_training tt ON t.type_id = tt.id
+        WHERE d.exercises_id IN (:list)
+        
+    """)
+    suspend fun getTrainingsDataList(list: List<Int>) : List<ChartDataExercises>
 }

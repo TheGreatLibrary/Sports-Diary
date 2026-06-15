@@ -6,6 +6,7 @@ import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.core.domain.useCase.GetCountTrainingUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.GetSummaryWeightTrainingUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.GetTrainingChartUseCase
+import com.sinya.projects.sportsdiary.core.utils.getErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 class StatisticViewModel @Inject constructor(
     private val getCountTrainingUseCase: GetCountTrainingUseCase,
     private val getSummaryWeightTrainingUseCase: GetSummaryWeightTrainingUseCase,
-    private val getTrainingChartUseCase: GetTrainingChartUseCase
+    private val getTrainingChartUseCase: GetTrainingChartUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<StatisticUiState>(StatisticUiState.Loading)
@@ -28,9 +29,7 @@ class StatisticViewModel @Inject constructor(
         loadAll()
     }
 
-    private fun loadAll(type: TypeTime = TypeTime.DAYS) = viewModelScope.launch {
-        _state.value = StatisticUiState.Loading
-
+    private fun loadAll(type: TypeTime = TypeTime.DAYS) = viewModelScope.launch{
         val countResult = getCountTrainingUseCase()
         val weightResult = getSummaryWeightTrainingUseCase()
         val chartResult = getTrainingChartUseCase(type)
@@ -40,18 +39,31 @@ class StatisticViewModel @Inject constructor(
             ?.exceptionOrNull()
 
         if (error != null) {
-            _state.value = StatisticUiState.Success(errorMessage = error.toString())
+            _state.update {
+                StatisticUiState.Success(errorMessage = error.getErrorMessage())
+            }
             return@launch
         }
 
-        _state.value = StatisticUiState.Success(
-            countTrain = countResult.getOrThrow(),
-            countWeight = weightResult.getOrThrow(),
-            chartList = chartResult.getOrThrow(),
-            timeMode = type
-        )
+        _state.update {
+            StatisticUiState.Success(
+                countTrain = countResult.getOrThrow(),
+                countWeight = weightResult.getOrThrow(),
+                timeMode = type,
+                chartList = chartResult.getOrThrow(),
+            )
+        }
     }
 
+    fun onEvent(event: StatisticEvent) {
+        when (event) {
+            is StatisticEvent.OnSelectTimePeriod -> loadChart(type = event.mode)
+
+            is StatisticEvent.OnMessage -> updateIfSuccess {
+                it.copy(errorMessage = event.message)
+            }
+        }
+    }
     private fun loadChart(type: TypeTime = TypeTime.DAYS) = viewModelScope.launch {
         getTrainingChartUseCase(type).fold(
             onSuccess = { chart ->
@@ -62,24 +74,14 @@ class StatisticViewModel @Inject constructor(
                     )
                 }
             },
-            onFailure = { error ->
-                updateIfSuccess { it.copy(errorMessage = error.toString()) }
-            }
+            onFailure = { error -> handleError(error) }
         )
     }
 
-    fun onEvent(event: StatisticEvent) {
-         when (event) {
-            is StatisticEvent.OnSelectTimePeriod -> loadChart(type = event.mode)
-
-            is StatisticEvent.OnDialogState -> updateIfSuccess {
-                it.copy(dialogState = event.state)
-            }
-
-             StatisticEvent.OnErrorShown -> updateIfSuccess {
-                 it.copy(errorMessage = null)
-             }
-         }
+    private fun handleError(error: Throwable) {
+        updateIfSuccess {
+            it.copy(errorMessage = error.getErrorMessage())
+        }
     }
 
     private fun updateIfSuccess(transform: (StatisticUiState.Success) -> StatisticUiState.Success) {

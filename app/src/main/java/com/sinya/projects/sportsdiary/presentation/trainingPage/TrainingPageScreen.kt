@@ -29,10 +29,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
 import com.sinya.projects.sportsdiary.presentation.categoryPage.components.DragOverlay
 import com.sinya.projects.sportsdiary.presentation.categoryPage.components.ExerciseSheetContent
@@ -43,6 +43,7 @@ import com.sinya.projects.sportsdiary.presentation.trainingPage.components.Custo
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.SwipeTrainingCard
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.SwipeTrainingCardContent
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
+import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.DateCard
 import com.sinya.projects.sportsdiary.ui.features.DatePickerModal
 import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
@@ -50,17 +51,18 @@ import com.sinya.projects.sportsdiary.ui.features.ScreenLazyColumn
 import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
-import com.sinya.projects.sportsdiary.ui.features.rememberReorderState
+import com.sinya.projects.sportsdiary.ui.features.reorderList.rememberReorderState
 import kotlinx.coroutines.launch
 
 @Composable
 fun TrainingPageScreen(
     id: Int?,
+    date: String?,
     onBackClick: () -> Unit,
 ) {
     val viewModel = hiltViewModel(
         creationCallback = { factory: TrainingPageViewModel.Factory ->
-            factory.create(id = id)
+            factory.create(id = id, date = date)
         }
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -189,7 +191,7 @@ private fun TrainingPage(
             ScreenLazyColumn(
                 list = listState,
                 arrangement = Arrangement.spacedBy(8.dp),
-                navigationType = TypeAppTopNavigation.WithIcon(
+                navigationType = TypeTopNavigation.WithIcon(
                     onBackClick = onBackClick,
                     title = if (state.item.title.isNotEmpty()) stringResource(
                         R.string.training_number,
@@ -271,6 +273,9 @@ private fun TrainingPage(
                         },
                         onVisibleClick = { value, id ->
                             onEvent(TrainingPageEvent.VisibleExercise(value, id))
+                        },
+                        onModeClick = { mode, id ->
+                            onEvent(TrainingPageEvent.ToggleMode(mode, id))
                         }
                     )
                 }
@@ -310,7 +315,8 @@ private fun TrainingPage(
                     onPlusClick = {},
                     onEditSet = { _, _, _, _ -> },
                     onDeleteSet = { _, _ -> },
-                    onVisibleClick = { _, _ -> }
+                    onVisibleClick = { _, _ -> },
+                    onModeClick = { _, _ -> }
                 )
             }
 
@@ -352,11 +358,7 @@ private fun TrainingPage(
                 )
             }
 
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-            )
+            CustomSnackbar(snackbarHostState)
         }
     }
 }

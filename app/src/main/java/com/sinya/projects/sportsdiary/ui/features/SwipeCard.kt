@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
@@ -16,8 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sinya.projects.sportsdiary.R
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,7 +32,9 @@ fun SwipeCard(
     title: String,
     maxLines: Int = Int.MAX_VALUE,
     description: String? = null,
+    painter1: Painter? = null,
     onDelete: (Int) -> Unit,
+    onChange: ((Int) -> Unit)? = null,
     onTrainingClick: () -> Unit,
 ) {
     SwipeToDismissBox(
@@ -37,12 +43,14 @@ fun SwipeCard(
             confirmValueChange = {
                 if (it == SwipeToDismissBoxValue.EndToStart) {
                     onDelete(id)
+                } else if (it == SwipeToDismissBoxValue.StartToEnd && onChange != null) {
+                    onChange(id)
                 }
                 false
             }
         ),
         backgroundContent = {
-            SwipeCardBackground()
+            SwipeCardBackground(painter1 = painter1, color1 = MaterialTheme.colorScheme.onPrimary)
         },
         content = {
             SwipeCardContent(

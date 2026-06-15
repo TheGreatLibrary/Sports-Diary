@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.core.domain.model.ProportionRow
@@ -20,7 +21,7 @@ fun MeasureCard(
     onInfoClick: () -> Unit,
     items: List<ProportionRow>,
     onValueChange: (Int, String) -> Unit,
-    context: Context
+    context: Context,
 ) {
     Column(
         modifier = Modifier,
@@ -41,7 +42,7 @@ fun MeasureCard(
                     unit = context.getString(item.unitMeasure),
                     modifier = Modifier.weight(1f),
                     delta = deltaFloat(item.value, item.delta),
-                    keyboardType = KeyboardType.Decimal
+                    keyboardType = KeyboardType.Decimal,
                 )
             }
         }

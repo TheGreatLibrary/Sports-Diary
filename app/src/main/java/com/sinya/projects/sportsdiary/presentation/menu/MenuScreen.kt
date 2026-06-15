@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.navigation.ScreenRoute
 import com.sinya.projects.sportsdiary.ui.features.BlockOfCards
 import com.sinya.projects.sportsdiary.ui.features.ListCardItem
@@ -19,7 +19,7 @@ fun MenuScreen(
     navigateTo: (ScreenRoute) -> Unit
 ) {
     ScreenColumn(
-        navigationType = TypeAppTopNavigation.WithoutIcon(
+        navigationType = TypeTopNavigation.WithoutIcon(
             onBackClick = onBackClick,
             title = stringResource(R.string.menu_title)
         )

@@ -19,8 +19,8 @@ import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.domain.model.Training
 import com.sinya.projects.sportsdiary.core.domain.model.localDateOrNull
 import com.sinya.projects.sportsdiary.navigation.ScreenRoute
-import com.sinya.projects.sportsdiary.presentation.trainings.dateFmt
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
+import com.sinya.projects.sportsdiary.ui.theme.LocalDateFormat
 import kotlinx.coroutines.launch
 
 @Composable
@@ -75,6 +75,7 @@ private fun TrainingItem(
     item: Training,
     onClick: (Int) -> Unit
 ) {
+    val dateFmt = LocalDateFormat.current
     val dateText = item.localDateOrNull()?.format(dateFmt) ?: item.date
 
     AnimationCard(

@@ -17,12 +17,14 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.core.utils.updateLocale
 import com.sinya.projects.sportsdiary.navigation.MainApp
+import com.sinya.projects.sportsdiary.ui.theme.LocalDateFormat
 import com.sinya.projects.sportsdiary.ui.theme.LocalSettingsEngine
 import com.sinya.projects.sportsdiary.ui.theme.SportsDiaryTheme
-import com.sinya.projects.wordle.data.local.datastore.SettingsEngine
+import com.sinya.projects.sportsdiary.core.data.dataStore.SettingsEngine
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.drop
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -80,7 +82,8 @@ class MainActivity : ComponentActivity() {
         }
 
         CompositionLocalProvider(
-            LocalSettingsEngine provides engine
+            LocalSettingsEngine provides engine,
+            LocalDateFormat provides DateTimeFormatter.ofPattern("dd.MM.yyyy")
         ) {
             SportsDiaryTheme(darkTheme = config.dark, dynamicColor = false) {
                 MainApp()

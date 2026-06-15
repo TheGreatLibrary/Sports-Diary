@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetNote.MorningNoteSheet
 import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetPlan.MorningPlanSheet
@@ -104,7 +104,7 @@ private fun MorningExercisesView(
         }
     ) {
         ScreenColumn(
-            navigationType = TypeAppTopNavigation.WithoutIcon(
+            navigationType = TypeTopNavigation.WithoutIcon(
                 onBackClick = onBackClick,
                 title = stringResource(R.string.morning_exercises_title)
             )

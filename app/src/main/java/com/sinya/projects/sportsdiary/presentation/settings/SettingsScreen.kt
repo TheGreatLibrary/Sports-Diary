@@ -10,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.SwitchItem
 import com.sinya.projects.sportsdiary.core.utils.updateLocale
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
@@ -54,7 +54,7 @@ private fun SettingsScreenView(
     val stateBottomSheet = remember { mutableStateOf(false) }
 
     ScreenColumn(
-        navigationType = TypeAppTopNavigation.WithoutIcon(
+        navigationType = TypeTopNavigation.WithoutIcon(
             onBackClick = onBackClick,
             title = stringResource(R.string.settings_title)
         )
@@ -65,10 +65,10 @@ private fun SettingsScreenView(
             ListCardItem(
                 onClick = { stateBottomSheet.value = !stateBottomSheet.value },
                 title = stringResource(R.string.language_title),
-                description = Locale(state.langMode).displayName.lowercase(),
+                description = Locale(state.langMode).displayName.replaceFirstChar { it.uppercaseChar() }
             )
             ListCardItem(
-                onClick = { },
+                onClick = { onEvent(SettingsEvent.ThemeToggle(!state.themeMode)) },
                 title = stringResource(R.string.theme_title),
                 description = if (state.themeMode) stringResource(R.string.dark_mode)
                 else stringResource(R.string.light_mode),

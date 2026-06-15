@@ -26,19 +26,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.enums.TrainingMode
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
 import com.sinya.projects.sportsdiary.presentation.categoryPage.components.DragOverlay
 import com.sinya.projects.sportsdiary.presentation.categoryPage.components.ExerciseSheetContent
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
+import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.CustomTextField
 import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
 import com.sinya.projects.sportsdiary.ui.features.ScreenLazyColumn
@@ -46,7 +50,7 @@ import com.sinya.projects.sportsdiary.ui.features.SwipeCard
 import com.sinya.projects.sportsdiary.ui.features.SwipeCardContent
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
-import com.sinya.projects.sportsdiary.ui.features.rememberReorderState
+import com.sinya.projects.sportsdiary.ui.features.reorderList.rememberReorderState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -147,7 +151,7 @@ private fun CategoryPageView(
             ScreenLazyColumn(
                 list = listState,
                 arrangement = Arrangement.spacedBy(8.dp),
-                navigationType = TypeAppTopNavigation.WithIcon(
+                navigationType = TypeTopNavigation.WithIcon(
                     onBackClick = onBackClick,
                     title = state.item.category.name,
                     painter = R.drawable.nav_save,
@@ -166,6 +170,7 @@ private fun CategoryPageView(
                         contentColor = MaterialTheme.colorScheme.onSurface,
                         containerColor = MaterialTheme.colorScheme.surfaceContainer,
                         isError = state.isError,
+                        imeAction = ImeAction.Done,
                         errorMessage = stringResource(R.string.category_name_is_empty)
                     )
                 }
@@ -194,6 +199,14 @@ private fun CategoryPageView(
                             },
                         id = item.id,
                         title = item.title,
+                        description = stringResource(
+                            when (TrainingMode.getMode(item.mode)) {
+                                TrainingMode.COUNT -> R.string.count_exercise
+                                TrainingMode.TIME -> R.string.time_exercise
+                            }
+                        ),
+                        painter1 = painterResource(R.drawable.cat_change),
+                        onChange = { id -> onEvent(CategoryPageEvent.ToggleMode(item.mode, id)) },
                         onTrainingClick = { onEvent(CategoryPageEvent.OpenDialog(item.id)) },
                         onDelete = { id -> onEvent(CategoryPageEvent.Delete(id)) },
                     )
@@ -247,11 +260,7 @@ private fun CategoryPageView(
                 )
             }
 
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-            )
+            CustomSnackbar(snackbarHostState)
         }
     }
 }

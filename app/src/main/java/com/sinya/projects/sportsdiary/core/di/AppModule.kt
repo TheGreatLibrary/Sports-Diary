@@ -10,6 +10,7 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.DatabaseMigrations.MIGR
 import com.sinya.projects.sportsdiary.core.data.dataBase.DatabaseMigrations.MIGRATION_5_6
 import com.sinya.projects.sportsdiary.core.data.dataBase.DatabaseMigrations.MIGRATION_6_7
 import com.sinya.projects.sportsdiary.core.data.dataBase.DatabaseMigrations.MIGRATION_7_8
+import com.sinya.projects.sportsdiary.core.data.dataBase.DatabaseMigrations.MIGRATION_8_9
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.DataMorningDao
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.ExercisesDao
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.PlanMorningDao
@@ -38,9 +39,18 @@ object AppModule {
             AppDatabase::class.java,
             "diary.db"
         )
-        .createFromAsset("diary.db")
-        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
-        .build()
+            .createFromAsset("diary.db")
+            .addMigrations(
+                MIGRATION_1_2,
+                MIGRATION_2_3,
+                MIGRATION_3_4,
+                MIGRATION_4_5,
+                MIGRATION_5_6,
+                MIGRATION_6_7,
+                MIGRATION_7_8,
+                MIGRATION_8_9
+            )
+            .build()
     }
 
     @Provides
@@ -50,14 +60,14 @@ object AppModule {
     fun provideTrainingDao(db: AppDatabase): TrainingsDao = db.trainingsDao()
 
     @Provides
-    fun provideExercisesDao(db: AppDatabase) : ExercisesDao = db.exercisesDao()
+    fun provideExercisesDao(db: AppDatabase): ExercisesDao = db.exercisesDao()
 
     @Provides
-    fun provideProportionsDao(db: AppDatabase) : ProportionsDao = db.proportionsDao()
+    fun provideProportionsDao(db: AppDatabase): ProportionsDao = db.proportionsDao()
 
     @Provides
-    fun provideDataMorningDao(db: AppDatabase) : DataMorningDao = db.dataMorningDao()
+    fun provideDataMorningDao(db: AppDatabase): DataMorningDao = db.dataMorningDao()
 
     @Provides
-    fun providePlanMorningDao(db: AppDatabase) : PlanMorningDao = db.planMorningDao()
+    fun providePlanMorningDao(db: AppDatabase): PlanMorningDao = db.planMorningDao()
 }

@@ -75,7 +75,7 @@ private fun CardItemContent(
                 onCheckedChange = it.onClick,
                 Modifier
                     .size(28.dp, 20.dp)
-                    .scale(0.73f),
+                    .scale(0.65f),
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = MaterialTheme.colorScheme.primary,
                     uncheckedThumbColor = MaterialTheme.colorScheme.secondary,

@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -96,7 +97,7 @@ private fun MorningPlanView(
         )
         if (state.items.isEmpty()) {
             Text(
-                text = stringResource(R.string.nothing_found),
+                text = stringResource(R.string.not_found_data),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )
@@ -139,7 +140,7 @@ private fun MorningPlanView(
                                                     )
                                                 )
                                             },
-                                            icon = painterResource(R.drawable.morn_edit),
+                                            painter = painterResource(R.drawable.morn_edit),
                                             description = "update",
                                             isSelected = true,
                                             size = 28.dp,
@@ -164,7 +165,7 @@ private fun MorningPlanView(
                                             onClick = {
                                                 onEvent(ModalSheetPlanEvent.DeletePlan(it.id))
                                             },
-                                            icon = painterResource(R.drawable.morn_trash),
+                                            painter = painterResource(R.drawable.morn_trash),
                                             description = "delete",
                                             isSelected = true,
                                             size = 28.dp,
@@ -205,6 +206,7 @@ private fun MorningPlanView(
                                             )
                                         )
                                     },
+                                    imeAction = ImeAction.Done,
                                     onTrailingClick = { onEvent(ModalSheetPlanEvent.ClearQuery) },
                                     keyboardType = KeyboardType.Text,
                                     modifier = Modifier.fillMaxWidth(),
@@ -247,6 +249,7 @@ private fun MorningPlanView(
                             )
                         )
                     },
+                    imeAction = ImeAction.Done,
                     onTrailingClick = { onEvent(ModalSheetPlanEvent.ClearQuery) },
                     keyboardType = KeyboardType.Text,
                     modifier = Modifier.fillMaxWidth(),

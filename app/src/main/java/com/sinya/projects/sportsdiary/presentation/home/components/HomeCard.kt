@@ -53,7 +53,7 @@ fun HomeCard(
                 onPlusClick?.let {
                     AnimationIcon(
                         onClick = it,
-                        icon = painterResource(R.drawable.ic_plus),
+                        painter = painterResource(R.drawable.ic_plus),
                         size = 18.dp,
                         isSelected = true,
                         selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,

@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.FilterBuilder
 import com.sinya.projects.sportsdiary.core.domain.model.SortParam
 import com.sinya.projects.sportsdiary.navigation.NavigationTopBar
@@ -26,7 +26,7 @@ fun BoxScope.ProportionsHeader(
     modifier: Modifier,
     onOptionSelected: (SortParam) -> Unit,
     categories: List<FilterBuilder<Any>>,
-    navigationType: TypeAppTopNavigation
+    navigationType: TypeTopNavigation
 ) {
     Column(
         modifier = Modifier

@@ -1,14 +1,21 @@
 package com.sinya.projects.sportsdiary.core.domain.repository
 
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.ProportionsDao
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Proportions
+import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.core.domain.model.ProportionDialogContent
 import com.sinya.projects.sportsdiary.core.domain.model.ProportionItem
+import com.sinya.projects.sportsdiary.ui.features.DropdownCheckboxItem
+import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartLine
+import com.sinya.projects.sportsdiary.ui.features.chart.utils.ChartColors
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import java.time.LocalDate
+import kotlin.random.Random
 
 interface ProportionRepository {
     // Proportions
@@ -19,6 +26,8 @@ interface ProportionRepository {
     suspend fun getById(id: Int?): Result<ProportionItem>
     suspend fun getMeasurementDataById(id: Int): Result<ProportionDialogContent>
     suspend fun insertOrUpdateProportion(entity: ProportionItem): Result<Int>
+    suspend fun getMeasurementsList(): Result<List<DropdownCheckboxItem>>
+    suspend fun getMeasurementData(list: List<Int>): Result<List<ChartLine>>
 }
 
 class ProportionRepositoryImpl @Inject constructor(
@@ -54,7 +63,8 @@ class ProportionRepositoryImpl @Inject constructor(
                         id = null,
                         title = "",
                         date = LocalDate.now().toString(),
-                        items = items
+                        items = items,
+                        focusRequesters = List<FocusRequester>(items.size) { FocusRequester() }
                     )
                 )
             } else {
@@ -68,7 +78,8 @@ class ProportionRepositoryImpl @Inject constructor(
                         id = page.id,
                         title = page.id.toString(),
                         date = page.date,
-                        items = items
+                        items = items,
+                        focusRequesters = List<FocusRequester>(items.size) { FocusRequester() }
                     )
                 )
             }
@@ -92,6 +103,34 @@ class ProportionRepositoryImpl @Inject constructor(
             Result.success(result)
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    override suspend fun getMeasurementsList(): Result<List<DropdownCheckboxItem>> {
+        return try {
+            val result = proportionsDao.getMeasurementsTitles(Locale.current.language)
+            Result.success(result)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getMeasurementData(
+        list: List<Int>,
+    ): Result<List<ChartLine>> {
+        return try {
+            val raw = proportionsDao.getMeasurementDataList(list).sortedBy { it.xDate }.groupBy { it.id }.map {
+                ChartLine(
+                    id = it.key,
+                    points = it.value,
+                    lineColor = Color.Unspecified
+                )
+            }
+
+            Result.success(raw)
+        } catch (e: Exception) {
+            Result.failure(e)
+
         }
     }
 }

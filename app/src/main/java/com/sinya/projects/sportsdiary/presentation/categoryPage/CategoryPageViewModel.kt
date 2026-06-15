@@ -14,6 +14,7 @@ import com.sinya.projects.sportsdiary.core.domain.useCase.GetExerciseWithSortedD
 import com.sinya.projects.sportsdiary.core.domain.useCase.InsertCategoryWithDataUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.UpdateCategoryDataUseCase
 import com.sinya.projects.sportsdiary.core.utils.searchByTerms
+import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingPageEvent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -57,6 +58,26 @@ class CategoryPageViewModel @AssistedInject constructor(
         when (event) {
             is CategoryPageEvent.Delete -> deleteExercise(event.id)
 
+            is CategoryPageEvent.ToggleMode -> {
+                viewModelScope.launch {
+
+                    launch {
+                        updateIfForm {
+                            it.copy(
+                                item = it.item.copy(
+                                    items = it.item.items.map { item ->
+                                        if (item.id == event.id) {
+                                            item.copy(mode = if (event.mode==0) 1 else 0)
+                                        } else item
+                                    }
+                                )
+                            )
+                        }
+                    }
+                    saveCategory { }
+                }
+            }
+
             is CategoryPageEvent.MoveExercise -> moveExercise(event.from, event.to)
 
             CategoryPageEvent.OnErrorShown -> updateIfForm { it.copy(errorMessage = null) }
@@ -70,16 +91,22 @@ class CategoryPageViewModel @AssistedInject constructor(
                 )
             }
 
-            is CategoryPageEvent.OpenBottomSheetTraining -> saveCategory {}
+            is CategoryPageEvent.OpenBottomSheetTraining -> viewModelScope.launch {
+                saveCategory {}
+            }
 
             is CategoryPageEvent.OpenDialog -> openDialog(event.id)
 
-            CategoryPageEvent.Save -> saveCategory {
-                _state.value = CategoryPageUiState.Success
+            CategoryPageEvent.Save -> viewModelScope.launch {
+                saveCategory {
+                    _state.value = CategoryPageUiState.Success
+                }
             }
 
-            is CategoryPageEvent.AddExercise -> saveCategory {
-                updateCategoryData { getCategoryEntity(it) }
+            is CategoryPageEvent.AddExercise -> viewModelScope.launch {
+                saveCategory {
+                    updateCategoryData { getCategoryEntity(it) }
+                }
             }
 
             is CategoryPageEvent.Toggle -> updateIfForm { categoryForm ->
@@ -138,9 +165,10 @@ class CategoryPageViewModel @AssistedInject constructor(
         val s = _state.value as? CategoryPageUiState.CategoryForm ?: return@launch
         val items1 = s.sheetData.items.filter { it.checked }.mapIndexed { index, it ->
             DataTypeTrainings(
-                s.item.category.id,
-                it.id,
-                index
+                typeId = s.item.category.id,
+                exerciseId = it.id,
+                mode = s.item.items.first { item -> item.id == it.id }.mode,
+                orderIndex = index
             )
         }
 
@@ -207,11 +235,15 @@ class CategoryPageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun saveCategory(function: () -> Unit) = viewModelScope.launch {
-        val s = _state.value as? CategoryPageUiState.CategoryForm ?: return@launch
+    private suspend fun saveCategory(function: () -> Unit) {
+        val s = _state.value as? CategoryPageUiState.CategoryForm ?: return
 
         if (s.item.category.name.isEmpty()) updateIfForm { it.copy(isError = true) }
-        else if (checkNameCategoryExistsUseCase(s.item.category.name, s.item.category.id).getOrElse { true }) {
+        else if (checkNameCategoryExistsUseCase(
+                s.item.category.name,
+                s.item.category.id
+            ).getOrElse { true }
+        ) {
             updateIfForm { it.copy(isError = true) }
         } else {
             val id = s.item.category.id
@@ -219,6 +251,7 @@ class CategoryPageViewModel @AssistedInject constructor(
                 DataTypeTrainings(
                     typeId = id,
                     exerciseId = it.id,
+                    mode = it.mode,
                     orderIndex = it.orderIndex
                 )
             }
@@ -237,8 +270,9 @@ class CategoryPageViewModel @AssistedInject constructor(
 
     private fun deleteExercise(exerciseId: Int?) {
         updateIfForm {
-            it.copy(item = it.item.copy(
-                items = it.item.items.filterNot { item -> item.id == exerciseId }
+            it.copy(
+                item = it.item.copy(
+                    items = it.item.items.filterNot { item -> item.id == exerciseId }
                 )
             )
         }

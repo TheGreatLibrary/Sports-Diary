@@ -14,7 +14,10 @@ sealed class ScreenRoute(val route: String) {
     @Serializable data class ProportionPage(val id: Int? = null) : ScreenRoute("ProportionPage")
 
     @Serializable data object Training : ScreenRoute("Training")
-    @Serializable data class TrainingPage(val id: Int? = null) : ScreenRoute("TrainingPage")
+    @Serializable data class TrainingPage(
+        val id: Int? = null,
+        val date: String? = null
+    ) : ScreenRoute("TrainingPage")
 
     @Serializable data object Categories : ScreenRoute("Categories")
     @Serializable data class CategoryPage(val id: Int? = null) : ScreenRoute("CategoryPage")
@@ -26,8 +29,7 @@ sealed class ScreenRoute(val route: String) {
     @Serializable data class ExercisePage(val id: Int) : ScreenRoute("ExercisePage")
     @Serializable data class ExerciseEdit(val id: Int?) : ScreenRoute("ExerciseEdit")
 
-    @Serializable data object StatisticProportions : ScreenRoute("StatisticProportions")
-    @Serializable data object StatisticExercises : ScreenRoute("StatisticExercises")
+    @Serializable data object StatisticDiagram : ScreenRoute("StatisticDiagram")
 }
 
 val WITH_BOTTOM_BAR = setOf(

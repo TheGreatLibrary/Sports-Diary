@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.exerciseEdit
 
+import androidx.compose.ui.focus.FocusRequester
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.CategoryTranslation
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.EquipmentTranslation
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.ForceTranslation
@@ -20,6 +21,7 @@ sealed interface ExerciseEditUiState {
         val equipments: List<EquipmentTranslation?>,
         val categories: List<CategoryTranslation?>,
         val muscles: List<ExerciseMusclesData>,
+        val focusRequesters: List<FocusRequester> = List(3) { FocusRequester() },
         val dialogContent: ExerciseDialogContent? = null
     ): ExerciseEditUiState
 

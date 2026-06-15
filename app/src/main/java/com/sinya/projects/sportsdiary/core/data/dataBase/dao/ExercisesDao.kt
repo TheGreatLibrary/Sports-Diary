@@ -18,6 +18,7 @@ import com.sinya.projects.sportsdiary.core.domain.model.ExerciseMuscleName
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseMusclesData
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithFullData
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithSortedData
+import com.sinya.projects.sportsdiary.ui.features.DropdownCheckboxItem
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -167,4 +168,17 @@ interface ExercisesDao {
         ORDER BY em.exercise_id
     """)
     fun getMusclesForAllExercises(language: String): Flow<List<ExerciseMuscleName>>
+
+    @Query("""
+        SELECT 
+            exercise_id AS id,
+            tpt.name AS title,
+            0 AS checked
+        FROM exercise_translations tpt 
+        JOIN data_training dt ON tpt.exercise_id = dt.exercises_id
+        WHERE language = :language
+        GROUP BY tpt.name
+        ORDER BY tpt.name
+    """)
+    suspend fun getExercisesTitles(language: String) : List<DropdownCheckboxItem>
 }

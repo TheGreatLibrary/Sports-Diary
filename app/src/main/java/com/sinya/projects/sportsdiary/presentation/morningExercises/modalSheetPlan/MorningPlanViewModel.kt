@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.PlanMornings
 import com.sinya.projects.sportsdiary.core.domain.repository.MorningRepository
-import com.sinya.projects.wordle.data.local.datastore.SettingsEngine
+import com.sinya.projects.sportsdiary.core.data.dataStore.SettingsEngine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

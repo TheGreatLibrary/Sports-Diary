@@ -12,6 +12,8 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Proportions
 import com.sinya.projects.sportsdiary.core.domain.model.ProportionDialogContent
 import com.sinya.projects.sportsdiary.core.domain.model.ProportionItem
 import com.sinya.projects.sportsdiary.core.domain.model.ProportionRow
+import com.sinya.projects.sportsdiary.ui.features.DropdownCheckboxItem
+import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartPoint
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -129,4 +131,26 @@ interface ProportionsDao {
         WHERE type_id = :id AND language = :locale
     """)
     suspend fun getMeasurementDataById(id: Int, locale: String): ProportionDialogContent
+    @Query("""
+        SELECT 
+            id,
+            tpt.name AS title,
+            0 AS checked
+        FROM type_proportions t
+        JOIN type_proportion_translations tpt ON t.id = tpt.type_id
+        WHERE language = :locale
+        ORDER BY tpt.name
+    """)
+    suspend fun getMeasurementsTitles(locale: String) : List<DropdownCheckboxItem>
+    @Query("""
+        SELECT
+            p.type_id AS id,
+            value AS yValue,
+            p.proportion_id AS xDate,
+            '' as date
+        FROM proportions pr 
+        JOIN data_proportions p ON pr.id = p.proportion_id
+        WHERE p.type_id IN (:id)
+    """)
+    suspend fun getMeasurementDataList(id: List<Int>) : List<ChartPoint>
 }

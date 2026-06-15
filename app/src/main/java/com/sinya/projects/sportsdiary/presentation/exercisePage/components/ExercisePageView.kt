@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.presentation.exerciseEdit.components.CharacteristicRow
 import com.sinya.projects.sportsdiary.presentation.exerciseEdit.components.InfoCard
 import com.sinya.projects.sportsdiary.presentation.exercisePage.ExercisePageUiState
@@ -25,12 +25,12 @@ fun ExercisePageView(
     navigateToEdit: (Int) -> Unit
 ) {
     ScreenColumn(
-        navigationType = if (state.exercise.isCustom) TypeAppTopNavigation.WithIcon(
+        navigationType = if (state.exercise.isCustom) TypeTopNavigation.WithIcon(
             onBackClick = onBackClick,
             title = "",
             painter = R.drawable.icon_edit,
             onClick = { navigateToEdit(state.exercise.id) }
-        ) else TypeAppTopNavigation.WithoutIcon(onBackClick = onBackClick, title = "")
+        ) else TypeTopNavigation.WithoutIcon(onBackClick = onBackClick, title = "")
     ) {
         Text(
             text = state.exercise.name,

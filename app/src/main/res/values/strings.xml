@@ -1,7 +1,32 @@
 <resources>
     <string name="app_name">Gymble</string>
-    <string name="calendar_widget_description">Удобная отметка о выполнении зарядок с экрана телефона</string>
 
+    <!-- виджет -->
+    <string name="calendar_widget_description">Удобная отметка о выполнении зарядок с экрана телефона</string>
+    <string name="monday_16_2026">Понедельник, 16 февраль 2026</string>
+
+    <!-- типы замеров -->
+    <string name="cm">см</string>
+    <string name="kg">кг</string>
+    <string name="second">сек</string>
+    <string name="count">шт</string>
+
+    <!-- Сортировка -->
+    <string name="year">Года</string>
+    <string name="month">Мес.</string>
+
+    <string name="all">Все</string>
+    <string name="no_one">Не указано</string>
+
+    <string name="ex_level">Сложность</string>
+    <string name="ex_equipment">Экипировка</string>
+    <string name="force">Сила</string>
+    <string name="ex_muscle">Мышцы</string>
+
+    <string name="cancel">Отмена</string>
+    <string name="apply">Применить</string>
+
+    <!-- Главная страница -->
     <string name="monday_short">Пн</string>
     <string name="tuesday_short">Вт</string>
     <string name="wednesday_short">Ср</string>
@@ -9,122 +34,105 @@
     <string name="friday_short">Пт</string>
     <string name="saturday_short">Сб</string>
     <string name="sunday_short">Вс</string>
-
-    <string name="menu_title">Меню</string>
-    <string name="trainings_title">Тренировки</string>
-    <string name="list_of_training">Список проведенных тренировок</string>
-    <string name="main_block">Основные</string>
-    <string name="other_block">Прочее</string>
-    <string name="morning_exercises_title">Зарядка</string>
-    <string name="statistic_and_note">Статистика и заметки</string>
-    <string name="proportions_title">Замеры тела</string>
-    <string name="list_of_proportions">Список проведенных замеров</string>
-    <string name="list_of_exercises">Список упражнений с описанием</string>
-    <string name="sports_exercises_title">Упражнения</string>
-    <string name="calculate_title">Калькуляторы</string>
-    <string name="calculate_description">Калькуляторы для вычисления различных показателей</string>
-    <string name="settings_title">Настройки</string>
-    <string name="interface_block">Интерфейс</string>
-    <string name="language_title">Язык</string>
-    <string name="theme_title">Тема</string>
-    <string name="morning_exercises_description">Внести заметку о проделанной зарядке?</string>
-    <string name="proportions_description">Пришло время помериться обхватом бицепса!</string>
-    <string name="not_entries_of_training">На данный момент нет записей о тренировках</string>
-    <string name="statistic_title">Статистика</string>
-    <string name="count_of_training">Количество тренировок</string>
-    <string name="all_weight">Общий тоннаж</string>
-    <string name="effect_of_training">Эффективность тренировок</string>
-
-    <string name="days">Дни</string>
-    <string name="months">Месяцы</string>
-    <string name="years">Года</string>
-
-    <string name="January">Янв</string>
-    <string name="February">Фев</string>
-    <string name="March">Мар</string>
-    <string name="April">Апр</string>
-    <string name="May">Май</string>
-    <string name="June">Июн</string>
-    <string name="sorted_about">Сортировать по</string>
-    <string name="not_category">Не выбрано</string>
-    <string name="add_exercise">Добавить упражнение</string>
-    <string name="minus">-</string>
-    <string name="constructor">Категория</string>
-    <string name="new_category">Новая категория</string>
-
-    <string name="category_name">Название категории</string>
-    <string name="chosen_n">Выбрано: %1$d</string>
-    <string name="search">Поиск</string>
-    <string name="select_all">Выбрать всё</string>
-    <string name="nothing_found">Ничего не найдено</string>
-    <string name="close">Закрыть</string>
-    <string name="cancel">Отмена</string>
-    <string name="create">Создать</string>
-    <string name="apply">Применить</string>
-
-    <!-- типы замеров -->
-    <string name="cm">см</string>
-    <string name="kg">кг</string>
-    <string name="count">шт</string>
-
-    <string name="thigh_right">Бедро правое</string>
-    <string name="thigh_left">Бедро левое</string>
-    <string name="biceps_left">Бицепс левый</string>
-    <string name="biceps_right">Бицепс правый</string>
-    <string name="weight">Вес</string>
-    <string name="calf_left">Голень левая</string>
-    <string name="calf_right">Голень правая</string>
-    <string name="chest_girth">Обхват груди</string>
-    <string name="shoulder_girth">Обхват плеч</string>
-    <string name="shoulders_width">Плечи</string>
-    <string name="forearm_left">Предплечье левое</string>
-    <string name="forearm_right">Предплечье правое</string>
-    <string name="height">Рост</string>
-    <string name="hips">Таз</string>
-    <string name="waist">Талия</string>
-    <string name="neck">Шея</string>
-    <string name="wrist_left">Кисть левая</string>
-    <string name="wrist_right">Кисть правая</string>
-    <string name="triceps_left">Трицепс левый</string>
-    <string name="triceps_right">Трицепс правый</string>
-    <string name="quadriceps_left">Квадрицепс левый</string>
-    <string name="quadriceps_right">Квадрицепс правый</string>
-
-    <string name="biceps">Бицепс</string>
-    <string name="triceps">Трицепс</string>
-    <string name="quadriceps">Квадрицепс</string>
-    <string name="thigh">Бедро</string>
-    <string name="calf">Голень</string>
-    <string name="forearm">Предплечье</string>
-    <string name="wrist">Кисть</string>
-    <string name="data_of_morning_exercises">Данные по зарядкам</string>
-    <string name="note_of_morning_exercises">Заметки по зарядкам</string>
     <string name="finish_morning_exercises">Выполнил зарядку?</string>
     <string name="finished_morning_exercises">Зарядка выполнена</string>
     <string name="morning_exercises">- зарядка</string>
     <string name="training">- тренировка</string>
-    <string name="error_title">Ошибка</string>
-    <string name="sport_exercises_title">Упражнения</string>
-    <string name="illustration">Иллюстрации</string>
-    <string name="dark_mode">темная</string>
-    <string name="light_mode">светлая</string>
-    <string name="choose_lang">Выбор языка</string>
-    <string name="not_found_data">Нет данных</string>
-    <string name="note">Памятка</string>
-    <string name="proportion_number">Замер №%1$s</string>
-    <string name="notes">Заметки</string>
-    <string name="morning_has_note">Заметка существует</string>
-    <string name="save">Сохранить</string>
-    <string name="plans">Планы</string>
-    <string name="name">Название</string>
-    <string name="description">Описание</string>
-    <string name="training_number">Тренировка №%1$s</string>
+    <string name="morning_exercises_description">Внести заметку о проделанной зарядке?</string>
+    <string name="proportions_description">Пришло время помериться обхватом бицепса!</string>
+    <string name="not_entries_of_training">На данный момент нет записей о тренировках</string>
     <string name="workout_type_training">Тренировка на %1$s №%2$s - %3$s</string>
+
+    <!-- Меню -->
+    <string name="menu_title">Меню</string>
+    <string name="main_block">Основные</string>
+    <string name="other_block">Прочее</string>
+    <string name="list_of_training">Список проведенных тренировок</string>
+    <string name="statistic_and_note">Статистика и заметки</string>
+    <string name="list_of_proportions">Список проведенных замеров</string>
+    <string name="list_of_exercises">Список упражнений с описанием</string>
+    <string name="calculate_description">Калькуляторы для вычисления различных показателей</string>
+    <string name="categories_description">Список категорий тренировок</string>
+
+    <!-- Статистика -->
+    <string name="statistic_title">Статистика</string>
+    <string name="count_of_training">Количество тренировок</string>
+    <string name="all_weight">Общий тоннаж</string>
+    <string name="effect_of_training">Эффективность тренировок</string>
+    <string name="days">Дни</string>
+    <string name="months">Месяцы</string>
+    <string name="years">Года</string>
+    <string name="note">Памятка</string>
+    <string name="not_found_data">Нет данных</string>
+
+    <!-- Доп.стат. -->
+    <string name="statistic_diagram_title">Доп. статистика</string>
+    <string name="grown_up_trainings">Рост результатов</string>
+    <string name="measurements">Замеры</string>
+    <string name="dropdown_checkbox_description">Выберите несколько показателей, которые хотели бы рассмотреть на диаграмме</string>
+    <string name="diagram_exercise">Диаграмма отражает общий тоннаж упражнения за тренировку. На вертикальной оси отображен тоннаж, на горизонтальной - название тренировки (тренировки без категории называются просто номерами)</string>
+    <string name="diagram_training">Диаграмма отражает общий тоннаж тренировок за день. На вертикальной оси отображен тоннаж, на горизонтальной - дата</string>
+    <string name="diagram_measurement">Диаграмма отражает изменения замеров тела. На вертикальной оси отображены условные единицы (см, кг и др.), на горизонтальной - нумерация замеров</string>
+
+    <!-- Настройки -->
+    <string name="settings_title">Настройки</string>
+    <string name="interface_block">Интерфейс</string>
+    <string name="language_title">Язык</string>
+    <string name="theme_title">Тема</string>
+    <string name="warning_dialog_title">Предупреждение перед удалением</string>
+
+    <string name="choose_lang">Выбор языка</string>
+    <string name="dark_mode">Темная</string>
+    <string name="light_mode">Светлая</string>
+
+    <!-- Зарядка -->
+    <string name="morning_exercises_title">Зарядка</string>
     <string name="count_completed_mornings">Количество выполненных зарядок</string>
     <string name="series_of_completed_mornings">Серия выполненных зарядок</string>
+    <string name="data_of_morning_exercises">Данные по зарядкам</string>
+    <string name="note_of_morning_exercises">Заметки по зарядкам</string>
+    <string name="plans">Планы</string>
+    <string name="notes">Заметки</string>
+    <string name="morning_has_note">Заметка существует</string>
+    <string name="base_plan">Базовый план</string>
+    <string name="name">Название</string>
+    <string name="base_description">Базовая зарядка</string>
+    <string name="save">Сохранить</string>
+
+    <!-- Замеры -->
+    <string name="proportions_title">Замеры тела</string>
+    <string name="proportion_number">Замер №%1$s</string>
+
+    <!-- Замер -->
+    <string name="measurement">Замер</string>
+
+    <!-- Тренировки -->
+    <string name="trainings_title">Тренировки</string>
+    <string name="sorted_by">Сортировать по</string>
+    <string name="training_number">Тренировка №%1$s</string>
+
+    <!-- Тренировка -->
+    <string name="training_title">Тренировка</string>
+    <string name="constructor">Категория</string>
+    <string name="not_category">Не выбрано</string>
+    <string name="add_exercise">Добавить упражнение</string>
+    <string name="minus">-</string>
+    <string name="create_category">Создание категории</string>
+    <string name="choose_exercises">Добавление упражнений</string>
+    <string name="category_description">Категория - это тип тренировки с определенным набор упражнений, порядком их выполнения и количеством повторений с весом, которые задает пользователь</string>
+    <string name="create">Создать</string>
+    <string name="add">Добавить</string>
+
     <string name="enter_delete">Подтвердите удаление</string>
     <string name="delete_info_description">Вы действительно хотите удалить элемент списка? Восстановить его будет уже невозможно!</string>
     <string name="delete">Удалить</string>
+    <string name="dont_take_warning">Не показывать больше предупреждение</string>
+
+    <!-- Упражнения -->
+    <string name="sports_exercises_title">Упражнения</string>
+    <string name="sort_title">Сортировать</string>
+
+    <!-- Упражнение -->
     <string name="rules">Инструкции</string>
     <string name="secondary_muscle">Побочные мышцы</string>
     <string name="primary_muscle">Главные мышцы</string>
@@ -135,52 +143,40 @@
     <string name="equipment">Экипировка</string>
     <string name="category">Категория</string>
     <string name="mechanic">Механика</string>
+    <string name="description">Описание</string>
 
-    <string name="base_plan">Базовый план</string>
-    <string name="base_description">Базовая зарядка</string>
-    <string name="sorted_by">Сортировать по</string>
-    <string name="categories">Категории</string>
-    <string name="year">Года</string>
-    <string name="month">Мес.</string>
-    <string name="all">Все</string>
-    <string name="training_title">Тренировка</string>
-    <string name="date">Дата</string>
-    <string name="measurement">Замер</string>
-    <string name="category_with_name">Категория %1$s</string>
-    <string name="categories_title">Категории</string>
-    <string name="categories_description">Список категорий тренировок</string>
+    <string name="illustration">Иллюстрации</string>
 
-
-    <string name="category_description">Категория - это тип тренировки с определенным набор упражнений, порядком их выполнения и количеством повторений с весом, которые задает пользователь</string>
-    <string name="put_your_text">Введите название</string>
-    <string name="choose_exercises">Добавление упражнений</string>
+    <!-- Создание упражнения -->
+    <string name="create_exercise_title">Создание упражнения</string>
     <string name="put_your_title">Введите название</string>
-    <string name="category_name_is_empty">Название категории пустое или дублируется</string>
-    <string name="add">Добавить</string>
-    <string name="ex_level">Сложность</string>
-    <string name="ex_equipment">Экипировка</string>
-    <string name="ex_muscle">Мышцы</string>
-    <string name="no_one">Не указано</string>
-    <string name="sort_title">Сортировать</string>
-    <string name="create_category">Создание категории</string>
-    <string name="complete">Применить</string>
     <string name="put_your_description">Введите описание</string>
     <string name="put_your_rule">Введите правила выполнения</string>
-    <string name="force">Сила</string>
-    <string name="choose_muscle">Добавление мышц</string>
-
     <string name="category_desc">Определяет тип упражнения</string>
     <string name="force_desc">Показывает уровень нагрузки</string>
     <string name="mechanic_desc">Тип движения в упражнении</string>
     <string name="equipment_desc">Что требуется для выполнения</string>
     <string name="level_desc">Подходит ли упражнение новичкам</string>
-    <string name="create_exercise">Создание упражнения</string>
     <string name="secondary_muscl">Побочная мышца</string>
     <string name="primary_muscl">Главная мышца</string>
     <string name="custom">Пользовательские</string>
     <string name="base_exercise">Предустановленные</string>
-    <string name="monday_16_2026">Понедельник, 16 февраль 2026</string>
-    <string name="warning_dialog_title">Предупреждение перед удалением</string>
-    <string name="dont_take_warning">Не показывать больше предупреждение</string>
     <string name="exercise_name_is_empty">Название упражнения пустое или дублируется</string>
+    <string name="choose_muscle">Добавление мышц</string>
+
+
+
+    <!-- Калькулятор -->
+    <string name="calculate_title">Калькуляторы</string>
+
+    <!-- Категории -->
+    <string name="category_with_name">Категория %1$s</string>
+    <string name="categories_title">Категории</string>
+    <string name="category_name">Название категории</string>
+    <string name="category_name_is_empty">Название категории пустое или дублируется</string>
+
+    <!-- Категория -->
+    <string name="time_exercise">Упражнение на время</string>
+    <string name="count_exercise">Упражнение на количество</string>
+
 </resources>

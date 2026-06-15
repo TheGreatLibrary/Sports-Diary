@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.categoryPage
 
+import com.sinya.projects.sportsdiary.core.domain.enums.TrainingMode
 import com.sinya.projects.sportsdiary.core.domain.model.ModeOfSorting
 
 sealed interface CategoryPageEvent {
@@ -17,4 +18,6 @@ sealed interface CategoryPageEvent {
 
     data object OnErrorShown : CategoryPageEvent
     data object Save : CategoryPageEvent
+    data class ToggleMode(val mode: Int, val id: Int) : CategoryPageEvent
+
 }

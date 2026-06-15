@@ -15,7 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.FilterBuilder
 import com.sinya.projects.sportsdiary.core.domain.model.ModeOfSorting
 import com.sinya.projects.sportsdiary.core.domain.model.SortParam
@@ -30,7 +30,7 @@ fun BoxScope.TrainingsHeader(
     onModeChange: (Int?) -> Unit,
     selectedMode: ModeOfSorting,
     categories: List<FilterBuilder<Any>>,
-    navigationType: TypeAppTopNavigation
+    navigationType: TypeTopNavigation
 ) {
     Column(
         modifier = Modifier

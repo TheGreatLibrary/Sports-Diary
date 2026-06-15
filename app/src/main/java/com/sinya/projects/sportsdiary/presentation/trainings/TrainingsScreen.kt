@@ -24,21 +24,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.localDateOrNull
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.trainings.components.TrainingsHeader
+import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
 import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
 import com.sinya.projects.sportsdiary.ui.features.smartHeader.rememberSmartHeaderManager
 import com.sinya.projects.sportsdiary.ui.features.smartHeader.smartHeader
-import java.time.format.DateTimeFormatter
-
-val dateFmt: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+import com.sinya.projects.sportsdiary.ui.theme.LocalDateFormat
 
 @Composable
 fun TrainingsScreen(
@@ -69,6 +68,7 @@ private fun TrainingsScreenView(
     onTrainingClick: (Int?) -> Unit,
 ) {
     val context = LocalContext.current
+    val dateFmt = LocalDateFormat.current
     val density = LocalDensity.current
     val pullToRefreshState = rememberPullToRefreshState()
     val manager = rememberSmartHeaderManager()
@@ -145,7 +145,7 @@ private fun TrainingsScreenView(
             },
             selectedMode = state.selectedMode,
             categories = categories,
-            navigationType = TypeAppTopNavigation.WithIcon(
+            navigationType = TypeTopNavigation.WithIcon(
                 onBackClick = onBackClick,
                 title = stringResource(R.string.trainings_title),
                 painter = R.drawable.ic_plus,
@@ -165,10 +165,6 @@ private fun TrainingsScreenView(
             )
         }
 
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-        )
+        CustomSnackbar(snackbarHostState)
     }
 }

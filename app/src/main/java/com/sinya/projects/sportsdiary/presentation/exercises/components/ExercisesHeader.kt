@@ -15,7 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.RadioItem
 import com.sinya.projects.sportsdiary.navigation.NavigationTopBar
 import com.sinya.projects.sportsdiary.ui.features.SearchContainer
@@ -27,7 +27,7 @@ fun BoxScope.ExercisesHeader(
     query: String,
     onQueryChange: (String) -> Unit,
     onOptionSelected: (Int) -> Unit,
-    navigationType: TypeAppTopNavigation
+    navigationType: TypeTopNavigation
 ) {
     Column(
         modifier = Modifier

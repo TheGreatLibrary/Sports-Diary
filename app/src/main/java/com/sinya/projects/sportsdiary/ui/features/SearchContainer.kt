@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.sinya.projects.sportsdiary.R
 
@@ -21,11 +22,12 @@ fun SearchContainer(
     CustomTextField(
         value = searchQuery,
         onValueChange = onValueChanged,
-        placeholder = stringResource(R.string.put_your_text),
+        placeholder = stringResource(R.string.put_your_title),
         leadingIcon = painterResource(R.drawable.ic_search),
         onTrailingClick = onClear,
         shape = MaterialTheme.shapes.extraLarge,
         keyboardType = KeyboardType.Text,
+        imeAction = ImeAction.Done,
         modifier = Modifier.fillMaxWidth(),
         contentColor = contentColor,
         containerColor = containerColor

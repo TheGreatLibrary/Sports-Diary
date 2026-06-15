@@ -1,9 +1,12 @@
 package com.sinya.projects.sportsdiary.core.domain.model
 
+import com.sinya.projects.sportsdiary.core.domain.enums.TrainingMode
+
 data class ExerciseItem(
     val id: Int,
     val title: String,
     val state: Int,
+    val mode: TrainingMode,
     val orderIndex: Int,
     val item: List<ExerciseItemData> = listOf()
 )
@@ -22,6 +25,7 @@ fun ExerciseItem.toExerciseData(): ExerciseData {
         prevCountResult = prevCounts.joinToString("/"),
         prevWeightResult = prevWeights.joinToString("/"),
         state = state,
+        mode = mode.mode,
         orderIndex = orderIndex
     )
 }

@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun GuideDescriptionView(
     title: String,
-    description: String,
+    description: String?,
     image: Painter?
 ) {
     Text(
@@ -37,9 +37,11 @@ fun GuideDescriptionView(
 
         )
     }
-    Text(
-        text = description,
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onPrimary
-    )
+    description?.let {
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+    }
 }

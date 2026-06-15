@@ -89,7 +89,7 @@ fun SortedExercisesSheetContent(
             cancelOnClick = { scope.launch { scaffoldState.bottomSheetState.partialExpand() } },
             cancelText = stringResource(R.string.cancel),
             doneOnClick = { scope.launch { scaffoldState.bottomSheetState.partialExpand() } },
-            doneText = stringResource(R.string.complete),
+            doneText = stringResource(R.string.apply),
         )
     }
 }

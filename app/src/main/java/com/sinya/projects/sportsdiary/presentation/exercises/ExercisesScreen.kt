@@ -30,15 +30,16 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.exercises.components.ExercisesHeader
 import com.sinya.projects.sportsdiary.presentation.exercises.components.SortedExercisesSheetContent
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
 import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
@@ -138,7 +139,7 @@ private fun ExercisesScreenView(
                     if (exercises.isEmpty()) {
                         Box(Modifier.fillMaxSize()) {
                             Text(
-                                text = stringResource(R.string.nothing_found),
+                                text = stringResource(R.string.not_found_data),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.fillMaxWidth(),
@@ -173,9 +174,9 @@ private fun ExercisesScreenView(
                 query = state.query,
                 onQueryChange = { s -> onEvent(ExercisesEvent.OnQueryChange(s)) },
                 onOptionSelected = { scope.launch { scaffoldState.bottomSheetState.expand() } },
-                navigationType = TypeAppTopNavigation.WithIcon(
+                navigationType = TypeTopNavigation.WithIcon(
                     onBackClick = onBackClick,
-                    title = stringResource(R.string.sport_exercises_title),
+                    title = stringResource(R.string.sports_exercises_title),
                     painter = R.drawable.ic_plus,
                     onClick = { onEditClick(null) }
                 )
@@ -193,11 +194,7 @@ private fun ExercisesScreenView(
                 )
             }
 
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-            )
+            CustomSnackbar(snackbarHostState)
         }
     }
 }

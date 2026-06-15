@@ -28,15 +28,16 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.localDateOrNull
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.proportions.components.ProportionsHeader
-import com.sinya.projects.sportsdiary.presentation.trainings.dateFmt
+import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
 import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
 import com.sinya.projects.sportsdiary.ui.features.smartHeader.rememberSmartHeaderManager
 import com.sinya.projects.sportsdiary.ui.features.smartHeader.smartHeader
+import com.sinya.projects.sportsdiary.ui.theme.LocalDateFormat
 
 @Composable
 fun ProportionsScreen(
@@ -68,6 +69,7 @@ private fun ProportionsScreenView(
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
+    val dateFmt = LocalDateFormat.current
     val pullToRefreshState = rememberPullToRefreshState()
     val manager = rememberSmartHeaderManager()
     val smartHeader = manager.rememberScrollDirection()
@@ -138,7 +140,7 @@ private fun ProportionsScreenView(
             onOptionSelected = { value ->
                 onEvent(ProportionsEvent.SortParamChange(value))
             },
-            navigationType = TypeAppTopNavigation.WithIcon(
+            navigationType = TypeTopNavigation.WithIcon(
                 onBackClick = onBackClick,
                 title = stringResource(R.string.proportions_title),
                 painter = R.drawable.ic_plus,
@@ -161,9 +163,6 @@ private fun ProportionsScreenView(
             )
         }
 
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
+        CustomSnackbar(snackbarHostState)
     }
 }

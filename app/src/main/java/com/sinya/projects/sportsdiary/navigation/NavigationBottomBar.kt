@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.core.domain.enums.TypeAppBottomNavigation
+import com.sinya.projects.sportsdiary.core.domain.enums.TypeBottomNavigation
 import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
 
 @Composable
@@ -22,9 +22,9 @@ fun NavigationBottomBar(
     currentRoute: String?,
     navigateTo: (ScreenRoute, ScreenRoute?) -> Unit
 ) {
-    val firstPart = remember { TypeAppBottomNavigation.getFirstPartList() }
-    val secondPart = remember { TypeAppBottomNavigation.getSecondPartList() }
-    val plusBtn = remember { TypeAppBottomNavigation.getPlus() }
+    val firstPart = remember { TypeBottomNavigation.getFirstPartList() }
+    val secondPart = remember { TypeBottomNavigation.getSecondPartList() }
+    val plusBtn = remember { TypeBottomNavigation.getPlus() }
 
     Box(
         modifier = Modifier
@@ -64,7 +64,7 @@ fun NavigationBottomBar(
             AnimationIcon(
                 onClick = { navigateTo(plusBtn.route, null) },
                 description = "Plus",
-                icon = painterResource(plusBtn.icon),
+                painter = painterResource(plusBtn.icon),
                 size = 60.dp,
                 isSelected = true,
                 selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -77,7 +77,7 @@ fun NavigationBottomBar(
 
 @Composable
 private fun SubNavRow(
-    navList: List<TypeAppBottomNavigation>,
+    navList: List<TypeBottomNavigation>,
     currentRoute: String?,
     navigateTo: (ScreenRoute) -> Unit
 ) {
@@ -91,7 +91,7 @@ private fun SubNavRow(
                 description = ScreenRoute.Home.route,
                 isSelected = currentRoute == it.route.route,
                 selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                icon = painterResource(it.icon)
+                painter = painterResource(it.icon)
             )
         }
     }

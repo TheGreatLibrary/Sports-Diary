@@ -7,7 +7,7 @@ import com.sinya.projects.sportsdiary.core.domain.model.DayOfMonth
 import com.sinya.projects.sportsdiary.core.domain.useCase.GetMorningListUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.GetTrainingRangeListUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.MarkDayMorningExerciseUseCase
-import com.sinya.projects.wordle.data.local.datastore.SettingsEngine
+import com.sinya.projects.sportsdiary.core.data.dataStore.SettingsEngine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -133,7 +133,7 @@ class HomeViewModel @Inject constructor(
             settingsEngine.uiState,
             getTrainingListUseCase(start.toString(), finish.toString()),
             getMorningListUseCase(start.toString(), finish.toString()),
-            getTrainingListUseCase(date.toString(), date.plusDays(1).toString())
+            getTrainingListUseCase(date.toString(), date.toString())
         ) { config, trainingListMonth, morningList, trainingListDay ->
 
             val morningDates = morningList.map { it.date }.toHashSet()

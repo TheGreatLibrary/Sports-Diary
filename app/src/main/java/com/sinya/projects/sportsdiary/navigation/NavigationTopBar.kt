@@ -19,24 +19,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeAppTopNavigation
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
 
 @Composable
 fun NavigationTopBar(
-    type: TypeAppTopNavigation
+    type: TypeTopNavigation
 ) {
     val title = remember(type) {
         when (type) {
-            is TypeAppTopNavigation.WithoutIcon -> type.title
-            is TypeAppTopNavigation.WithIcon -> type.title
-            is TypeAppTopNavigation.OnlyBackIcon -> null
-        }
-    }
-    val action = remember(type) {
-        when (type) {
-            is TypeAppTopNavigation.WithIcon -> Pair(type.painter, type.onClick)
-            else -> null
+            is TypeTopNavigation.WithoutIcon -> type.title
+            is TypeTopNavigation.WithIcon -> type.title
+            is TypeTopNavigation.OnlyBackIcon -> null
         }
     }
 
@@ -50,11 +44,9 @@ fun NavigationTopBar(
     ) {
         AnimationIcon(
             onClick = type.onBackClick,
-            description = "Back",
-            isSelected = true,
-            size = 22.dp,
+            size = 24.dp,
             selectedContainerColor = Color.Transparent,
-            icon = painterResource(R.drawable.nav_back)
+            painter = painterResource(R.drawable.nav_back)
         )
         title?.let {
             Text(
@@ -63,18 +55,16 @@ fun NavigationTopBar(
                 style = MaterialTheme.typography.titleLarge,
             )
         }
-        if (action != null)
-            AnimationIcon(
-                onClick = action.second,
-                shape = MaterialTheme.shapes.extraLarge,
-                description = "",
-                isSelected = true,
-                size = 22.dp,
-                selectedContainerColor = Color.Transparent,
-                icon = painterResource(action.first)
-            )
-        else {
-            Spacer(modifier = Modifier.size(22.dp))
+        when (type) {
+            is TypeTopNavigation.WithIcon -> {
+                AnimationIcon(
+                    onClick = type.onClick,
+                    size = 24.dp,
+                    selectedContainerColor = Color.Transparent,
+                    painter = painterResource(type.painter)
+                )
+            }
+            else -> Spacer(modifier = Modifier.size(26.dp))
         }
     }
 }

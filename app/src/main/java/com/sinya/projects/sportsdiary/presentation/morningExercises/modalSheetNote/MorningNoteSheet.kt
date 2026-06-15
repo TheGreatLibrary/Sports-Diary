@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -96,7 +97,7 @@ private fun MorningNoteView(
         )
         if (state.items.isEmpty()) {
             Text(
-                text = stringResource(R.string.nothing_found),
+                text = stringResource(R.string.not_found_data),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )
@@ -132,7 +133,7 @@ private fun MorningNoteView(
                             ) {
                                 AnimationIcon(
                                     onClick = { onEvent(ModalSheetNoteEvent.OpenEditNoteField(it.id)) },
-                                    icon = painterResource(R.drawable.morn_edit),
+                                    painter = painterResource(R.drawable.morn_edit),
                                     description = "update",
                                     isSelected = true,
                                     size = 28.dp,
@@ -142,7 +143,7 @@ private fun MorningNoteView(
                                 )
                                 AnimationIcon(
                                     onClick = { onEvent(ModalSheetNoteEvent.ClearNote(it.id)) },
-                                    icon = painterResource(R.drawable.morn_trash),
+                                    painter = painterResource(R.drawable.morn_trash),
                                     description = "delete",
                                     isSelected = true,
                                     size = 28.dp,
@@ -159,6 +160,7 @@ private fun MorningNoteView(
                                 onTrailingClick = { onEvent(ModalSheetNoteEvent.ClearQuery) },
                                 keyboardType = KeyboardType.Text,
                                 modifier = Modifier.fillMaxWidth(),
+                                imeAction = ImeAction.Done,
                                 contentColor = MaterialTheme.colorScheme.onSurface,
                                 containerColor = MaterialTheme.colorScheme.surfaceContainer
                             )
@@ -176,6 +178,7 @@ private fun MorningNoteView(
                 onTrailingClick = { onEvent(ModalSheetNoteEvent.ClearQuery) },
                 keyboardType = KeyboardType.Text,
                 modifier = Modifier.fillMaxWidth(),
+                imeAction = ImeAction.Done,
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 containerColor = MaterialTheme.colorScheme.surfaceContainer
             )

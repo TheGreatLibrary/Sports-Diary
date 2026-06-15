@@ -1,6 +1,8 @@
 package com.sinya.projects.sportsdiary.core.domain.repository
 
 import android.util.Log
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.TrainingsDao
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.TypeTrainingDao
@@ -8,6 +10,7 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataTraining
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataTypeTrainings
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Trainings
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.TypeTraining
+import com.sinya.projects.sportsdiary.core.domain.enums.TrainingMode
 import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.core.domain.model.CategoryEntity
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItem
@@ -15,24 +18,28 @@ import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItemData
 import com.sinya.projects.sportsdiary.core.domain.model.Training
 import com.sinya.projects.sportsdiary.core.domain.model.TrainingEntity
 import com.sinya.projects.sportsdiary.core.domain.model.toItem
-import com.sinya.projects.sportsdiary.ui.features.diagram.ChartPoint
+import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartLine
+import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartPoint
+import com.sinya.projects.sportsdiary.ui.features.chart.utils.ChartColors
+import com.sinya.projects.sportsdiary.ui.features.chart.utils.ChartDataUtils
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import java.time.LocalDate
+import kotlin.random.Random
 
 interface TrainingRepository {
     // Statistic
     suspend fun getCountOfTrainings(): Result<Int>
     suspend fun getSummaryWeightOfTrainings(): Result<Float>
-    suspend fun getChartList(mode: TypeTime): Result<List<ChartPoint>>
+    suspend fun getChartList(mode: TypeTime): Result<List<ChartLine>>
 
     // Training
     fun getTrainingList(): Flow<List<Training>>
     suspend fun deleteTraining(it: Trainings): Result<Int>
 
     // TrainingPage
-    suspend fun getById(id: Int?): Result<TrainingEntity>
+    suspend fun getById(id: Int?, date: String?): Result<TrainingEntity>
     suspend fun insertDataTraining(items: List<DataTraining>): Result<Int>
     suspend fun upsertTraining(entity: TrainingEntity): Result<Int>
     suspend fun getSerialNumOfCategory(typeTraining: Int?): Result<String>
@@ -51,6 +58,7 @@ interface TrainingRepository {
     suspend fun insertCategory(item: TypeTraining, exercises: List<DataTypeTrainings>): Result<Int>
     suspend fun updateDataCategory(items: List<DataTypeTrainings>): Result<Int>
     suspend fun checkNameCategoryExists(name: String, id: Int): Result<Boolean>
+    suspend fun getExercisesData(list: List<Int>): Result<List<ChartLine>>
 }
 
 
@@ -94,7 +102,7 @@ class TrainingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getChartList(mode: TypeTime): Result<List<ChartPoint>> {
+    override suspend fun getChartList(mode: TypeTime): Result<List<ChartLine>> {
         return try {
             val raw = trainingDao.getChartList()
 
@@ -112,7 +120,7 @@ class TrainingRepositoryImpl @Inject constructor(
                     val weightArr = item.weight.split('/')
 
                     for (i in countArr.indices) {
-                        totalWeight += countArr[i].toInt() * weightArr[i].toFloat()
+                        totalWeight += countArr[i].toInt() * weightArr[i].toFloat() / if (TrainingMode.getMode(item.mode)==TrainingMode.TIME) 4f else 1f
                     }
                 }
 
@@ -124,10 +132,18 @@ class TrainingRepositoryImpl @Inject constructor(
                     TypeTime.YEARS -> LocalDate.parse("$key-01-01").toString()
                 }
 
-                ChartPoint(label, totalWeight)
+                ChartPoint(xDate = label, yValue = totalWeight)
             }.sortedBy { it.xDate }
 
-            Result.success(result)
+            Result.success(
+                listOf(
+                    ChartLine(
+                        id = result.first().id,
+                        points = result,
+                        lineColor = Color.Unspecified
+                    )
+                )
+            )
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -164,6 +180,7 @@ class TrainingRepositoryImpl @Inject constructor(
                                 id = it.id,
                                 title = it.title,
                                 state = 1,
+                                mode = TrainingMode.getMode(it.mode),
                                 orderIndex = it.orderIndex,
                                 item = List(4) { setIndex ->
                                     ExerciseItemData(
@@ -186,7 +203,7 @@ class TrainingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getById(id: Int?): Result<TrainingEntity> {
+    override suspend fun getById(id: Int?, date: String?): Result<TrainingEntity> {
         return try {
             val locale = Locale.current.language
 
@@ -202,7 +219,7 @@ class TrainingRepositoryImpl @Inject constructor(
                         id = null,
                         title = "",
                         category = typeCategory,
-                        date = LocalDate.now().toString(),
+                        date = date ?: LocalDate.now().toString(),
                         items = listData
                     )
                 )
@@ -321,6 +338,47 @@ class TrainingRepositoryImpl @Inject constructor(
             Result.success(typeTrainingDao.checkIfNameExists(name, id))
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    override suspend fun getExercisesData(list: List<Int>): Result<List<ChartLine>> {
+        return try {
+            val raw =
+                trainingDao.getTrainingsDataList(list)
+                    .groupBy { it.exerciseId }
+                    .map { it ->
+                        ChartLine(
+                            id = it.key,
+                            points = it.value.map {
+                                var totalWeight = 0f
+
+                                val countArr = it.count.split('/')
+                                val weightArr = it.weight.split('/')
+
+                                for (i in countArr.indices) {
+                                    totalWeight += countArr[i].toInt() * weightArr[i].toFloat() / if (TrainingMode.getMode(it.mode)==TrainingMode.TIME) 4f else 1f
+                                }
+
+                                totalWeight /= 1000f
+
+
+                                ChartPoint(
+                                    id = it.exerciseId,
+                                    xDate = "${it.categoryName} №${it.trainingNumber}",
+                                    yValue = totalWeight,
+                                    date = it.date
+                                )
+                            }
+                                .sortedBy { it.date },
+                            lineColor = Color.Unspecified
+                        )
+                    }
+
+
+            Result.success(raw)
+        } catch (e: Exception) {
+            Result.failure(e)
+
         }
     }
 }

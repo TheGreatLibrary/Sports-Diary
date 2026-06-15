@@ -27,6 +27,7 @@ import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionPage
 import com.sinya.projects.sportsdiary.presentation.proportions.ProportionsScreen
 import com.sinya.projects.sportsdiary.presentation.settings.SettingsScreen
 import com.sinya.projects.sportsdiary.presentation.statistic.StatisticScreen
+import com.sinya.projects.sportsdiary.presentation.statisticDiagram.StatisticDiagramScreen
 import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingPageScreen
 import com.sinya.projects.sportsdiary.presentation.trainings.TrainingsScreen
 
@@ -113,6 +114,7 @@ private fun NavGraph(
         composable<ScreenRoute.Statistic> {
             StatisticScreen(
                 onBackClick = navigateToBackStack,
+                navigateToStatisticDiagram = { navigateTo(ScreenRoute.StatisticDiagram, null) }
             )
         }
         composable<ScreenRoute.Settings> {
@@ -130,6 +132,7 @@ private fun NavGraph(
 
             TrainingPageScreen(
                 id = args.id,
+                date = args.date,
                 onBackClick = navigateToBackStack
             )
         }
@@ -206,11 +209,10 @@ private fun NavGraph(
             )
         }
 
-        composable<ScreenRoute.StatisticProportions> {
-
-        }
-        composable<ScreenRoute.StatisticExercises> {
-
+        composable<ScreenRoute.StatisticDiagram> {
+            StatisticDiagramScreen(
+                onBackClick = navigateToBackStack
+            )
         }
     }
 }
