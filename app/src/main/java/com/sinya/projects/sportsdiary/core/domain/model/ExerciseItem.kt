@@ -8,14 +8,14 @@ data class ExerciseItem(
     val state: Int,
     val mode: TrainingMode,
     val orderIndex: Int,
-    val item: List<ExerciseItemData> = listOf()
+    val items: List<ExerciseItemData> = listOf()
 )
 
 fun ExerciseItem.toExerciseData(): ExerciseData {
-    val counts = item.map { it.count }
-    val weights = item.map { it.weight }
-    val prevCounts = item.mapNotNull { it.prevCount }
-    val prevWeights = item.mapNotNull { it.prevWeight }
+    val counts = items.map { it.count }
+    val weights = items.map { it.weight }
+    val prevCounts = items.mapNotNull { it.prevCount }
+    val prevWeights = items.mapNotNull { it.prevWeight }
 
     return ExerciseData(
         id = id,
@@ -35,9 +35,9 @@ fun ExerciseItem.updateSet(
     newCount: String? = null,
     newWeight: String? = null
 ): ExerciseItem {
-    require(setIndex in item.indices) { "Индекс подхода $setIndex вне диапазона" }
+    require(setIndex in items.indices) { "Индекс подхода $setIndex вне диапазона" }
 
-    val updatedItems = item.mapIndexed { index, itemData ->
+    val updatedItems = items.mapIndexed { index, itemData ->
         if (index == setIndex) {
             itemData.copy(
                 count = newCount ?: itemData.count,
@@ -48,11 +48,11 @@ fun ExerciseItem.updateSet(
         }
     }
 
-    return this.copy(item = updatedItems)
+    return this.copy(items = updatedItems)
 }
 
 fun ExerciseItem.addEmptySet(): ExerciseItem {
-    val newIndex = item.size
+    val newIndex = items.size
     val newItem =
         ExerciseItemData(
             exerciseId = id,
@@ -61,17 +61,28 @@ fun ExerciseItem.addEmptySet(): ExerciseItem {
             weight = "0"
         )
 
-    return this.copy(item = item + newItem)
+    return this.copy(items = items + newItem)
 }
 
 fun ExerciseItem.removeSet(setIndex: Int): ExerciseItem {
-    require(setIndex in item.indices) { "Индекс подхода $setIndex вне диапазона" }
+    require(setIndex in items.indices) { "Индекс подхода $setIndex вне диапазона" }
 
-    return this.copy(item = item.filterIndexed { index, _ -> index != setIndex })
-        // Переиндексируем оставшиеся подходы
+    return this.copy(items = items.filterIndexed { index, _ -> index != setIndex })
         .let { item ->
-            item.copy(item = item.item.mapIndexed { newIndex, itemData ->
+            item.copy(items = item.items.mapIndexed { newIndex, itemData ->
                 itemData.copy(index = newIndex)
             })
         }
+}
+
+fun ExerciseItem.insertSet(setIndex: Int, exercise: ExerciseItemData): ExerciseItem {
+    val newList = this.items.toMutableList()
+    newList.add(setIndex, exercise)
+    require(setIndex in items.indices) { "Индекс подхода $setIndex вне диапазона" }
+
+    return this.copy(items = newList).let { item ->
+        item.copy(items = item.items.mapIndexed { newIndex, itemData ->
+            itemData.copy(index = newIndex)
+        })
+    }
 }

@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.core.domain.enums.TypeBottomNavigation
-import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
+import com.sinya.projects.sportsdiary.ui.features.RoundedIcon
 
 @Composable
 fun NavigationBottomBar(
@@ -61,7 +61,7 @@ fun NavigationBottomBar(
             modifier = Modifier.padding(bottom = 30.dp),
             contentAlignment = Alignment.Center
         ) {
-            AnimationIcon(
+            RoundedIcon(
                 onClick = { navigateTo(plusBtn.route, null) },
                 description = "Plus",
                 painter = painterResource(plusBtn.icon),
@@ -86,10 +86,11 @@ private fun SubNavRow(
         horizontalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         navList.forEach {
-            AnimationIcon(
+            RoundedIcon(
                 onClick = { navigateTo(it.route) },
                 description = ScreenRoute.Home.route,
                 isSelected = currentRoute == it.route.route,
+                size = 30.dp,
                 selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 painter = painterResource(it.icon)
             )

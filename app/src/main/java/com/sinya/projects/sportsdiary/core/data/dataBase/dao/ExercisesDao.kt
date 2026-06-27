@@ -14,6 +14,7 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Exercises
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.ForceTranslation
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.LevelTranslation
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.MechanicTranslation
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseDialogContent
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseMuscleName
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseMusclesData
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithFullData
@@ -119,7 +120,17 @@ interface ExercisesDao {
         LIMIT 1 
     """
     )
-    fun getExerciseById(exerciseId: Int, language: String): Flow<ExerciseWithFullData>
+    fun observeExerciseById(exerciseId: Int, language: String): Flow<ExerciseWithFullData>
+
+    @Query("""
+        SELECT 
+            exercise_id as id,
+            et.name,
+            et.description
+        FROM exercise_translations et
+        WHERE et.exercise_id = :exerciseId AND et.language = :language
+    """)
+    suspend fun getExerciseById(exerciseId: Int, language: String): ExerciseDialogContent
 
     @Query("""
         SELECT 
@@ -159,6 +170,23 @@ interface ExercisesDao {
     fun observeExerciseList(language: String): Flow<List<ExerciseWithSortedData>>
 
     @Query("""
+         SELECT 
+            exercise_id as id,
+            et.name,
+            e.is_custom AS isCustom,
+            l.name AS level,
+            eq.name AS equipment,
+            c.name AS category
+        FROM exercise_translations et 
+            JOIN exercises e ON et.exercise_id = e.id 
+            LEFT JOIN equipment_translation eq ON eq.eq_id = e.equipment_id AND eq.language = :language 
+            LEFT JOIN category_translation c ON c.category_id = e.category_id AND c.language = :language 
+            LEFT JOIN level_translation l ON l.level_id = e.level_id AND l.language = :language
+        WHERE et.language = :language
+        ORDER BY et.name, is_custom DESC
+    """)
+    suspend fun getExerciseList(language: String) : List<ExerciseWithSortedData>
+    @Query("""
         SELECT 
             em.exercise_id AS exerciseId,
             mt.name as name
@@ -167,7 +195,18 @@ interface ExercisesDao {
         WHERE mt.language = :language
         ORDER BY em.exercise_id
     """)
-    fun getMusclesForAllExercises(language: String): Flow<List<ExerciseMuscleName>>
+    fun observeMusclesForAllExercises(language: String): Flow<List<ExerciseMuscleName>>
+
+    @Query("""
+        SELECT 
+            em.exercise_id AS exerciseId,
+            mt.name as name
+        FROM exercise_muscles em 
+        JOIN muscle_translations mt ON em.muscle_id = mt.muscle_id
+        WHERE mt.language = :language
+        ORDER BY em.exercise_id
+    """)
+    suspend fun getMusclesForAllExercises(language: String): List<ExerciseMuscleName>
 
     @Query("""
         SELECT 

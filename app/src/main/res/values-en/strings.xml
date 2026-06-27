@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Gymble</string>
 
+    <!-- Errors -->
+    <string name="saving">Saving…</string>
+    <string name="saved">Saved</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_title">Error</string>
+
     <!-- Calculator -->
     <string name="calculate_description">Calculators for computing various metrics</string>
     <string name="calculate_title">Calculators</string>
@@ -104,7 +110,11 @@
     <string name="light_mode">Light</string>
     <string name="settings_title">Settings</string>
     <string name="theme_title">Theme</string>
-    <string name="warning_dialog_title">Warning before deletion</string>
+    <string name="version">Version %1$s (%2$s)</string>
+<!--    <string name="warning_dialog_title">Warning before deletion</string>-->
+    <string name="app_block">App</string>
+    <string name="copy_errors">Copy error logs</string>
+    <string name="send_to_support">Write to support</string>
 
     <!-- Statistics -->
     <string name="all_weight">Total tonnage</string>
@@ -171,4 +181,6 @@
     <!-- Category -->
     <string name="time_exercise">Timed exercise</string>
     <string name="count_exercise">Rep-based exercise</string>
+    <string name="title_is_empty">Title is empty</string>
+    <string name="title_already_existed">Title already exists, duplicates are not allowed</string>
 </resources>

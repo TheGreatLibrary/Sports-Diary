@@ -31,12 +31,12 @@ fun HeaderInfo(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        AnimationIcon(
+        RoundedIcon(
             onClick = onInfoClick,
             description = "Info",
             painter = painterResource(R.drawable.ic_info),
             isSelected = true,
-            size = 18.dp,
+            size = 25.dp,
             selectedContainerColor = Color.Transparent,
         )
     }

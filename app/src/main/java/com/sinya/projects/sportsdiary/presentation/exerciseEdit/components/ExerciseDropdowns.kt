@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.presentation.exerciseEdit.ExerciseEditEvent
 import com.sinya.projects.sportsdiary.presentation.exerciseEdit.ExerciseEditUiState
+import com.sinya.projects.sportsdiary.presentation.exerciseEdit.ExerciseUndoableAction
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.CustomDropdownMenu
 
 @Composable
@@ -34,11 +35,26 @@ fun ExerciseDropdowns(
         CustomDropdownMenu(
             items = state.categories,
             title = category,
-            onInfoClick = { onEvent(ExerciseEditEvent.OpenDialogGuide(category, categoryDescription)) },
+            onInfoClick = {
+                onEvent(
+                    ExerciseEditEvent.OpenDialogGuide(
+                        category,
+                        categoryDescription
+                    )
+                )
+            },
             selectedItem = state.exercise.category,
-            onOpenMenu = { },
             nameObject = { it.name },
-            onSelectedCategory = { onEvent(ExerciseEditEvent.OnSelectedCategory(it)) },
+            onSelectedCategory = {
+                onEvent(
+                    ExerciseEditEvent.Undoable(
+                        ExerciseUndoableAction.OnSelectedCategory(
+                            state.exercise.category,
+                            it
+                        )
+                    )
+                )
+            },
             onPlusClick = null
         )
 
@@ -47,42 +63,95 @@ fun ExerciseDropdowns(
             title = force,
             onInfoClick = { onEvent(ExerciseEditEvent.OpenDialogGuide(force, forceDescription)) },
             selectedItem = state.exercise.force,
-            onOpenMenu = { },
             nameObject = { it.name },
-            onSelectedCategory = { onEvent(ExerciseEditEvent.OnSelectedForce(it)) },
+            onSelectedCategory = {
+                onEvent(
+                    ExerciseEditEvent.Undoable(
+                        ExerciseUndoableAction.OnSelectedForce(
+                            state.exercise.force,
+                            it
+                        )
+                    )
+                )
+            },
             onPlusClick = null
         )
 
         CustomDropdownMenu(
             items = state.levels,
             title = level,
-            onInfoClick = { onEvent(ExerciseEditEvent.OpenDialogGuide(level, levelDescriptionUse)) },
+            onInfoClick = {
+                onEvent(
+                    ExerciseEditEvent.OpenDialogGuide(
+                        level,
+                        levelDescriptionUse
+                    )
+                )
+            },
             selectedItem = state.exercise.level,
-            onOpenMenu = { },
             nameObject = { it.name },
-            onSelectedCategory = { onEvent(ExerciseEditEvent.OnSelectedLevel(it)) },
+            onSelectedCategory = {
+                onEvent(
+                    ExerciseEditEvent.Undoable(
+                        ExerciseUndoableAction.OnSelectedLevel(
+                            state.exercise.level,
+                            it
+                        )
+                    )
+                )
+            },
             onPlusClick = null
         )
 
         CustomDropdownMenu(
             items = state.mechanics,
             title = mechanic,
-            onInfoClick = { onEvent(ExerciseEditEvent.OpenDialogGuide(mechanic, mechanicDescription)) },
+            onInfoClick = {
+                onEvent(
+                    ExerciseEditEvent.OpenDialogGuide(
+                        mechanic,
+                        mechanicDescription
+                    )
+                )
+            },
             selectedItem = state.exercise.mechanic,
-            onOpenMenu = { },
             nameObject = { it.name },
-            onSelectedCategory = { onEvent(ExerciseEditEvent.OnSelectedMechanic(it)) },
+            onSelectedCategory = {
+                onEvent(
+                    ExerciseEditEvent.Undoable(
+                        ExerciseUndoableAction.OnSelectedMechanic(
+                            state.exercise.mechanic,
+                            it
+                        )
+                    )
+                )
+            },
             onPlusClick = null
         )
 
         CustomDropdownMenu(
             items = state.equipments,
             title = equipment,
-            onInfoClick = { onEvent(ExerciseEditEvent.OpenDialogGuide(equipment, equipmentDescription)) },
+            onInfoClick = {
+                onEvent(
+                    ExerciseEditEvent.OpenDialogGuide(
+                        equipment,
+                        equipmentDescription
+                    )
+                )
+            },
             selectedItem = state.exercise.equipment,
-            onOpenMenu = { },
             nameObject = { it.name },
-            onSelectedCategory = { onEvent(ExerciseEditEvent.OnSelectedEquipment(it)) },
+            onSelectedCategory = {
+                onEvent(
+                    ExerciseEditEvent.Undoable(
+                        ExerciseUndoableAction.OnSelectedEquipment(
+                            state.exercise.equipment,
+                            it
+                        )
+                    )
+                )
+            },
             onPlusClick = null
         )
     }

@@ -17,8 +17,8 @@ android {
         applicationId = "com.sinya.projects.sportsdiary"
         minSdk = 26
         targetSdk = 36
-        versionCode = 16
-        versionName = "1.3.3"
+        versionCode = 17
+        versionName = "1.4.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -61,6 +61,7 @@ dependencies {
     // work manager for widget
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
+    implementation(libs.androidx.compose.foundation.layout)
     ksp(libs.androidx.hilt.compiler)
 
     // widget

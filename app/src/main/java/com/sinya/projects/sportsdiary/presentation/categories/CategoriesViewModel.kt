@@ -3,7 +3,7 @@ package com.sinya.projects.sportsdiary.presentation.categories
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.core.domain.useCase.DeleteCategoryUseCase
-import com.sinya.projects.sportsdiary.core.domain.useCase.GetCategoriesListUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.ObserveCategoriesListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
-    private val getCategoryListUseCase: GetCategoriesListUseCase
+    private val getCategoryListUseCase: ObserveCategoriesListUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<CategoriesUiState>(CategoriesUiState.Loading)

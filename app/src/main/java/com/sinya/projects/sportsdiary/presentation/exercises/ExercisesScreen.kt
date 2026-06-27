@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -33,12 +32,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
-import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.presentation.exercises.components.ExercisesHeader
-import com.sinya.projects.sportsdiary.presentation.exercises.components.SortedExercisesSheetContent
-import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.presentation.exercises.components.ExercisesPlaceholder
+import com.sinya.projects.sportsdiary.sheets.SortedExercisesSheetContent
 import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
@@ -58,7 +56,10 @@ fun ExercisesScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (state) {
-        ExercisesUiState.Loading -> PlaceholderScreen()
+        ExercisesUiState.Loading -> ExercisesPlaceholder(
+            onBackClick = onBackClick,
+            title = stringResource(R.string.sports_exercises_title),
+        )
 
         is ExercisesUiState.Success -> ExercisesScreenView(
             state = state as ExercisesUiState.Success,
@@ -68,8 +69,6 @@ fun ExercisesScreen(
             onExerciseClick = onExerciseClick,
             onEditClick = onEditClick
         )
-
-        is ExercisesUiState.Error -> ErrorScreen((state as ExercisesUiState.Error).message)
     }
 }
 

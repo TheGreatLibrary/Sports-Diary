@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -34,24 +34,25 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
-import com.sinya.projects.sportsdiary.presentation.categoryPage.components.DragOverlay
-import com.sinya.projects.sportsdiary.presentation.categoryPage.components.ExerciseSheetContent
+import com.sinya.projects.sportsdiary.core.utils.parseMillisToDateTime
+import com.sinya.projects.sportsdiary.ui.features.DragOverlay
+import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.ExerciseSheetContent
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
-import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
-import com.sinya.projects.sportsdiary.presentation.trainingPage.components.CategorySheetContent
+import com.sinya.projects.sportsdiary.sheets.CategorySheetContent
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.CustomDropdownMenu
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.SwipeTrainingCard
 import com.sinya.projects.sportsdiary.presentation.trainingPage.components.SwipeTrainingCardContent
+import com.sinya.projects.sportsdiary.presentation.trainingPage.components.TrainingPagePlaceholder
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.DateCard
 import com.sinya.projects.sportsdiary.ui.features.DatePickerModal
 import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
 import com.sinya.projects.sportsdiary.ui.features.ScreenLazyColumn
-import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
 import com.sinya.projects.sportsdiary.ui.features.reorderList.rememberReorderState
+import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.UndoBottomNavigation
 import kotlinx.coroutines.launch
 
 @Composable
@@ -66,18 +67,21 @@ fun TrainingPageScreen(
         }
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val filtredList by viewModel.filteredList.collectAsStateWithLifecycle()
 
     when (state) {
-        TrainingPageUiState.Loading -> PlaceholderScreen()
+        TrainingPageUiState.Loading -> TrainingPagePlaceholder("", onBackClick)
 
-        is TrainingPageUiState.TrainingForm -> TrainingPage(
-            state = state as TrainingPageUiState.TrainingForm,
-            onEvent = viewModel::onEvent,
-            filtered = viewModel.filtered(),
-            onBackClick = onBackClick
-        )
+        is TrainingPageUiState.TrainingForm -> {
+            TrainingPage(
+                state = state as TrainingPageUiState.TrainingForm,
+                onEvent = viewModel::onEvent,
+                filtered = filtredList,
+                onBackClick = onBackClick
+            )
+        }
 
-        is TrainingPageUiState.Error -> ErrorScreen((state as TrainingPageUiState.Error).errorMessage)
+        is TrainingPageUiState.Error -> ErrorScreen(onBackClick, (state as TrainingPageUiState.Error).errorMessage)
 
         TrainingPageUiState.Success -> {
             LaunchedEffect(Unit) {
@@ -87,6 +91,7 @@ fun TrainingPageScreen(
     }
 }
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TrainingPage(
@@ -113,7 +118,9 @@ private fun TrainingPage(
         items = state.item.items,
         scope = scope,
         idProvided = { it.id }
-    ) { from, to -> onEvent(TrainingPageEvent.MoveExercise(from, to)) }
+    ) { from, to ->
+        onEvent(TrainingPageEvent.Undoable(TrainingUndoableAction.MoveExercise(from, to)))
+    }
 
     val context = LocalContext.current
     val modesFlattened = remember(state.items, state.modes) {
@@ -133,7 +140,7 @@ private fun TrainingPage(
     LaunchedEffect(state.errorMessage) {
         state.errorMessage?.let { message ->
             snackbarHostState.showSnackbar(
-                message = message,
+                message = context.getString(message),
                 duration = SnackbarDuration.Short
             )
             onEvent(TrainingPageEvent.OnErrorShown)
@@ -214,11 +221,10 @@ private fun TrainingPage(
                             onEvent(TrainingPageEvent.OpenDialogGuide(title, description))
                         },
                         selectedItem = state.item.category,
-                        onOpenMenu = { /*onEvent(TrainingPageEvent.UpdateCategories)*/ },
-                        onSelectedCategory = { name ->
+                        onSelectedCategory = { type ->
                             onEvent(
                                 TrainingPageEvent.OnSelectedCategory(
-                                    name
+                                    type
                                 )
                             )
                         },
@@ -256,26 +262,70 @@ private fun TrainingPage(
                             },
                         item = item,
                         onInfoClick = { id -> onEvent(TrainingPageEvent.OpenDialog(id)) },
-                        onPlusClick = { id -> onEvent(TrainingPageEvent.AddSet(id)) },
-                        onMinusClick = { id -> onEvent(TrainingPageEvent.OpenDialogOnDelete(id)) },
+                        onPlusClick = { id ->
+                            onEvent(
+                                TrainingPageEvent.Undoable(
+                                    TrainingUndoableAction.AddSet(id)
+                                )
+                            )
+                        },
+                        onMinusClick = {
+                            onEvent(
+                                TrainingPageEvent.Undoable(
+                                    TrainingUndoableAction.DeleteExercise(
+                                        item,
+                                        state.item.items.indexOfFirst { it == item })
+                                )
+                            )
+                        },
                         onEditSet = { id, index1, value, valState ->
                             onEvent(
-                                TrainingPageEvent.EditSet(
-                                    id,
-                                    index1,
-                                    value,
-                                    valState
+                                TrainingPageEvent.Undoable(
+                                    TrainingUndoableAction.EditSet(
+                                        id,
+                                        index1,
+                                        when (valState) {
+                                            true -> item.items[index1].count
+                                            else -> item.items[index1].weight
+                                        },
+                                        value,
+                                        valState
+                                    )
                                 )
                             )
                         },
                         onDeleteSet = { id, index1 ->
-                            onEvent(TrainingPageEvent.DeleteSet(id, index1))
+                            onEvent(
+                                TrainingPageEvent.Undoable(
+                                    TrainingUndoableAction.DeleteSet(
+                                        id,
+                                        index1,
+                                        item.items[index1]
+                                    )
+                                )
+                            )
                         },
                         onVisibleClick = { value, id ->
-                            onEvent(TrainingPageEvent.VisibleExercise(value, id))
+                            onEvent(
+                                TrainingPageEvent.Undoable(
+                                    TrainingUndoableAction.VisibleExercise(
+                                        id,
+                                        item.state,
+                                        value
+                                    )
+                                )
+                            )
                         },
                         onModeClick = { mode, id ->
-                            onEvent(TrainingPageEvent.ToggleMode(mode, id))
+                            onEvent(
+                                TrainingPageEvent.Undoable(
+                                    TrainingUndoableAction.ToggleMode(
+                                        id,
+                                        item.mode,
+                                        mode
+                                    )
+                                )
+                            )
                         }
                     )
                 }
@@ -335,28 +385,31 @@ private fun TrainingPage(
                 )
             }
 
-
-            state.deleteDialogId?.let {
-                GuideDialog(
-                    onDismiss = { onEvent(TrainingPageEvent.OpenDialogOnDelete(null)) },
-                    content = {
-                        DeleteDialogView(
-                            onSuccess = { onEvent(TrainingPageEvent.Delete) },
-                            checked = !state.trainingWarningState,
-                            checkBoxToggle = { onEvent(TrainingPageEvent.CheckBoxToggle(it)) },
-                            onBack = { onEvent(TrainingPageEvent.OpenDialogOnDelete(null)) }
-                        )
-                    }
-                )
-            }
-
-
             if (state.calendarVisible) {
                 DatePickerModal(
-                    onDateSelected = { date -> onEvent(TrainingPageEvent.OnPickDate(date)) },
+                    onDateSelected = { date ->
+                        onEvent(
+                            TrainingPageEvent.Undoable(
+                                TrainingUndoableAction.OnPickDate(
+                                    parseMillisToDateTime(date),
+                                    state.item.date
+                                )
+                            )
+                        )
+                    },
                     onDismiss = { onEvent(TrainingPageEvent.CalendarState(false)) }
                 )
             }
+
+            UndoBottomNavigation(
+                modifier = Modifier
+                    .padding(bottom = 70.dp, start = 16.dp, end = 16.dp),
+                onUndoClick = { onEvent(TrainingPageEvent.Undo) },
+                canUndo = state.canUndo,
+                isUndoing = state.isUndoing,
+                onRedoClick = { onEvent(TrainingPageEvent.Redo) },
+                canRedo = state.canRedo,
+            )
 
             CustomSnackbar(snackbarHostState)
         }

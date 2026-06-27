@@ -32,7 +32,7 @@ import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.core.domain.model.RadioItem
 import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
-import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.presentation.statistic.components.StatisticPlaceholder
 import com.sinya.projects.sportsdiary.ui.features.CardWithArrow
 import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.RadioButtons
@@ -50,7 +50,10 @@ fun StatisticScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (state) {
-        StatisticUiState.Loading -> PlaceholderScreen()
+        StatisticUiState.Loading -> StatisticPlaceholder(
+            onBackClick = onBackClick,
+            title = stringResource(R.string.statistic_title)
+        )
 
         is StatisticUiState.Success -> {
             StatisticScreenView(

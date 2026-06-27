@@ -13,15 +13,15 @@ import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 
 @Composable
-fun DeltaHint(delta: Int?) {
-    if (delta == null || delta == 0) return
+fun DeltaHint(delta: Float?) {
+    if (delta == null || delta == 0f) return
 
-    val color =  if (delta > 0) MaterialTheme.colorScheme.primary
+    val color =  if (delta > 0f) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.secondary
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
-            painter = if (delta > 0) painterResource(R.drawable.ic_arrow_up) else painterResource(R.drawable.ic_arrow_down),
+            painter = if (delta > 0f) painterResource(R.drawable.ic_arrow_up) else painterResource(R.drawable.ic_arrow_down),
             contentDescription = null,
             tint = color,
             modifier = Modifier.size(12.dp)

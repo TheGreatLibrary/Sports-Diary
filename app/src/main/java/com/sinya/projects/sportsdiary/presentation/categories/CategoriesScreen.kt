@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -23,7 +22,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
-import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.presentation.categories.components.CategoriesPlaceholder
 import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.ScreenLazyColumn
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
@@ -39,7 +38,10 @@ fun CategoriesScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (state) {
-        CategoriesUiState.Loading -> PlaceholderScreen()
+        CategoriesUiState.Loading -> CategoriesPlaceholder(
+            onBackClick = onBackClick,
+            title = stringResource(R.string.categories_title),
+        )
 
         is CategoriesUiState.Success -> CategoriesScreenView(
             state = state as CategoriesUiState.Success,

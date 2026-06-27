@@ -48,9 +48,8 @@ class ProportionsViewModel @Inject constructor(
         }
     }
 
-    private fun delete() = viewModelScope.launch {
-        val currentState = _state.value as? ProportionsUiState.Success ?: return@launch
-
+    private fun delete() {
+        val currentState = _state.value as? ProportionsUiState.Success ?: return
         currentState.deleteDialogId?.let { id ->
             val item = currentState.proportions.first { id == it.id }.let { item ->
                 Proportions(
@@ -59,32 +58,36 @@ class ProportionsViewModel @Inject constructor(
                 )
             }
 
-            deleteProportionUseCase(item).fold(
-                onSuccess = {
-                    updateIfSuccess { it.copy(deleteDialogId = null) }
-                },
-                onFailure = { error ->
-                    updateIfSuccess { it.copy(errorMessage = error.toString()) }
-                }
-            )
+            viewModelScope.launch {
+                deleteProportionUseCase(item).fold(
+                    onSuccess = {
+                        updateIfSuccess { it.copy(deleteDialogId = null) }
+                    },
+                    onFailure = { error ->
+                        updateIfSuccess { it.copy(errorMessage = error.toString()) }
+                    }
+                )
+            }
         }
     }
 
-    private fun loadData() = viewModelScope.launch {
+    private fun loadData() {
         updateIfSuccess { it.copy(isRefreshing = true) }
 
-        getProportionsUseCase().collectLatest { list ->
-            if (_state.value is ProportionsUiState.Success) {
-                updateIfSuccess {
-                    it.copy(
-                        proportions = list,
-                        isRefreshing = false
-                    )
+        viewModelScope.launch {
+            getProportionsUseCase().collectLatest { list ->
+                if (_state.value is ProportionsUiState.Success) {
+                    updateIfSuccess {
+                        it.copy(
+                            proportions = list,
+                            isRefreshing = false
+                        )
+                    }
+                } else {
+                    _state.update {
+                        ProportionsUiState.Success(proportions = list, isRefreshing = false)
+                    }
                 }
-            } else {
-                _state.value = ProportionsUiState.Success(
-                    proportions = list, isRefreshing = false
-                )
             }
         }
     }

@@ -26,8 +26,8 @@ fun SwipeTrainingStepCard(
     weightUnit: String,
     onRepChange: (String) -> Unit,
     onWeightChange: (String) -> Unit,
-    deltaRep: Int?,
-    deltaWeight: Int?,
+    deltaRep: Float?,
+    deltaWeight: Float?,
     onRemove: () -> Unit,
     onPlusClick: () -> Unit
 ) {
@@ -69,8 +69,8 @@ private fun TrainingStepCardContent(
     weightUnit: String,
     onRepChange: (String) -> Unit,
     onWeightChange: (String) -> Unit,
-    deltaRep: Int?,
-    deltaWeight: Int?
+    deltaRep: Float?,
+    deltaWeight: Float?
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -83,7 +83,7 @@ private fun TrainingStepCardContent(
             unit = repsUnit,
             modifier = Modifier.weight(1f),
             delta = deltaRep,
-            keyboardType = KeyboardType.Number
+            keyboardType = KeyboardType.Decimal
         )
         CompactUnitField(
             value = weight,

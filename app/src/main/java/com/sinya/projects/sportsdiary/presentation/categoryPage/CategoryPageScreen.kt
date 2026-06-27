@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.categoryPage
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
@@ -35,12 +35,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.domain.enums.TrainingMode
-import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
-import com.sinya.projects.sportsdiary.presentation.categoryPage.components.DragOverlay
-import com.sinya.projects.sportsdiary.presentation.categoryPage.components.ExerciseSheetContent
+import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
+import com.sinya.projects.sportsdiary.presentation.categoryPage.components.CategoryPagePlaceholder
+import com.sinya.projects.sportsdiary.ui.features.DragOverlay
+import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.ExerciseSheetContent
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
-import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.ui.features.CustomButton
 import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.CustomTextField
@@ -51,6 +51,7 @@ import com.sinya.projects.sportsdiary.ui.features.SwipeCardContent
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
 import com.sinya.projects.sportsdiary.ui.features.reorderList.rememberReorderState
+import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.UndoBottomNavigation
 import kotlinx.coroutines.launch
 
 @Composable
@@ -64,18 +65,27 @@ fun CategoryPageScreen(
         }
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val filtered by viewModel.filteredList.collectAsStateWithLifecycle()
 
     when (state) {
-        CategoryPageUiState.Loading -> PlaceholderScreen()
-
-        is CategoryPageUiState.CategoryForm -> CategoryPageView(
-            state = state as CategoryPageUiState.CategoryForm,
-            onEvent = viewModel::onEvent,
-            filtered = viewModel.filtered(),
-            onBackClick = onBackClick
+        CategoryPageUiState.Loading -> CategoryPagePlaceholder(
+            onBackClick = onBackClick,
+            title = "",
         )
 
-        is CategoryPageUiState.Error -> ErrorScreen((state as CategoryPageUiState.Error).errorMessage)
+        is CategoryPageUiState.CategoryForm -> {
+            CategoryPageView(
+                state = state as CategoryPageUiState.CategoryForm,
+                onEvent = viewModel::onEvent,
+                filtered = filtered,
+                onBackClick = onBackClick
+            )
+        }
+
+        is CategoryPageUiState.Error -> ErrorScreen(
+            onBackClick,
+            (state as CategoryPageUiState.Error).errorMessage
+        )
 
         CategoryPageUiState.Success -> {
             LaunchedEffect(Unit) {
@@ -85,6 +95,7 @@ fun CategoryPageScreen(
     }
 }
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryPageView(
@@ -93,6 +104,7 @@ private fun CategoryPageView(
     onEvent: (CategoryPageEvent) -> Unit,
     onBackClick: () -> Unit
 ) {
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -102,9 +114,9 @@ private fun CategoryPageView(
         items = state.item.items,
         scope = scope,
         idProvided = { it.id }
-    ) { from, to -> onEvent(CategoryPageEvent.MoveExercise(from, to)) }
-
-    val context = LocalContext.current
+    ) { from, to ->
+        onEvent(CategoryPageEvent.Undoable(CategoryUndoableAction.MoveExercise(from, to)))
+    }
     val modesFlattened = remember(state.sheetData.items, state.sheetData.modes) {
         state.sheetData.modes.flatMap { mode ->
             mode.categories<Any, Any>(state.sheetData.items, context).map { filter ->
@@ -116,7 +128,7 @@ private fun CategoryPageView(
     LaunchedEffect(state.errorMessage) {
         state.errorMessage?.let { message ->
             snackbarHostState.showSnackbar(
-                message = message,
+                message = context.getString(message),
                 duration = SnackbarDuration.Short
             )
             onEvent(CategoryPageEvent.OnErrorShown)
@@ -161,8 +173,26 @@ private fun CategoryPageView(
                 item {
                     CustomTextField(
                         value = state.item.category.name,
-                        onValueChange = { s -> onEvent(CategoryPageEvent.OnValueChange(s)) },
-                        onTrailingClick = { onEvent(CategoryPageEvent.OnValueChange("")) },
+                        onValueChange = { s ->
+                            onEvent(
+                                CategoryPageEvent.Undoable(
+                                    CategoryUndoableAction.OnValueChange(
+                                        state.item.category.name,
+                                        s
+                                    )
+                                )
+                            )
+                        },
+                        onTrailingClick = {
+                            onEvent(
+                                CategoryPageEvent.Undoable(
+                                    CategoryUndoableAction.OnValueChange(
+                                        state.item.category.name,
+                                        ""
+                                    )
+                                )
+                            )
+                        },
                         placeholder = stringResource(R.string.category_name),
                         shape = MaterialTheme.shapes.extraLarge,
                         keyboardType = KeyboardType.Text,
@@ -177,9 +207,8 @@ private fun CategoryPageView(
 
                 items(
                     items = state.item.items,
-                    key = { it.id }
+                    key = { "${it.id}_${it.mode}" }
                 ) { item ->
-
                     val isDragging = reorderState.draggedItemId == item.id
 
                     SwipeCard(
@@ -206,9 +235,26 @@ private fun CategoryPageView(
                             }
                         ),
                         painter1 = painterResource(R.drawable.cat_change),
-                        onChange = { id -> onEvent(CategoryPageEvent.ToggleMode(item.mode, id)) },
+                        onChange = {
+                            onEvent(
+                                CategoryPageEvent.Undoable(
+                                    CategoryUndoableAction.ToggleMode(
+                                        item.id,
+                                        item.mode
+                                    )
+                                )
+                            )
+                        },
                         onTrainingClick = { onEvent(CategoryPageEvent.OpenDialog(item.id)) },
-                        onDelete = { id -> onEvent(CategoryPageEvent.Delete(id)) },
+                        onDelete = {
+                            onEvent(
+                                CategoryPageEvent.Undoable(
+                                    CategoryUndoableAction.DeleteExercise(
+                                        item,
+                                        state.item.items.indexOfFirst { it == item })
+                                )
+                            )
+                        },
                     )
                 }
 
@@ -220,7 +266,6 @@ private fun CategoryPageView(
                         CustomButton(
                             onClick = {
                                 scope.launch {
-                                    onEvent(CategoryPageEvent.OpenBottomSheetTraining)
                                     scaffoldState.bottomSheetState.expand()
                                 }
                             },
@@ -259,6 +304,16 @@ private fun CategoryPageView(
                     }
                 )
             }
+
+            UndoBottomNavigation(
+                modifier = Modifier
+                    .padding(bottom = 70.dp, start = 16.dp, end = 16.dp),
+                onUndoClick = { onEvent(CategoryPageEvent.Undo) },
+                canUndo = state.canUndo,
+                isUndoing = state.isUndoing,
+                onRedoClick = { onEvent(CategoryPageEvent.Redo) },
+                canRedo = state.canRedo,
+            )
 
             CustomSnackbar(snackbarHostState)
         }

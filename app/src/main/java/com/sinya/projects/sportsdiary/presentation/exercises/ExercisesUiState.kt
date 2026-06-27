@@ -20,6 +20,4 @@ sealed interface ExercisesUiState {
         val deleteDialogId: Int? = null,
         val errorMessage: String? = null
     ) : ExercisesUiState
-
-    data class Error(val message: String) : ExercisesUiState
 }

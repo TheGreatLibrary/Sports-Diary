@@ -41,7 +41,6 @@ fun <T> CustomDropdownMenu(
     title: String,
     selectedItem: T?,
     nameObject: (T) -> String,
-    onOpenMenu: () -> Unit,
     onSelectedCategory: (T?) -> Unit,
     onInfoClick: () -> Unit,
     onPlusClick: (() -> Unit)?
@@ -58,7 +57,6 @@ fun <T> CustomDropdownMenu(
             expanded = expanded,
             onExpandedChange = {
                 expanded = !expanded
-                onOpenMenu()
             }
         ) {
             Row(

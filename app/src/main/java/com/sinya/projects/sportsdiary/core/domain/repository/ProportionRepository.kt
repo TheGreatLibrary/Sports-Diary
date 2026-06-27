@@ -1,21 +1,20 @@
 package com.sinya.projects.sportsdiary.core.domain.repository
 
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.ProportionsDao
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Proportions
-import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.core.domain.model.ProportionDialogContent
 import com.sinya.projects.sportsdiary.core.domain.model.ProportionItem
+import com.sinya.projects.sportsdiary.core.utils.getSortedList
 import com.sinya.projects.sportsdiary.ui.features.DropdownCheckboxItem
 import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartLine
-import com.sinya.projects.sportsdiary.ui.features.chart.utils.ChartColors
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import java.time.LocalDate
-import kotlin.random.Random
 
 interface ProportionRepository {
     // Proportions
@@ -23,11 +22,14 @@ interface ProportionRepository {
     suspend fun deleteProportion(it: Proportions): Result<Int>
 
     // ProportionPage
-    suspend fun getById(id: Int?): Result<ProportionItem>
+
     suspend fun getMeasurementDataById(id: Int): Result<ProportionDialogContent>
     suspend fun insertOrUpdateProportion(entity: ProportionItem): Result<Int>
     suspend fun getMeasurementsList(): Result<List<DropdownCheckboxItem>>
     suspend fun getMeasurementData(list: List<Int>): Result<List<ChartLine>>
+
+    fun observeProportionEntityById(id: Int, locale: String = Locale.current.language): Flow<ProportionItem>
+    fun observeNewProportion(locale: String = Locale.current.language): Flow<ProportionItem>
 }
 
 class ProportionRepositoryImpl @Inject constructor(
@@ -51,40 +53,21 @@ class ProportionRepositoryImpl @Inject constructor(
     }
 
     // ProportionPage
-    override suspend fun getById(id: Int?): Result<ProportionItem> {
-        return try {
-            val locale = Locale.current.language
-
-            if (id == null) {
-                val items = proportionsDao.newProportionsWithPrevData(locale)
-
-                Result.success(
-                    ProportionItem(
-                        id = null,
-                        title = "",
-                        date = LocalDate.now().toString(),
-                        items = items,
-                        focusRequesters = List<FocusRequester>(items.size) { FocusRequester() }
-                    )
-                )
-            } else {
-                val page = proportionsDao.getById(id)
-                    ?: return Result.failure(IllegalStateException("Proportion with id=$id not found"))
-
-                val items = proportionsDao.proportionPage(id, locale)
-
-                Result.success(
-                    ProportionItem(
-                        id = page.id,
-                        title = page.id.toString(),
-                        date = page.date,
-                        items = items,
-                        focusRequesters = List<FocusRequester>(items.size) { FocusRequester() }
-                    )
-                )
+    override fun observeProportionEntityById(id: Int, locale: String): Flow<ProportionItem> {
+        return combine(
+            proportionsDao.getById(id),
+            proportionsDao.proportionPage(id, locale)
+        ) { page, items ->
+            when (page) {
+                null -> throw IllegalStateException("Proportion with id=$id not found")
+                else -> ProportionItem(page.id, page.id.toString(), page.date, items)
             }
-        } catch (e: Exception) {
-            Result.failure(e)
+        }
+    }
+
+    override fun observeNewProportion(locale: String): Flow<ProportionItem> {
+        return proportionsDao.newProportionsWithPrevData(locale).map { items ->
+            ProportionItem(null, "", LocalDate.now().toString(), items)
         }
     }
 
@@ -108,7 +91,8 @@ class ProportionRepositoryImpl @Inject constructor(
 
     override suspend fun getMeasurementsList(): Result<List<DropdownCheckboxItem>> {
         return try {
-            val result = proportionsDao.getMeasurementsTitles(Locale.current.language)
+            val result =
+                proportionsDao.getMeasurementsTitles(Locale.current.language).getSortedList()
             Result.success(result)
         } catch (e: Exception) {
             Result.failure(e)
@@ -119,13 +103,15 @@ class ProportionRepositoryImpl @Inject constructor(
         list: List<Int>,
     ): Result<List<ChartLine>> {
         return try {
-            val raw = proportionsDao.getMeasurementDataList(list).sortedBy { it.xDate }.groupBy { it.id }.map {
-                ChartLine(
-                    id = it.key,
-                    points = it.value,
-                    lineColor = Color.Unspecified
-                )
-            }
+            val raw =
+                proportionsDao.getMeasurementDataList(list).sortedBy { it.date }.groupBy { it.id }
+                    .map {
+                        ChartLine(
+                            id = it.key,
+                            points = it.value,
+                            lineColor = Color.Unspecified
+                        )
+                    }
 
             Result.success(raw)
         } catch (e: Exception) {

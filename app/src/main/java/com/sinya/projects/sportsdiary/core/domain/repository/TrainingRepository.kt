@@ -1,7 +1,6 @@
 package com.sinya.projects.sportsdiary.core.domain.repository
 
 import android.util.Log
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.TrainingsDao
@@ -20,13 +19,11 @@ import com.sinya.projects.sportsdiary.core.domain.model.TrainingEntity
 import com.sinya.projects.sportsdiary.core.domain.model.toItem
 import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartLine
 import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartPoint
-import com.sinya.projects.sportsdiary.ui.features.chart.utils.ChartColors
-import com.sinya.projects.sportsdiary.ui.features.chart.utils.ChartDataUtils
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
-import kotlin.random.Random
 
 interface TrainingRepository {
     // Statistic
@@ -39,7 +36,14 @@ interface TrainingRepository {
     suspend fun deleteTraining(it: Trainings): Result<Int>
 
     // TrainingPage
-    suspend fun getById(id: Int?, date: String?): Result<TrainingEntity>
+    fun observeTrainingEntityById(
+        id: Int,
+        locale: String = Locale.current.language
+    ): Flow<TrainingEntity>
+
+    fun getNewTraining(date: String?): Result<TrainingEntity>
+
+
     suspend fun insertDataTraining(items: List<DataTraining>): Result<Int>
     suspend fun upsertTraining(entity: TrainingEntity): Result<Int>
     suspend fun getSerialNumOfCategory(typeTraining: Int?): Result<String>
@@ -50,7 +54,7 @@ interface TrainingRepository {
 
     // Categories
     suspend fun deleteCategory(it: TypeTraining): Result<Int>
-    fun getCategoriesList(): Flow<List<TypeTraining>>
+    fun observeCategoriesList(): Flow<List<TypeTraining>>
 
     // CategoryPage
 
@@ -120,7 +124,10 @@ class TrainingRepositoryImpl @Inject constructor(
                     val weightArr = item.weight.split('/')
 
                     for (i in countArr.indices) {
-                        totalWeight += countArr[i].toInt() * weightArr[i].toFloat() / if (TrainingMode.getMode(item.mode)==TrainingMode.TIME) 4f else 1f
+                        totalWeight += countArr[i].toInt() * weightArr[i].toFloat() / if (TrainingMode.getMode(
+                                item.mode
+                            ) == TrainingMode.TIME
+                        ) 4f else 1f
                     }
                 }
 
@@ -182,7 +189,7 @@ class TrainingRepositoryImpl @Inject constructor(
                                 state = 1,
                                 mode = TrainingMode.getMode(it.mode),
                                 orderIndex = it.orderIndex,
-                                item = List(4) { setIndex ->
+                                items = List(4) { setIndex ->
                                     ExerciseItemData(
                                         it.id,
                                         index = setIndex,
@@ -203,51 +210,46 @@ class TrainingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getById(id: Int?, date: String?): Result<TrainingEntity> {
-        return try {
-            val locale = Locale.current.language
-
-            if (id == null) {
-                val typeCategory = typeTrainingDao.getById(null)
-
-                val listData =
-                    trainingDao.getExercisesByCategoryIdWithLastData(typeCategory?.id, locale)
-                        .map { it.toItem() }
-
-                Result.success(
-                    TrainingEntity(
-                        id = null,
-                        title = "",
-                        category = typeCategory,
-                        date = date ?: LocalDate.now().toString(),
-                        items = listData
-                    )
-                )
-            } else {
-                val training = trainingDao.getById(id) ?: return Result.failure(
-                    IllegalStateException("Training is not found")
-                )
-
-                val listData = trainingDao.getExerciseDataByTrainingIdWithPrevData(id, locale)
-                    .map { it.toItem() }
-
-                Result.success(
-                    TrainingEntity(
-                        id = training.id,
-                        title = training.name,
-                        category = if (training.categoryId != null) TypeTraining(
-                            training.categoryId,
-                            training.category ?: "not_category"
-                        ) else null,
-                        date = training.date,
-                        items = listData
-                    )
+    override fun observeTrainingEntityById(id: Int, locale: String): Flow<TrainingEntity> {
+        return combine(
+            trainingDao.getById(id),
+            trainingDao.getExerciseDataByTrainingIdWithPrevData(id, locale)
+        ) { training, items ->
+            when(training) {
+                null -> throw IllegalStateException("Training with id=$id not found")
+                else -> TrainingEntity(
+                    id = training.id,
+                    title = training.name,
+                    category = if (training.categoryId != null) TypeTraining(
+                        id = training.categoryId,
+                        name = training.category ?: "not_category"
+                    ) else null,
+                    date = training.date,
+                    items = items.map { it.toItem()}
                 )
             }
-        } catch (e: Exception) {
+        }
+    }
+
+    override fun getNewTraining(date: String?): Result<TrainingEntity> {
+        return try {
+            Result.success(
+                TrainingEntity(
+                    id = null,
+                    title = "",
+                    category = null,
+                    date = date ?: LocalDate.now().toString(),
+                    items = emptyList()
+                )
+            )
+        }
+        catch (e: Exception) {
             Result.failure(e)
         }
     }
+
+
+
 
     override suspend fun insertDataTraining(items: List<DataTraining>): Result<Int> {
         return try {
@@ -290,7 +292,7 @@ class TrainingRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getCategoriesList(): Flow<List<TypeTraining>> {
+    override fun observeCategoriesList(): Flow<List<TypeTraining>> {
         return typeTrainingDao.getList().catch { emit(emptyList()) }
     }
 
@@ -327,7 +329,9 @@ class TrainingRepositoryImpl @Inject constructor(
 
     override suspend fun updateDataCategory(items: List<DataTypeTrainings>): Result<Int> {
         return try {
-            Result.success(typeTrainingDao.insertDataTypeTrainings(items).size)
+            val result = typeTrainingDao.insertDataTypeTrainings(items)
+
+            Result.success(items.first().typeId ?: result.size)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -356,7 +360,10 @@ class TrainingRepositoryImpl @Inject constructor(
                                 val weightArr = it.weight.split('/')
 
                                 for (i in countArr.indices) {
-                                    totalWeight += countArr[i].toInt() * weightArr[i].toFloat() / if (TrainingMode.getMode(it.mode)==TrainingMode.TIME) 4f else 1f
+                                    totalWeight += countArr[i].toInt() * weightArr[i].toFloat() / if (TrainingMode.getMode(
+                                            it.mode
+                                        ) == TrainingMode.TIME
+                                    ) 4f else 1f
                                 }
 
                                 totalWeight /= 1000f

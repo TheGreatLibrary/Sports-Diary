@@ -6,21 +6,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.core.domain.model.ProportionRow
-import com.sinya.projects.sportsdiary.ui.features.HeaderInfo
-import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.CompactUnitField
 import com.sinya.projects.sportsdiary.core.utils.deltaFloat
 import com.sinya.projects.sportsdiary.core.utils.getString
+import com.sinya.projects.sportsdiary.ui.features.HeaderInfo
+import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.CompactUnitField
 
 @Composable
 fun MeasureCard(
     title: String,
     onInfoClick: () -> Unit,
     items: List<ProportionRow>,
-    onValueChange: (Int, String) -> Unit,
+    onValueChange: (Int, String, String) -> Unit,
     context: Context,
 ) {
     Column(
@@ -37,7 +36,7 @@ fun MeasureCard(
                 CompactUnitField(
                     value = item.value,
                     onValueChange = { str ->
-                        onValueChange(item.id, str)
+                        onValueChange(item.id, item.value, str)
                     },
                     unit = context.getString(item.unitMeasure),
                     modifier = Modifier.weight(1f),

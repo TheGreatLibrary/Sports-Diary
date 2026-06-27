@@ -1,9 +1,11 @@
 package com.sinya.projects.sportsdiary.presentation.proportionPage
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -23,15 +25,17 @@ import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.buildMeasureItemsFromKeys
 import com.sinya.projects.sportsdiary.core.utils.getDrawableId
 import com.sinya.projects.sportsdiary.core.utils.getString
+import com.sinya.projects.sportsdiary.core.utils.parseMillisToDateTime
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
-import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.proportionPage.components.MeasureCard
+import com.sinya.projects.sportsdiary.presentation.proportionPage.components.ProportionPagePlaceholder
 import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.DateCard
 import com.sinya.projects.sportsdiary.ui.features.DatePickerModal
 import com.sinya.projects.sportsdiary.ui.features.ScreenLazyColumn
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDescriptionView
 import com.sinya.projects.sportsdiary.ui.features.dialog.GuideDialog
+import com.sinya.projects.sportsdiary.ui.features.trainingConstructor.UndoBottomNavigation
 
 @Composable
 fun ProportionPageScreen(
@@ -46,15 +50,20 @@ fun ProportionPageScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (state) {
-        ProportionPageUiState.Loading -> PlaceholderScreen()
-
-        is ProportionPageUiState.ProportionForm -> ProportionPageView(
+        ProportionPageUiState.Loading -> ProportionPagePlaceholder(
             onBackClick = onBackClick,
-            state = state as ProportionPageUiState.ProportionForm,
-            onEvent = viewModel::onEvent
+            title = stringResource(R.string.measurement),
         )
 
-        is ProportionPageUiState.Error -> ErrorScreen((state as ProportionPageUiState.Error).errorMessage)
+        is ProportionPageUiState.ProportionForm -> {
+            ProportionPageView(
+                onBackClick = onBackClick,
+                state = state as ProportionPageUiState.ProportionForm,
+                onEvent = viewModel::onEvent
+            )
+        }
+
+        is ProportionPageUiState.Error -> ErrorScreen(onBackClick, (state as ProportionPageUiState.Error).errorMessage)
 
         ProportionPageUiState.Success -> {
             LaunchedEffect(Unit) {
@@ -64,6 +73,7 @@ fun ProportionPageScreen(
     }
 }
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 private fun ProportionPageView(
     state: ProportionPageUiState.ProportionForm,
@@ -77,7 +87,7 @@ private fun ProportionPageView(
     LaunchedEffect(state.errorMessage) {
         state.errorMessage?.let { message ->
             snackbarHostState.showSnackbar(
-                message = message,
+                message = context.getString(message),
                 duration = SnackbarDuration.Short
             )
             onEvent(ProportionPageEvent.OnErrorShown)
@@ -110,7 +120,17 @@ private fun ProportionPageView(
                     title = context.getString(item.headerKey),
                     onInfoClick = { onEvent(ProportionPageEvent.OpenDialog(item.infoId)) },
                     items = item.items,
-                    onValueChange = { id, str -> onEvent(ProportionPageEvent.OnChangeValue(id, str)) },
+                    onValueChange = { id, oldValue, value ->
+                        onEvent(
+                            ProportionPageEvent.Undoable(
+                                ProportionUndoableAction.OnValueChange(
+                                    id,
+                                    oldValue,
+                                    value
+                                )
+                            )
+                        )
+                    },
                     context = context,
                 )
             }
@@ -141,10 +161,29 @@ private fun ProportionPageView(
 
         if (state.calendarVisible) {
             DatePickerModal(
-                onDateSelected = { date -> onEvent(ProportionPageEvent.OnPickDate(date)) },
+                onDateSelected = { date ->
+                    onEvent(
+                        ProportionPageEvent.Undoable(
+                            ProportionUndoableAction.OnPickDate(
+                                parseMillisToDateTime(date),
+                                state.item.date
+                            )
+                        )
+                    )
+                },
                 onDismiss = { onEvent(ProportionPageEvent.CalendarState(false)) }
             )
         }
+
+        UndoBottomNavigation(
+            modifier = Modifier
+                .padding(bottom = 40.dp, start = 16.dp, end = 16.dp),
+            onUndoClick = { onEvent(ProportionPageEvent.Undo) },
+            canUndo = state.canUndo,
+            isUndoing = state.isUndoing,
+            onRedoClick = { onEvent(ProportionPageEvent.Redo) },
+            canRedo = state.canRedo,
+        )
 
         CustomSnackbar(snackbarHostState)
     }

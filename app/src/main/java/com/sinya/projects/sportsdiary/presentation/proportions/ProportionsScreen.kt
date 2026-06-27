@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -29,8 +28,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.localDateOrNull
 import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
-import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.proportions.components.ProportionsHeader
+import com.sinya.projects.sportsdiary.presentation.proportions.components.ProportionsPlaceholder
 import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
 import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
@@ -48,14 +47,19 @@ fun ProportionsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (state) {
-        ProportionsUiState.Loading -> PlaceholderScreen()
-
-        is ProportionsUiState.Success -> ProportionsScreenView(
-            state = state as ProportionsUiState.Success,
-            onEvent = viewModel::onEvent,
+        ProportionsUiState.Loading -> ProportionsPlaceholder(
             onBackClick = onBackClick,
-            onProportionClick = onProportionClick
+            title = ""
         )
+
+        is ProportionsUiState.Success -> {
+            ProportionsScreenView(
+                state = state as ProportionsUiState.Success,
+                onEvent = viewModel::onEvent,
+                onBackClick = onBackClick,
+                onProportionClick = onProportionClick
+            )
+        }
     }
 }
 

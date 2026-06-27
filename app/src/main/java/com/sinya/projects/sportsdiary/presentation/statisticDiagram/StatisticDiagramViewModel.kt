@@ -126,13 +126,11 @@ class StatisticDiagramViewModel @Inject constructor(
             onFailure = { error -> handleError(error) }
         )
     }
-
     private fun handleError(error: Throwable) {
         updateIfSuccess {
             it.copy(errorMessage = error.getErrorMessage())
         }
     }
-
     private fun updateIfSuccess(transform: (StatisticDiagramUiState.Success) -> StatisticDiagramUiState.Success) {
         _state.update { currentState ->
             if (currentState is StatisticDiagramUiState.Success) {

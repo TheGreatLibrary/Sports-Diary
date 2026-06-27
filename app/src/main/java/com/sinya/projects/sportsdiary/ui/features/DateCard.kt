@@ -35,10 +35,10 @@ fun DateCard(
             style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp),
             color = MaterialTheme.colorScheme.onSecondary
         )
-        AnimationIcon(
+        RoundedIcon(
             onClick = onDateClick,
             painter = painterResource(R.drawable.ic_calendar),
-            size = 28.dp,
+            size = 25.dp,
             selectedContainerColor = Color.Transparent
         )
     }

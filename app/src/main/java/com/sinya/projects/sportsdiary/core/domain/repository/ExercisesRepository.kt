@@ -1,6 +1,5 @@
 package com.sinya.projects.sportsdiary.core.domain.repository
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.ExercisesDao
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.CategoryTranslation
@@ -11,17 +10,17 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Exercises
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.ForceTranslation
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.LevelTranslation
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.MechanicTranslation
+import com.sinya.projects.sportsdiary.core.domain.model.ExerciseDialogContent
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseMusclesData
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithFullData
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
 import com.sinya.projects.sportsdiary.ui.features.DropdownCheckboxItem
-import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartLine
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
-import kotlin.random.Random
+import kotlin.collections.map
 
 interface ExercisesRepository {
     // Exercises
@@ -37,10 +36,15 @@ interface ExercisesRepository {
         language: String = Locale.current.language
     ): Flow<List<ExerciseMusclesData>>
 
-    fun getExerciseById(
+    fun observeExerciseById(
         id: Int,
         language: String = Locale.current.language
     ): Flow<ExerciseWithFullData>
+
+    suspend fun getExerciseById(
+        id: Int,
+        language: String = Locale.current.language
+    ): Result<ExerciseDialogContent>
 
 
     // ExercisePage (EditForm)
@@ -59,6 +63,7 @@ interface ExercisesRepository {
     suspend fun getCategories(language: String = Locale.current.language): Result<List<CategoryTranslation>>
     suspend fun getMuscles(language: String = Locale.current.language): Result<List<ExerciseMusclesData>>
     suspend fun getExercises(language: String = Locale.current.language): Result<List<DropdownCheckboxItem>>
+    suspend fun getExercisesWithTranslations(language: String = Locale.current.language): Result<List<ExerciseWithMuscles>>
 }
 
 class ExercisesRepositoryImpl @Inject constructor(
@@ -70,7 +75,7 @@ class ExercisesRepositoryImpl @Inject constructor(
     override fun observeExerciseTranslations(language: String): Flow<List<ExerciseWithMuscles>> {
         return exercisesDao.observeExerciseList(language)
             .combine(
-                exercisesDao.getMusclesForAllExercises(language)
+                exercisesDao.observeMusclesForAllExercises(language)
             ) { exercises, muscles ->
                 val allMusclesMap = muscles.groupBy { it.exerciseId }
 
@@ -107,11 +112,25 @@ class ExercisesRepositoryImpl @Inject constructor(
 
     // ExercisePage and TrainingPage
 
-    override fun getExerciseById(id: Int, language: String): Flow<ExerciseWithFullData> {
-        return exercisesDao.getExerciseById(id, language)
+    override fun observeExerciseById(id: Int, language: String): Flow<ExerciseWithFullData> {
+        return exercisesDao.observeExerciseById(id, language)
     }
 
-    override fun getExerciseMusclesById(id: Int, language: String): Flow<List<ExerciseMusclesData>> {
+    override suspend fun getExerciseById(
+        id: Int,
+        language: String
+    ): Result<ExerciseDialogContent> {
+        return try {
+            Result.success(exercisesDao.getExerciseById(id, language))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override fun getExerciseMusclesById(
+        id: Int,
+        language: String
+    ): Flow<List<ExerciseMusclesData>> {
         return exercisesDao.getExerciseMuscleById(id, language)
             .onStart { emit(emptyList()) }
             .catch { emit(emptyList()) }
@@ -184,6 +203,32 @@ class ExercisesRepositoryImpl @Inject constructor(
         return try {
             val result = exercisesDao.getExercisesTitles(language)
             Result.success(result)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getExercisesWithTranslations(language: String): Result<List<ExerciseWithMuscles>> {
+        return try {
+            val exercises = exercisesDao.getExerciseList(language)
+            val muscles = exercisesDao.getMusclesForAllExercises(language)
+
+            val allMusclesMap = muscles.groupBy { it.exerciseId }
+
+
+            Result.success(exercises.map { exercise ->
+                ExerciseWithMuscles(
+                    id = exercise.id,
+                    name = exercise.name,
+                    isCustom = exercise.isCustom,
+                    level = exercise.level,
+                    equipment = exercise.equipment,
+                    category = exercise.category,
+                    muscles = allMusclesMap[exercise.id]
+                        ?.map { it.name }
+                        ?: emptyList()
+                )
+            })
         } catch (e: Exception) {
             Result.failure(e)
         }

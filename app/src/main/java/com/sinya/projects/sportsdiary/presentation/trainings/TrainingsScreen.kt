@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -29,8 +28,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.domain.model.localDateOrNull
-import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
 import com.sinya.projects.sportsdiary.presentation.trainings.components.TrainingsHeader
+import com.sinya.projects.sportsdiary.presentation.trainings.components.TrainingsPlaceholder
 import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.SwipeCard
 import com.sinya.projects.sportsdiary.ui.features.dialog.DeleteDialogView
@@ -48,14 +47,19 @@ fun TrainingsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (state) {
-        TrainingUiState.Loading -> PlaceholderScreen()
-
-        is TrainingUiState.Success -> TrainingsScreenView(
-            state = state as TrainingUiState.Success,
-            onEvent = viewModel::onEvent,
+        TrainingUiState.Loading -> TrainingsPlaceholder(
             onBackClick = onBackClick,
-            onTrainingClick = onTrainingClick
+            title = stringResource(R.string.trainings_title)
         )
+
+        is TrainingUiState.Success -> {
+            TrainingsScreenView(
+                state = state as TrainingUiState.Success,
+                onEvent = viewModel::onEvent,
+                onBackClick = onBackClick,
+                onTrainingClick = onTrainingClick
+            )
+        }
     }
 }
 

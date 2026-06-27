@@ -19,7 +19,6 @@ import com.sinya.projects.sportsdiary.ui.features.chart.model.AxisData
 import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartState
 import com.sinya.projects.sportsdiary.ui.features.chart.utils.ChartDataUtils
 import com.sinya.projects.sportsdiary.ui.features.chart.utils.calculateChartState
-import kotlin.math.roundToInt
 
 @Composable
 fun MultipleChart(

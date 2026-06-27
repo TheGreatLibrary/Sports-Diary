@@ -62,7 +62,7 @@ interface ProportionsDao {
       WHERE d.proportion_id = :id AND language = :locale
       ORDER BY t.id
     """)
-    suspend fun proportionPage(id: Int, locale: String): List<ProportionRow>
+    fun proportionPage(id: Int, locale: String): Flow<List<ProportionRow>>
 
     @Query("""
         SELECT 
@@ -78,10 +78,10 @@ interface ProportionsDao {
         WHERE  language = :language
         ORDER BY t.id
     """)
-    suspend fun newProportionsWithPrevData(language: String): List<ProportionRow>
+    fun newProportionsWithPrevData(language: String): Flow<List<ProportionRow>>
 
     @Query("SELECT * FROM proportions WHERE id = :id")
-    suspend fun getById(id: Int): Proportions?
+    fun getById(id: Int): Flow<Proportions?>
 
     @Transaction
     suspend fun insertOrUpdate(item: ProportionItem): Int {
@@ -139,7 +139,7 @@ interface ProportionsDao {
         FROM type_proportions t
         JOIN type_proportion_translations tpt ON t.id = tpt.type_id
         WHERE language = :locale
-        ORDER BY tpt.name
+        ORDER BY t.id
     """)
     suspend fun getMeasurementsTitles(locale: String) : List<DropdownCheckboxItem>
     @Query("""
@@ -147,10 +147,14 @@ interface ProportionsDao {
             p.type_id AS id,
             value AS yValue,
             p.proportion_id AS xDate,
-            '' as date
+             COALESCE(
+            strftime('%Y-%m-%d', pr.date),
+            strftime('%Y-%m-%d', 'now','localtime')
+        ) AS date
         FROM proportions pr 
         JOIN data_proportions p ON pr.id = p.proportion_id
         WHERE p.type_id IN (:id)
+        ORDER BY date
     """)
     suspend fun getMeasurementDataList(id: List<Int>) : List<ChartPoint>
 }

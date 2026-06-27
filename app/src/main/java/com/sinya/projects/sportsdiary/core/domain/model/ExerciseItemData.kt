@@ -37,9 +37,9 @@ fun List<ExerciseItemData>.toColoringRepsList(): List<Pair<String, Color>> {
 @Composable
 fun List<ExerciseItemData>.toColoringWeightList(): List<Pair<String, Color>> {
     return map {
-        val delta = (deltaFloat(it.weight, it.prevWeight) ?: 0)
-        val currentColor = if (delta > 0) MaterialTheme.colorScheme.primary
-        else if (delta < 0) MaterialTheme.colorScheme.secondary
+        val delta = (deltaFloat(it.weight, it.prevWeight) ?: 0f)
+        val currentColor = if (delta > 0f) MaterialTheme.colorScheme.primary
+        else if (delta < 0f) MaterialTheme.colorScheme.secondary
         else MaterialTheme.colorScheme.onPrimary
 
         Pair(

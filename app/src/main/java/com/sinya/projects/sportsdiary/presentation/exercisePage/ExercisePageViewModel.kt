@@ -2,7 +2,7 @@ package com.sinya.projects.sportsdiary.presentation.exercisePage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.sportsdiary.core.domain.useCase.GetExerciseDescriptionUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.ObserveExerciseDescriptionUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.GetExerciseMusclesUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = ExercisePageViewModel.Factory::class)
 class ExercisePageViewModel @AssistedInject constructor(
     @Assisted("id") val id: Int?,
-    private val getExerciseDescriptionUseCase: GetExerciseDescriptionUseCase,
+    private val getExerciseDescriptionUseCase: ObserveExerciseDescriptionUseCase,
     private val getExerciseMusclesUseCase: GetExerciseMusclesUseCase,
 ) : ViewModel() {
 
@@ -53,5 +53,4 @@ class ExercisePageViewModel @AssistedInject constructor(
             _state.value = state
         }
     }
-
 }

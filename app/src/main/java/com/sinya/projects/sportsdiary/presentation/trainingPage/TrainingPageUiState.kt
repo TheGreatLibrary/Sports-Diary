@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage
 
+import androidx.annotation.StringRes
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.TypeTraining
 import com.sinya.projects.sportsdiary.core.domain.model.BottomSheetCategoryData
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseDialogContent
@@ -15,7 +16,6 @@ sealed interface TrainingPageUiState {
         val categories: List<TypeTraining?> = emptyList(),
         val items: List<ExerciseWithMuscles> = emptyList(),
         val calendarVisible: Boolean = false,
-        val trainingWarningState: Boolean,
         val modes: List<ModeOfSorting> = listOf(
             ModeOfSorting.Level(),
             ModeOfSorting.Category(),
@@ -24,9 +24,13 @@ sealed interface TrainingPageUiState {
         ),
         val bottomSheetCategoryStatus: BottomSheetCategoryData? = null,
         val bottomSheetTrainingQuery: String? = "",
-        val deleteDialogId: Int? = null,
+        val hasUnsavedChanges: Boolean = true,
+        val isSaving: Boolean = false,
         val dialogContent: ExerciseDialogContent? = null,
-        val errorMessage: String? = null
+        val isUndoing: Boolean = false,
+        val canUndo: Boolean = false,
+        val canRedo: Boolean = false,
+        @StringRes val errorMessage: Int? = null
     ) : TrainingPageUiState
 
     data object Success : TrainingPageUiState

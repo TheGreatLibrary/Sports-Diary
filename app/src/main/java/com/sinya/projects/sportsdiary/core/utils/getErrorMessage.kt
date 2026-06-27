@@ -1,13 +1,15 @@
 package com.sinya.projects.sportsdiary.core.utils
 
+import com.sinya.projects.sportsdiary.R
+import com.sinya.projects.sportsdiary.core.domain.error.EmptyTitleError
+import com.sinya.projects.sportsdiary.core.domain.error.SavedChanges
+import com.sinya.projects.sportsdiary.core.domain.error.SavingProcess
+import com.sinya.projects.sportsdiary.core.domain.error.TitleExistedError
+
 fun Throwable.getErrorMessage(): Int = when (this) {
-    else -> 1
-//    is DefinitionNotFoundException -> R.string.error_definition_not_found
-//    is InvalidNicknameException -> R.string.error_invalid_nickname
-//    is NoInternetException -> R.string.error_no_internet
-//    is UserHasNotProfileException -> R.string.error_no_profile
-//    is UserNotAuthenticatedException -> R.string.error_not_authenticated
-//    is WordNotFoundException -> R.string.error_word_not_found
-//    is SessionRestoreException -> R.string.error_session_restore
-//    else -> R.string.error_unknown
+    is SavedChanges -> R.string.saved
+    is SavingProcess -> R.string.saving
+    is EmptyTitleError -> R.string.title_is_empty
+    is TitleExistedError -> R.string.title_already_existed
+    else -> R.string.error_unknown
 }

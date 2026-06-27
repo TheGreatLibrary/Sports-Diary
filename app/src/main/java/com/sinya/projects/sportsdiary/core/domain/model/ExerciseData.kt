@@ -43,7 +43,7 @@ fun ExerciseData.toItem(): ExerciseItem {
         title = this.title,
         state = this.state,
         orderIndex = this.orderIndex,
-        item = items,
+        items = items,
         mode = TrainingMode.getMode(this.mode)
     )
 }

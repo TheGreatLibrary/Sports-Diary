@@ -1,6 +1,7 @@
 package com.sinya.projects.sportsdiary.core.utils
 
 import com.sinya.projects.sportsdiary.core.domain.enums.Side
+import com.sinya.projects.sportsdiary.ui.features.DropdownCheckboxItem
 
 fun parseGroup(nameKey: String): Pair<String, Side> = when {
     nameKey.endsWith(" Left") -> nameKey.removeSuffix(" Left") to Side.LEFT
@@ -15,3 +16,29 @@ fun parseGroup(nameKey: String): Pair<String, Side> = when {
     else -> nameKey to Side.NONE
 }
 
+fun List<DropdownCheckboxItem>.getSortedList() : List<DropdownCheckboxItem> {
+    val rules = listOf(" Left", " Right", " левый", " левое", " левая", " правая", " правый", " правое")
+    val measuresWithDescription = mutableSetOf<DropdownCheckboxItem>()
+    val measuresBased = mutableSetOf<DropdownCheckboxItem>()
+
+    this.forEach { item ->
+        rules.forEach {
+            if (item.title.contains(it)) {
+                measuresWithDescription.add(item)
+                return@forEach
+            }
+        }
+    }
+    val measuresAnother = this - measuresWithDescription
+
+    measuresAnother.forEach { item ->
+        measuresWithDescription.forEach { newItem ->
+            if (newItem.title.contains(item.title)) {
+                measuresBased.add(item)
+                return@forEach
+            }
+        }
+    }
+
+    return (this-measuresBased).toList()
+}

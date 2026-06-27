@@ -21,12 +21,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,57 +37,25 @@ fun CompactUnitField(
     value: String,
     onValueChange: (String) -> Unit,
     unit: String,
-    delta: Int?,
+    delta: Float?,
     keyboardType: KeyboardType,
     modifier: Modifier = Modifier,
 ) {
+    var textFieldValue by remember(value) {
+        mutableStateOf(TextFieldValue(value, selection = TextRange(value.length)))
+    }
     var focused by remember { mutableStateOf(false) }
     val interaction = remember { MutableInteractionSource() }
 
     BasicTextField(
-        value = value,
-        onValueChange = { s ->
-            when (keyboardType) {
-                KeyboardType.Decimal -> {
-                    val norm = s.replace(',', '.')
-                    val filtered = buildString {
-                        var dotSeen = false
-                        for (ch in norm) {
-                            when {
-                                ch.isDigit() -> append(ch)
-                                ch == '.' && !dotSeen -> { append(ch); dotSeen = true }
-                                else -> Unit
-                            }
-                        }
-                    }
-
-                    // Убираем ведущие нули, кроме случаев "0" и "0."
-                    val cleaned = when {
-                        filtered.isEmpty() -> filtered
-                        filtered == "0" -> filtered
-                        filtered.startsWith("0.") -> filtered
-                        filtered.startsWith("0") -> filtered.trimStart('0').ifEmpty { "0" }
-                        else -> filtered
-                    }
-
-                    onValueChange(cleaned)
-                }
-                KeyboardType.Number -> {
-                    val filtered = s.filter { it.isDigit() }
-
-                    // Убираем ведущие нули
-                    val cleaned = if (filtered.startsWith("0") && filtered.length > 1) {
-                        filtered.trimStart('0').ifEmpty { "0" }
-                    } else {
-                        filtered
-                    }
-
-                    onValueChange(cleaned)
-                }
-                else -> {
-                    onValueChange(s)
-                }
+        value = textFieldValue,
+        onValueChange = { newValue ->
+            textFieldValue = newValue
+            val filtered = filterInput(newValue.text, keyboardType)
+            if (filtered != textFieldValue.text) {
+                textFieldValue = TextFieldValue(filtered, selection = TextRange(filtered.length))
             }
+            onValueChange(filtered)
         },
         singleLine = true,
         textStyle = MaterialTheme.typography.bodyLarge.copy(
@@ -102,7 +70,14 @@ fun CompactUnitField(
         modifier = modifier
             .height(40.dp)
             .background(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.small)
-            .onFocusChanged { focused = it.isFocused },
+            .onFocusChanged {
+                focused = it.isFocused
+                if (it.isFocused) {
+                    textFieldValue = textFieldValue.copy(
+                        selection = TextRange(textFieldValue.text.length)
+                    )
+                }
+            },
         decorationBox = { inner ->
             TextFieldDefaults.DecorationBox(
                 value = value,
@@ -133,4 +108,34 @@ fun CompactUnitField(
             )
         }
     )
+}
+
+private fun filterInput(s: String, keyboardType: KeyboardType): String = when (keyboardType) {
+    KeyboardType.Decimal -> {
+        val norm = s.replace(',', '.')
+        val filtered = buildString {
+            var dotSeen = false
+            for (ch in norm) {
+                when {
+                    ch.isDigit() -> append(ch)
+                    ch == '.' && !dotSeen -> { append(ch); dotSeen = true }
+                    else -> Unit
+                }
+            }
+        }
+        when {
+            filtered.isEmpty() -> filtered
+            filtered == "0" -> filtered
+            filtered.startsWith("0.") -> filtered
+            filtered.startsWith("0") -> filtered.trimStart('0').ifEmpty { "0" }
+            else -> filtered
+        }
+    }
+    KeyboardType.Number -> {
+        val filtered = s.filter { it.isDigit() }
+        if (filtered.startsWith("0") && filtered.length > 1)
+            filtered.trimStart('0').ifEmpty { "0" }
+        else filtered
+    }
+    else -> s
 }

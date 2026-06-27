@@ -38,9 +38,7 @@ class TrainingViewModel @Inject constructor(
 
             is TrainingEvent.SortParamChange -> {
                 updateIfSuccess {
-                    it.copy(
-                        selectedMode = it.selectedMode.apply(event.param)
-                    )
+                    it.copy(selectedMode = it.selectedMode.apply(event.param))
                 }
             }
 
@@ -54,8 +52,8 @@ class TrainingViewModel @Inject constructor(
         }
     }
 
-    private fun delete() = viewModelScope.launch {
-        val currentState = _state.value as? TrainingUiState.Success ?: return@launch
+    private fun delete() {
+        val currentState = _state.value as? TrainingUiState.Success ?: return
 
         currentState.deleteDialogId?.let { id ->
             val item: Trainings = currentState.trainings.first { id == it.id }.let { item ->
@@ -67,35 +65,38 @@ class TrainingViewModel @Inject constructor(
                 )
             }
 
-            deleteTrainingUseCase(item).fold(
-                onSuccess = {
-                    updateIfSuccess { it.copy(deleteDialogId = null) }
-                },
-                onFailure = { error ->
-                    updateIfSuccess { it.copy(errorMessage = error.toString()) }
-                }
-            )
+            viewModelScope.launch {
+                deleteTrainingUseCase(item).fold(
+                    onSuccess = {
+                        updateIfSuccess { it.copy(deleteDialogId = null) }
+                    },
+                    onFailure = { error ->
+                        updateIfSuccess { it.copy(errorMessage = error.toString()) }
+                    }
+                )
+            }
         }
     }
-
-    private fun loadData() = viewModelScope.launch {
+    private fun loadData() {
         updateIfSuccess { it.copy(isRefreshing = true) }
 
-        getTrainingUseCase().collectLatest { list ->
-            if (_state.value is TrainingUiState.Success) {
-                updateIfSuccess {
-                    it.copy(
-                        trainings = list,
-                        isRefreshing = false
-                    )
+        viewModelScope.launch {
+            getTrainingUseCase().collectLatest { list ->
+                if (_state.value is TrainingUiState.Success) {
+                    updateIfSuccess {
+                        it.copy(
+                            trainings = list,
+                            isRefreshing = false
+                        )
+                    }
+                } else {
+                    _state.update {
+                        TrainingUiState.Success(trainings = list, isRefreshing = false)
+                    }
                 }
-            }
-            else {
-                _state.value = TrainingUiState.Success(trainings = list, isRefreshing = false)
             }
         }
     }
-
     private fun updateIfSuccess(transform: (TrainingUiState.Success) -> TrainingUiState.Success) {
         _state.update { currentState ->
             if (currentState is TrainingUiState.Success) {

@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.domain.enums.TrainingMode
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItem
-import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
+import com.sinya.projects.sportsdiary.ui.features.RoundedIcon
 import com.sinya.projects.sportsdiary.ui.features.SwipeCardBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +38,7 @@ fun SwipeTrainingCard(
     item: ExerciseItem,
     onInfoClick: (Int) -> Unit,
     onPlusClick: (Int) -> Unit,
-    onMinusClick: (Int) -> Unit,
+    onMinusClick: () -> Unit,
     onEditSet: (Int, Int, String?, Boolean) -> Unit,
     onDeleteSet: (Int, Int) -> Unit,
     onModeClick: (TrainingMode, Int) -> Unit,
@@ -52,7 +53,7 @@ fun SwipeTrainingCard(
         state = rememberSwipeToDismissBoxState(
             confirmValueChange = {
                 if (it == SwipeToDismissBoxValue.EndToStart) {
-                    onMinusClick(item.id)
+                    onMinusClick()
                 }
                 false
             }
@@ -115,7 +116,7 @@ fun SwipeTrainingCardContent(
             id = item.id,
             expanded = expanded,
             onExpanded = onExpanded,
-            items = item.item,
+            items = item.items,
             repsUnit = when(item.mode) {
                 TrainingMode.COUNT -> stringResource(R.string.count)
                 TrainingMode.TIME -> stringResource(R.string.second)
@@ -148,35 +149,43 @@ fun HeaderTraining(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        AnimationIcon(
-            onClick = onModeClick,
-            painter = when(mode) {
-                TrainingMode.COUNT -> painterResource(R.drawable.train_muscul)
-                TrainingMode.TIME -> painterResource(R.drawable.train_time)
-            },
-            description = "mode",
-            isSelected = true,
-            size = 25.dp,
-            selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-        AnimationIcon(
-            onClick = onVisibleClick,
-            painter = iconEye,
-            description = "eye",
-            isSelected = true,
-            size = 25.dp,
-            selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-        AnimationIcon(
-            onClick = onInfoClick,
-            painter = painterResource(R.drawable.ic_info),
-            description = "Info",
-            isSelected = true,
-            size = 25.dp,
-            selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
+        Row(
+            modifier = Modifier
+                .background(
+                    MaterialTheme.colorScheme.secondaryContainer,
+                    MaterialTheme.shapes.extraLarge
+                )
+        ) {
+            RoundedIcon(
+                onClick = onModeClick,
+                painter = when (mode) {
+                    TrainingMode.COUNT -> painterResource(R.drawable.train_muscul)
+                    TrainingMode.TIME -> painterResource(R.drawable.train_time)
+                },
+                description = "mode",
+                isSelected = true,
+                size = 25.dp,
+                selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
+            )
+            RoundedIcon(
+                onClick = onVisibleClick,
+                painter = iconEye,
+                description = "eye",
+                isSelected = true,
+                size = 25.dp,
+                selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
+            )
+            RoundedIcon(
+                onClick = onInfoClick,
+                painter = painterResource(R.drawable.ic_info),
+                description = "Info",
+                isSelected = true,
+                size = 25.dp,
+                selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
+            )
+        }
     }
 }

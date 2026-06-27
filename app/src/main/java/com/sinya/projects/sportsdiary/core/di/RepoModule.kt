@@ -1,5 +1,7 @@
 package com.sinya.projects.sportsdiary.core.di
 
+import com.sinya.projects.sportsdiary.core.domain.repository.CategoryRepository
+import com.sinya.projects.sportsdiary.core.domain.repository.CategoryRepositoryImpl
 import com.sinya.projects.sportsdiary.core.domain.repository.ExercisesRepository
 import com.sinya.projects.sportsdiary.core.domain.repository.ExercisesRepositoryImpl
 import com.sinya.projects.sportsdiary.core.domain.repository.MorningRepository
@@ -40,4 +42,10 @@ abstract class RepoModule {
     abstract fun bindMorningRepository(
         impl: MorningRepositoryImpl
     ) : MorningRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCategoryRepository(
+        impl: CategoryRepositoryImpl
+    ) : CategoryRepository
 }

@@ -27,9 +27,8 @@ import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItemData
 import com.sinya.projects.sportsdiary.core.domain.model.coloringText
 import com.sinya.projects.sportsdiary.core.domain.model.toColoringRepsList
 import com.sinya.projects.sportsdiary.core.domain.model.toColoringWeightList
-import com.sinya.projects.sportsdiary.ui.features.SummaryPill
 import com.sinya.projects.sportsdiary.core.utils.deltaFloat
-import com.sinya.projects.sportsdiary.core.utils.deltaInt
+import com.sinya.projects.sportsdiary.ui.features.SummaryPill
 
 @Composable
 fun TrainingCardContent(
@@ -146,7 +145,7 @@ private fun ExpandedSetsList(
                     weightUnit = weightUnit,
                     onRepChange = { new -> onEditSet(id, index, new, true) },
                     onWeightChange = { new -> onEditSet(id, index, new, false) },
-                    deltaRep = deltaInt(rep.count, rep.prevCount),
+                    deltaRep = deltaFloat(rep.count, rep.prevCount),
                     deltaWeight = deltaFloat(rep.weight, rep.prevWeight),
                     onRemove = { onDeleteSet(id, index) },
                     onPlusClick = { onPlusClick(rep.exerciseId) }

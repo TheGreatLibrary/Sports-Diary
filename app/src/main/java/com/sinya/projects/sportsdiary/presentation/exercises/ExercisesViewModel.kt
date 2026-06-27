@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseWithMuscles
 import com.sinya.projects.sportsdiary.core.domain.model.SortParam
 import com.sinya.projects.sportsdiary.core.domain.useCase.DeleteCustomExerciseUseCase
-import com.sinya.projects.sportsdiary.core.domain.useCase.GetExerciseWithSortedDataUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.ObserveExerciseWithSortedDataUseCase
 import com.sinya.projects.sportsdiary.core.utils.searchByTerms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ExercisesViewModel @Inject constructor(
-    private val getExerciseWithSortedDataUseCase: GetExerciseWithSortedDataUseCase,
+    private val getExerciseWithSortedDataUseCase: ObserveExerciseWithSortedDataUseCase,
     private val deleteCustomExerciseUseCase: DeleteCustomExerciseUseCase
 ) : ViewModel() {
 

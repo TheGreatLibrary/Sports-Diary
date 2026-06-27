@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.navigation.ScreenRoute
 import com.sinya.projects.sportsdiary.ui.features.AnimationCard
-import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
+import com.sinya.projects.sportsdiary.ui.features.RoundedIcon
 
 @Composable
 fun HomeCard(
@@ -51,10 +51,10 @@ fun HomeCard(
                     overflow = TextOverflow.Ellipsis
                 )
                 onPlusClick?.let {
-                    AnimationIcon(
+                    RoundedIcon(
                         onClick = it,
                         painter = painterResource(R.drawable.ic_plus),
-                        size = 18.dp,
+                        size = 25.dp,
                         isSelected = true,
                         selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         unselectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,

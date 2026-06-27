@@ -1,5 +1,6 @@
 package com.sinya.projects.sportsdiary.presentation.proportionPage
 
+import androidx.annotation.StringRes
 import com.sinya.projects.sportsdiary.core.domain.model.ProportionDialogContent
 import com.sinya.projects.sportsdiary.core.domain.model.ProportionItem
 
@@ -10,7 +11,12 @@ sealed interface ProportionPageUiState {
         val item: ProportionItem,
         val dialogContent: ProportionDialogContent? = null,
         val calendarVisible: Boolean = false,
-        val errorMessage: String? = null
+        val hasUnsavedChanges: Boolean = false,
+        val isSaving: Boolean = false,
+        val isUndoing: Boolean = false,
+        val canUndo: Boolean = false,
+        val canRedo: Boolean = false,
+        @StringRes val errorMessage: Int? = null
     ) : ProportionPageUiState
 
     data object Success : ProportionPageUiState

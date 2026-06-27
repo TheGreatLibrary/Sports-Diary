@@ -29,9 +29,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
-import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetNote.MorningNoteSheet
-import com.sinya.projects.sportsdiary.presentation.morningExercises.modalSheetPlan.MorningPlanSheet
-import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.presentation.morningExercises.composable.MorningExercisesPlaceholder
+import com.sinya.projects.sportsdiary.sheets.modalSheetNote.MorningNoteSheet
+import com.sinya.projects.sportsdiary.sheets.modalSheetPlan.MorningPlanSheet
 import com.sinya.projects.sportsdiary.ui.features.CardWithArrow
 import com.sinya.projects.sportsdiary.ui.features.ScaffoldBottomSheet
 import com.sinya.projects.sportsdiary.ui.features.ScreenColumn
@@ -45,14 +45,20 @@ fun MorningExercisesScreen(
     val state by vm.state.collectAsStateWithLifecycle()
 
     when (state) {
-        is MorningExercisesUiState.Loading -> PlaceholderScreen()
-        is MorningExercisesUiState.Success -> MorningExercisesView(
-            state = state as MorningExercisesUiState.Success,
-            onEvent = vm::onEvent,
-            onBackClick = onBackClick
+        is MorningExercisesUiState.Loading -> MorningExercisesPlaceholder(
+            onBackClick = onBackClick,
+            title = stringResource(R.string.morning_exercises_title)
         )
+        is MorningExercisesUiState.Success -> {
+            MorningExercisesView(
+                state = state as MorningExercisesUiState.Success,
+                onEvent = vm::onEvent,
+                onBackClick = onBackClick
+            )
+        }
 
         is MorningExercisesUiState.Error -> ErrorScreen(
+            onBackClick,
             (state as MorningExercisesUiState.Error).message
         )
     }
@@ -95,8 +101,7 @@ private fun MorningExercisesView(
                 MorningNoteSheet(
                     onDismiss = { onEvent(MorningExercisesEvent.OnNoteExpanded(false)) }
                 )
-            }
-            else if (state.planExpanded) {
+            } else if (state.planExpanded) {
                 MorningPlanSheet(
                     onDismiss = { onEvent(MorningExercisesEvent.OnPlanExpanded(false)) }
                 )

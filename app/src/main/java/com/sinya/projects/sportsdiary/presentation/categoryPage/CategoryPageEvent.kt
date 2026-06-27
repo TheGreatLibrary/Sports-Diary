@@ -1,16 +1,9 @@
 package com.sinya.projects.sportsdiary.presentation.categoryPage
 
-import com.sinya.projects.sportsdiary.core.domain.enums.TrainingMode
 import com.sinya.projects.sportsdiary.core.domain.model.ModeOfSorting
 
 sealed interface CategoryPageEvent {
-    data object OpenBottomSheetTraining : CategoryPageEvent
-    data class Delete(val id: Int) : CategoryPageEvent
-    data class OnValueChange(val name: String) : CategoryPageEvent
     data class OpenDialog(val id: Int?) : CategoryPageEvent
-
-    data class UpdateListTraining(val id: Int?) : CategoryPageEvent
-    data class MoveExercise(val from: Int, val to: Int) : CategoryPageEvent
     data object AddExercise : CategoryPageEvent
     data class OnQueryChange(val name: String) : CategoryPageEvent
     data class Toggle(val id: Int): CategoryPageEvent
@@ -18,6 +11,10 @@ sealed interface CategoryPageEvent {
 
     data object OnErrorShown : CategoryPageEvent
     data object Save : CategoryPageEvent
-    data class ToggleMode(val mode: Int, val id: Int) : CategoryPageEvent
+
+    data object Undo : CategoryPageEvent
+
+    data class Undoable(val action: CategoryUndoableAction) : CategoryPageEvent
+    data object Redo: CategoryPageEvent
 
 }

@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Gymble</string>
 
+    <!-- Ошибки -->
+    <string name="saving">Сохранение…</string>
+    <string name="saved">Сохранено</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+    <string name="error_title">Ошибка</string>
+
     <!-- виджет -->
     <string name="calendar_widget_description">Удобная отметка о выполнении зарядок с экрана телефона</string>
     <string name="monday_16_2026">Понедельник, 16 февраль 2026</string>
@@ -79,7 +85,11 @@
     <string name="interface_block">Интерфейс</string>
     <string name="language_title">Язык</string>
     <string name="theme_title">Тема</string>
-    <string name="warning_dialog_title">Предупреждение перед удалением</string>
+    <string name="app_block">Приложение</string>
+    <string name="copy_errors">Копировать логи ошибок</string>
+    <string name="send_to_support">Написать в поддержку</string>
+    <string name="version">Версия %1$s (%2$s)</string>
+<!--    <string name="warning_dialog_title">Предупреждение перед удалением</string>-->
 
     <string name="choose_lang">Выбор языка</string>
     <string name="dark_mode">Темная</string>
@@ -178,5 +188,9 @@
     <!-- Категория -->
     <string name="time_exercise">Упражнение на время</string>
     <string name="count_exercise">Упражнение на количество</string>
+    <string name="title_is_empty">Название пустое</string>
+    <string name="title_already_existed">Название уже существует, дубликаты запрещены</string>
+
+
 
 </resources>

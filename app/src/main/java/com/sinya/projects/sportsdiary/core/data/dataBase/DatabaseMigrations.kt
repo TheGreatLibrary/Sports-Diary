@@ -1,7 +1,6 @@
 package com.sinya.projects.sportsdiary.core.data.dataBase
 
 import androidx.room.migration.Migration
-import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 object DatabaseMigrations {

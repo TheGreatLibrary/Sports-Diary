@@ -3,7 +3,6 @@ package com.sinya.projects.sportsdiary.core.domain.useCase
 import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.core.domain.repository.TrainingRepository
 import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartLine
-import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartPoint
 import jakarta.inject.Inject
 
 class GetTrainingChartUseCase @Inject constructor(

@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
+import com.sinya.projects.sportsdiary.ui.features.RoundedIcon
 
 @Composable
 fun ChartHeader(
@@ -33,12 +33,11 @@ fun ChartHeader(
             color = MaterialTheme.colorScheme.onPrimary,
         )
 
-        AnimationIcon(
+        RoundedIcon(
             onClick = onInfoClick,
-            description = "Info",
             painter = painterResource(R.drawable.ic_info),
             isSelected = true,
-            size = 16.dp,
+            size = 25.dp,
             selectedContainerColor = Color.Transparent,
         )
     }

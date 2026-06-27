@@ -14,8 +14,8 @@ import kotlin.math.roundToInt
 object ChartDataUtils {
 
     fun createAxisDataWithDate(lines: List<ChartLine>, timeMode: TypeTime): AxisData {
-        val unifiedXAxis = lines.first().points.parseDateByMode(timeMode)
-        val mainUnifiedXAxis = lines.first().points.groupPointsByTimeMode(timeMode)
+        val unifiedXAxis = lines.firstOrNull()?.points?.parseDateByMode(timeMode) ?: emptyList()
+        val mainUnifiedXAxis = lines.firstOrNull()?.points?.groupPointsByTimeMode(timeMode) ?: emptyList()
 
         val yRange = calculateYRange(lines)
         val yMin = calculateYMin(lines)

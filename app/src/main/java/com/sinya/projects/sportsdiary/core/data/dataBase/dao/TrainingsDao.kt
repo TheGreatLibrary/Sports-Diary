@@ -18,8 +18,6 @@ import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItemWithoutList
 import com.sinya.projects.sportsdiary.core.domain.model.Training
 import com.sinya.projects.sportsdiary.core.domain.model.TrainingEntity
 import com.sinya.projects.sportsdiary.core.domain.model.toExerciseData
-import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartLine
-import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartPoint
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -148,7 +146,7 @@ interface TrainingsDao {
         FROM trainings t LEFT JOIN type_training tt ON t.type_id = tt.id
         WHERE t.id = :id
     """)
-    suspend fun getById(id: Int): Training?
+    fun getById(id: Int): Flow<Training?>
 
     @Query("""
       SELECT 
@@ -189,7 +187,7 @@ interface TrainingsDao {
         WHERE t.id = :id
         ORDER BY d.order_index
     """)
-    suspend fun getExerciseDataByTrainingIdWithPrevData(id: Int?, lang: String): List<ExerciseData>
+    fun getExerciseDataByTrainingIdWithPrevData(id: Int?, lang: String): Flow<List<ExerciseData>>
 
     @Query("""
        SELECT
@@ -200,7 +198,7 @@ interface TrainingsDao {
             COALESCE(d.count_result, '0/0/0/0') AS prevCountResult,
             COALESCE(d.weight_result, '0/0/0/0') AS prevWeightResult,
             COALESCE(d.state, 1) AS state,
-            COALESCE(d.mode,dc.mode ) AS mode,
+            COALESCE(d.mode, dc.mode) AS mode,
             dc.order_index AS orderIndex
         FROM exercises e
         JOIN data_type_trainings dc ON dc.exercise_id = e.id

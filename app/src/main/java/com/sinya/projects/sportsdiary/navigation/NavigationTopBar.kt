@@ -20,7 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
-import com.sinya.projects.sportsdiary.ui.features.AnimationIcon
+import com.sinya.projects.sportsdiary.ui.features.RoundedIcon
 
 @Composable
 fun NavigationTopBar(
@@ -42,9 +42,9 @@ fun NavigationTopBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        AnimationIcon(
+        RoundedIcon(
             onClick = type.onBackClick,
-            size = 24.dp,
+            size = 32.dp,
             selectedContainerColor = Color.Transparent,
             painter = painterResource(R.drawable.nav_back)
         )
@@ -57,9 +57,9 @@ fun NavigationTopBar(
         }
         when (type) {
             is TypeTopNavigation.WithIcon -> {
-                AnimationIcon(
+                RoundedIcon(
                     onClick = type.onClick,
-                    size = 24.dp,
+                    size = 32.dp,
                     selectedContainerColor = Color.Transparent,
                     painter = painterResource(type.painter)
                 )

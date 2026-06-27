@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,12 +27,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.navigation.ScreenRoute
-import com.sinya.projects.sportsdiary.presentation.home.components.calendar.Calendar
+import com.sinya.projects.sportsdiary.presentation.home.components.HomePlaceholder
 import com.sinya.projects.sportsdiary.presentation.home.components.MiniHomeCard
 import com.sinya.projects.sportsdiary.presentation.home.components.TrainingHomeCard
-import com.sinya.projects.sportsdiary.presentation.placeholder.PlaceholderScreen
+import com.sinya.projects.sportsdiary.presentation.home.components.calendar.Calendar
 import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
-import kotlin.collections.emptyList
 
 @Composable
 fun HomeScreen(
@@ -43,7 +41,7 @@ fun HomeScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (val currentState = state) {
-        HomeUiState.Loading -> PlaceholderScreen()
+        HomeUiState.Loading -> HomePlaceholder()
 
         is HomeUiState.Success -> {
             HomeScreenView(

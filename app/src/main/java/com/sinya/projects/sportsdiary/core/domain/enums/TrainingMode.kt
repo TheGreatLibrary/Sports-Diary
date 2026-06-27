@@ -1,7 +1,5 @@
 package com.sinya.projects.sportsdiary.core.domain.enums
 
-import com.sinya.projects.sportsdiary.core.domain.enums.TypeLanguages.RU
-
 enum class TrainingMode(val mode: Int) {
     COUNT(0),
     TIME(1);

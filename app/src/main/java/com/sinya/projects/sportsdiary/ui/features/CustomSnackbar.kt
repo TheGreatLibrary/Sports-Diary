@@ -29,14 +29,14 @@ fun BoxScope.CustomSnackbar(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             shape = MaterialTheme.shapes.small,
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.background
+                containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.9f)
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Box(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                 Text(
                     text = data.visuals.message,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
