@@ -1,13 +1,15 @@
 package com.sinya.projects.sportsdiary.presentation.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataMorning
+import com.sinya.projects.sportsdiary.core.data.dataStore.SettingsEngine
 import com.sinya.projects.sportsdiary.core.domain.model.DayOfMonth
 import com.sinya.projects.sportsdiary.core.domain.useCase.GetMorningListUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.GetTrainingRangeListUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.MarkDayMorningExerciseUseCase
-import com.sinya.projects.sportsdiary.core.data.dataStore.SettingsEngine
+import com.sinya.projects.sportsdiary.core.domain.useCase.UpsertMorningUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,6 +31,7 @@ class HomeViewModel @Inject constructor(
     private val settingsEngine: SettingsEngine,
     private val markDayMorningExerciseUseCase: MarkDayMorningExerciseUseCase,
     private val getMorningListUseCase: GetMorningListUseCase,
+    private val insertMorningUseCase: UpsertMorningUseCase,
     private val getTrainingListUseCase: GetTrainingRangeListUseCase
 ) : ViewModel() {
 
@@ -59,6 +62,40 @@ class HomeViewModel @Inject constructor(
                 event.planId
             )
 
+            is HomeEvent.SaveNote -> viewModelScope.launch {
+                val state = _state.value as? HomeUiState.Success ?: return@launch
+                val day = state.monthDays.find { it.date == state.date } ?: return@launch
+
+                insertMorningUseCase(
+                        DataMorning(
+                            id = 0,
+                            note = day.note,
+                            date = _selectedDate.value.toString(),
+                            categoryId = state.currentPlanId
+                        )
+                ).fold(
+                    onSuccess = {},
+                    onFailure = {
+                        updateIfSuccess {
+                            it.copy(errorMessage = it.toString())
+                        }
+                        Log.d("HomeViewModel", it.toString())
+                    }
+                )
+            }
+
+
+            is HomeEvent.OnValueChange -> {
+                updateIfSuccess {
+                    it.copy(
+                        monthDays = it.monthDays.map { item ->
+                            if (item.date == it.date) item.copy(note = event.value)
+                            else item
+                        }
+                    )
+                }
+            }
+
             is HomeEvent.OnShift -> {
                 val oldDate = _selectedDate.value
                 val newDate = oldDate.plusMonths(event.index)
@@ -71,6 +108,7 @@ class HomeViewModel @Inject constructor(
                         val offsetFromStart = oldDay.coerceAtMost(7)
                         offsetFromStart.coerceAtMost(newLength)
                     }
+
                     else -> {
                         val offsetFromEnd = (oldLength - oldDay + 1).coerceAtMost(7)
                         (newLength - offsetFromEnd + 1).coerceIn(1, newLength)
@@ -93,15 +131,15 @@ class HomeViewModel @Inject constructor(
     private fun morningExercisesButtonClick(
         morningState: Boolean,
         date: LocalDate,
-        planId: Int?
+        categoryId: Int?
     ) = viewModelScope.launch {
         markDayMorningExerciseUseCase(
             morningState = morningState,
             item = DataMorning(
                 id = 0,
-                note = null,
+                note = (state.value as HomeUiState.Success).monthDays.find { it.date == date }?.note,
                 date = date.toString(),
-                planId = planId
+                categoryId = categoryId
             )
         ).fold(
             onSuccess = {
@@ -114,6 +152,7 @@ class HomeViewModel @Inject constructor(
                 }
             },
             onFailure = { error ->
+                error.printStackTrace()
                 updateIfSuccess {
                     it.copy(errorMessage = error.toString())
                 }
@@ -146,10 +185,11 @@ class HomeViewModel @Inject constructor(
                 val isCurrentMonthCell = d.monthValue == date.monthValue && d.year == date.year
 
                 monthDays += DayOfMonth(
-                    currentMonth = isCurrentMonthCell,
                     date = d,
+                    currentMonth = isCurrentMonthCell,
                     trainingState = iso in trainingDates,
-                    morningState = iso in morningDates
+                    morningState = iso in morningDates,
+                    note = morningList.find { it.date == iso }?.note
                 )
                 d = d.plusDays(1)
             }

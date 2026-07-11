@@ -17,7 +17,7 @@ fun EmptyChartPlaceholder() {
         Text(
             text = stringResource(R.string.not_found_data),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }

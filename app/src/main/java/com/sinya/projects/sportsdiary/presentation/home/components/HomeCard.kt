@@ -3,15 +3,18 @@ package com.sinya.projects.sportsdiary.presentation.home.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -25,13 +28,15 @@ fun HomeCard(
     modifier: Modifier = Modifier,
     title: String,
     colorCard: Color,
+    icon: Painter = painterResource(R.drawable.ic_plus),
+    colorText: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     onCardClick: (ScreenRoute) -> Unit,
     onPlusClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     AnimationCard(
         modifier = modifier,
-        onClick = { onCardClick(ScreenRoute.MorningExercises) },
+        onClick = { onCardClick(ScreenRoute.SportExercises) },
         colorCard = colorCard
     ) {
         Column(
@@ -46,21 +51,22 @@ fun HomeCard(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = colorText,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                onPlusClick?.let {
+                if (onPlusClick!=null) {
                     RoundedIcon(
-                        onClick = it,
-                        painter = painterResource(R.drawable.ic_plus),
+                        onClick = onPlusClick,
+                        painter = icon,
                         size = 25.dp,
                         isSelected = true,
-                        selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        unselectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        selectedContentColor = colorText,
+                        unselectedContentColor = colorText,
                         selectedContainerColor = Color.Transparent,
                     )
                 }
+                else Spacer(Modifier.size(25.dp))
             }
             content()
         }

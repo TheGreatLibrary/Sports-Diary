@@ -305,13 +305,13 @@ private fun TrainingPage(
                                 )
                             )
                         },
-                        onVisibleClick = { value, id ->
+                        onVisibleClick = { state, id ->
                             onEvent(
                                 TrainingPageEvent.Undoable(
                                     TrainingUndoableAction.VisibleExercise(
                                         id,
                                         item.state,
-                                        value
+                                        state
                                     )
                                 )
                             )
@@ -323,6 +323,17 @@ private fun TrainingPage(
                                         id,
                                         item.mode,
                                         mode
+                                    )
+                                )
+                            )
+                        },
+                        onWeightClick = { weight, id ->
+                            onEvent(
+                                TrainingPageEvent.Undoable(
+                                    TrainingUndoableAction.ToggleWeight(
+                                        id,
+                                        item.weightState,
+                                        weight
                                     )
                                 )
                             )
@@ -366,7 +377,8 @@ private fun TrainingPage(
                     onEditSet = { _, _, _, _ -> },
                     onDeleteSet = { _, _ -> },
                     onVisibleClick = { _, _ -> },
-                    onModeClick = { _, _ -> }
+                    onModeClick = { _, _ -> },
+                    onWeightClick = { _, _ -> }
                 )
             }
 

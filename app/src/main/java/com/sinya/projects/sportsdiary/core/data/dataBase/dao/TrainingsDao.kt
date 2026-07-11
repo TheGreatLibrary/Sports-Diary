@@ -18,6 +18,7 @@ import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItemWithoutList
 import com.sinya.projects.sportsdiary.core.domain.model.Training
 import com.sinya.projects.sportsdiary.core.domain.model.TrainingEntity
 import com.sinya.projects.sportsdiary.core.domain.model.toExerciseData
+import com.sinya.projects.sportsdiary.ui.features.map.model.DataExerciseMuscleRaw
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -33,14 +34,48 @@ interface TrainingsDao {
             count_result AS count, 
             weight_result AS weight,
             mode AS mode,
+            CASE
+            WHEN d.weight = 1 THEN
+                COALESCE(
+                    (
+                       SELECT dp.value
+                        FROM proportions p 
+                        JOIN data_proportions dp ON p.id = dp.proportion_id
+                        WHERE dp.type_id = 22 AND p.date <= t.date
+                        ORDER BY p.date DESC
+                        LIMIT 1
+                    ),
+                    0
+                )
+            ELSE 0
+        END AS weightState,
             strftime('%Y-%m-%d', t.date) AS date
         FROM trainings t JOIN data_training d ON t.id = d.training_id
         WHERE d.state = 1
     """)
     suspend fun getChartList() : List<ChartDataTrainings>
 
-    @Query("""SELECT count_result AS count, weight_result AS weight 
-        FROM data_training d
+    @Query("""
+        SELECT 
+            count_result AS count, 
+            weight_result AS weight,
+            mode AS mode,
+           CASE
+            WHEN d.weight = 1 THEN
+                COALESCE(
+                    (
+                       SELECT dp.value
+                        FROM proportions p 
+                        JOIN data_proportions dp ON p.id = dp.proportion_id
+                        WHERE dp.type_id = 22 AND p.date <= t.date
+                        ORDER BY p.date DESC
+                        LIMIT 1
+                    ),
+                    0
+                )
+            ELSE 0
+        END AS weightState
+        FROM trainings t JOIN data_training d ON t.id = d.training_id
         WHERE d.state = 1
     """)
     suspend fun getDataOfTraining() : List<DataTrainings>
@@ -94,7 +129,8 @@ interface TrainingsDao {
                     countResult = it.toExerciseData().countResult,
                     weightResult = it.toExerciseData().weightResult,
                     mode = it.mode.mode,
-                    state = it.state,
+                    state = it.state.state,
+                    weight = it.weightState.state,
                     orderIndex = it.orderIndex
                 )
             })
@@ -153,6 +189,7 @@ interface TrainingsDao {
         e.id,
         et.name AS title,
         d.mode AS mode,
+        d.weight AS weight,
         d.order_index AS orderIndex
       FROM data_type_trainings d
       JOIN exercises e ON e.id = d.exercise_id
@@ -171,6 +208,7 @@ interface TrainingsDao {
             COALESCE(prev_d.count_result, '') AS prevCountResult,
             COALESCE(prev_d.weight_result, '') AS prevWeightResult,
             COALESCE(d.state, 1) AS state,
+            COALESCE(d.weight, prev_d.weight) AS weight,
             COALESCE(d.mode, prev_d.mode) AS mode,
             d.order_index AS orderIndex
         FROM trainings t
@@ -199,6 +237,7 @@ interface TrainingsDao {
             COALESCE(d.weight_result, '0/0/0/0') AS prevWeightResult,
             COALESCE(d.state, 1) AS state,
             COALESCE(d.mode, dc.mode) AS mode,
+            COALESCE(d.weight, dc.weight) AS weight,
             dc.order_index AS orderIndex
         FROM exercises e
         JOIN data_type_trainings dc ON dc.exercise_id = e.id
@@ -235,19 +274,51 @@ interface TrainingsDao {
     """)
     fun getDataOfMonth(startDate: String, endDate: String) : Flow<List<Training>>
     @Query("""
-          SELECT
-            d.exercises_id AS exerciseId,
-            count_result AS count, 
-            weight_result AS weight,
-            serial_num AS trainingNumber,
-            mode AS mode,
-             strftime('%Y-%m-%d', t.date) AS date,
-            COALESCE(tt.name, "") AS categoryName
-        FROM trainings t 
-        JOIN data_training d ON t.id = d.training_id
-        LEFT JOIN type_training tt ON t.type_id = tt.id
-        WHERE d.exercises_id IN (:list)
-        
+    SELECT
+        d.exercises_id AS exerciseId,
+        d.count_result AS count,
+        d.weight_result AS weight,
+        serial_num AS trainingNumber,
+        d.mode AS mode,
+        CASE
+            WHEN d.weight = 1 THEN
+                COALESCE(
+                    (
+                       SELECT dp.value
+                        FROM proportions p 
+                        JOIN data_proportions dp ON p.id = dp.proportion_id
+                        WHERE dp.type_id = 22 AND p.date <= t.date
+                        ORDER BY p.date DESC
+                        LIMIT 1
+                    ),
+                    0
+                )
+            ELSE 0
+        END AS weightState,
+        strftime('%Y-%m-%d', t.date) AS date,
+        COALESCE(tt.name, "") AS categoryName
+    FROM trainings t
+    JOIN data_training d ON t.id = d.training_id
+    LEFT JOIN type_training tt ON t.type_id = tt.id
+    WHERE d.exercises_id IN (:list)
     """)
     suspend fun getTrainingsDataList(list: List<Int>) : List<ChartDataExercises>
+
+    @Query("""
+        SELECT 
+            em.muscle_id AS muscleId,
+            name,
+            value AS level,
+            dt.count_result AS countResult,
+            dt.weight_result AS weightResult,
+            dt.mode AS mode,
+            dt.weight AS weight,
+            dt.state AS state
+        FROM exercise_muscles em 
+        JOIN muscle_translations mt ON em.muscle_id = mt.muscle_id
+        JOIN data_training dt ON dt.exercises_id = em.exercise_id
+        JOIN trainings t ON t.id = dt.training_id
+        WHERE t.date >= :fromDate AND t.date <= :toDate AND language = :language AND dt.state = 1
+    """)
+    suspend fun getDataExerciseMusclesByDate(fromDate: String, toDate: String, language: String): List<DataExerciseMuscleRaw>
 }

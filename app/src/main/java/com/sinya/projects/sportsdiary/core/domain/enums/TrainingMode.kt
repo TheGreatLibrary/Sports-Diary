@@ -7,12 +7,6 @@ enum class TrainingMode(val mode: Int) {
     companion object {
         fun getMode(code: Int): TrainingMode =
             TrainingMode.entries.find { it.mode == code } ?: COUNT
-
-        fun getNegativeMode(code: Int): TrainingMode =
-            when (code) {
-                0 -> TIME
-                else -> COUNT
-            }
-
     }
 }
+

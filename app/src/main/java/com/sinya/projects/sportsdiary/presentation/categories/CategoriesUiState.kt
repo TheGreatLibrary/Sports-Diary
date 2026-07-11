@@ -9,6 +9,7 @@ sealed interface CategoriesUiState {
         val categories: List<TypeTraining> = emptyList(),
         val deleteDialogId: Int? = null,
         val errorMessage: String? = null,
-        val isRefreshing: Boolean = false
+        val isRefreshing: Boolean = false,
+        val currentPlanId: Int? = null
     ) : CategoriesUiState
 }

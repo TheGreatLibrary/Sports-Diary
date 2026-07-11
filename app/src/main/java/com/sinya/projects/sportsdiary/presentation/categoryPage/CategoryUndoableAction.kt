@@ -99,6 +99,7 @@ sealed interface CategoryUndoableAction : UndoableAction<CategoryPageUiState.Cat
                     id = it.id,
                     title = it.name,
                     mode = 0,
+                    weight = 0,
                     orderIndex = index
                 )
             }

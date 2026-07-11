@@ -48,6 +48,8 @@
     <string name="proportions_description">Пришло время помериться обхватом бицепса!</string>
     <string name="not_entries_of_training">На данный момент нет записей о тренировках</string>
     <string name="workout_type_training">Тренировка на %1$s №%2$s - %3$s</string>
+    <string name="note_of_morning_exercises">Заметка к зарядке</string>
+
 
     <!-- Меню -->
     <string name="menu_title">Меню</string>
@@ -56,6 +58,7 @@
     <string name="list_of_training">Список проведенных тренировок</string>
     <string name="statistic_and_note">Статистика и заметки</string>
     <string name="list_of_proportions">Список проведенных замеров</string>
+    <string name="backup_description">Экспорт и импорт базы данных с данными</string>
     <string name="list_of_exercises">Список упражнений с описанием</string>
     <string name="calculate_description">Калькуляторы для вычисления различных показателей</string>
     <string name="categories_description">Список категорий тренировок</string>
@@ -70,6 +73,9 @@
     <string name="years">Года</string>
     <string name="note">Памятка</string>
     <string name="not_found_data">Нет данных</string>
+    <string name="work_muscles_for_week">Загруженность мышц за 7 дней</string>
+    <string name="muscles_of_body">Тепловая карта тела</string>
+    <string name="hot_map_description">На тепловой карте отображается загруженность тела за неделю тренировок относительно предыдущей недели</string>
 
     <!-- Доп.стат. -->
     <string name="statistic_diagram_title">Доп. статистика</string>
@@ -86,22 +92,27 @@
     <string name="language_title">Язык</string>
     <string name="theme_title">Тема</string>
     <string name="app_block">Приложение</string>
-    <string name="copy_errors">Копировать логи ошибок</string>
+    <string name="copy_errors">Копировать логи</string>
     <string name="send_to_support">Написать в поддержку</string>
     <string name="version">Версия %1$s (%2$s)</string>
-<!--    <string name="warning_dialog_title">Предупреждение перед удалением</string>-->
-
     <string name="choose_lang">Выбор языка</string>
     <string name="dark_mode">Темная</string>
     <string name="light_mode">Светлая</string>
+    <string name="copy_errors_description">Скопируйте логи и отправьте в поддержку!</string>
+    <string name="send_to_support_description">Сообщите о проблеме, и мы поможем!</string>
+
+    <!-- Список изменений -->
+    <string name="list_of_changes">Список изменений</string>
+    <string name="see_what_changes_in_the_update">Узнайте, что изменилось в приложении!</string>
+    <string name="release_title">"Релиз: %1$s"</string>
+
+
 
     <!-- Зарядка -->
     <string name="morning_exercises_title">Зарядка</string>
-    <string name="count_completed_mornings">Количество выполненных зарядок</string>
-    <string name="series_of_completed_mornings">Серия выполненных зарядок</string>
+    <string name="count_completed_mornings">Количество зарядок</string>
+    <string name="series_of_completed_mornings">Серия зарядок</string>
     <string name="data_of_morning_exercises">Данные по зарядкам</string>
-    <string name="note_of_morning_exercises">Заметки по зарядкам</string>
-    <string name="plans">Планы</string>
     <string name="notes">Заметки</string>
     <string name="morning_has_note">Заметка существует</string>
     <string name="base_plan">Базовый план</string>
@@ -174,8 +185,6 @@
     <string name="exercise_name_is_empty">Название упражнения пустое или дублируется</string>
     <string name="choose_muscle">Добавление мышц</string>
 
-
-
     <!-- Калькулятор -->
     <string name="calculate_title">Калькуляторы</string>
 
@@ -189,8 +198,16 @@
     <string name="time_exercise">Упражнение на время</string>
     <string name="count_exercise">Упражнение на количество</string>
     <string name="title_is_empty">Название пустое</string>
+    <string name="plan_morning">План зарядки</string>
     <string name="title_already_existed">Название уже существует, дубликаты запрещены</string>
 
-
+    <!-- Backup -->
+    <string name="backup_title">Импорт/Экспорт БД</string>
+    <string name="share">Поделиться БД</string>
+    <string name="export">Экспортировать БД</string>
+    <string name="import_db">Импортировать БД</string>
+    <string name="complete">Успех</string>
+    <string name="complete_backup"> Для завершения операции требуется перезапуск приложения</string>
+    <string name="ok">ОК</string>
 
 </resources>

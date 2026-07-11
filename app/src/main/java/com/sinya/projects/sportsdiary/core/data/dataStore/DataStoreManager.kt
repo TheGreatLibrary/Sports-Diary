@@ -27,7 +27,7 @@ class DataStoreManager @Inject constructor(
     private val SHOW_TRAINING_WARNING = booleanPreferencesKey("show_training_warning")
     private val THEME_MODE = booleanPreferencesKey("theme_mode")
     private val LANG_MODE = stringPreferencesKey("lang_mode")
-    private val PLAN_MORNING_ID = intPreferencesKey("plan_morning_id")
+    private val CATEGORY_MORNING_ID = intPreferencesKey("category_morning_id")
 
     private suspend fun <T> save(key: Preferences.Key<T>, value: T) {
         context.dataStore.edit { settings ->
@@ -40,7 +40,7 @@ class DataStoreManager @Inject constructor(
         return UiConfig(
             dark = prefs[THEME_MODE] ?: false,
             language = prefs[LANG_MODE] ?: TypeLanguages.RU.code,
-            planMorningId = prefs[PLAN_MORNING_ID] ?: null,
+            planMorningId = prefs[CATEGORY_MORNING_ID],
             trainingWarning = prefs[SHOW_TRAINING_WARNING] ?: false,
         )
     }
@@ -54,16 +54,16 @@ class DataStoreManager @Inject constructor(
     suspend fun setPlanMorningId(value: Int?) {
         context.dataStore.edit { settings ->
             if (value != null) {
-                settings[PLAN_MORNING_ID] = value
+                settings[CATEGORY_MORNING_ID] = value
             } else {
-                settings.remove(PLAN_MORNING_ID)
+                settings.remove(CATEGORY_MORNING_ID)
             }
         }
     }
     fun getPlanMorningId(): Flow<Int?> = context.dataStore.data
         .map { settings ->
-            if (settings.contains(PLAN_MORNING_ID)) {
-                settings[PLAN_MORNING_ID]
+            if (settings.contains(CATEGORY_MORNING_ID)) {
+                settings[CATEGORY_MORNING_ID]
             } else {
                 null
             }

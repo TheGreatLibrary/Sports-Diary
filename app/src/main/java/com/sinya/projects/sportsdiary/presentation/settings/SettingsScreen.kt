@@ -22,15 +22,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.sportsdiary.R
+import com.sinya.projects.sportsdiary.core.domain.model.ChangelogState
 import com.sinya.projects.sportsdiary.core.domain.model.SwitchItem
 import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.core.utils.LogcatReader
+import com.sinya.projects.sportsdiary.core.utils.UrlConfig
+import com.sinya.projects.sportsdiary.core.utils.openUrl
 import com.sinya.projects.sportsdiary.core.utils.sendSupportMail
 import com.sinya.projects.sportsdiary.core.utils.updateLocale
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.settings.composable.AppVersionInfo
 import com.sinya.projects.sportsdiary.presentation.settings.composable.SettingsPlaceholder
-import com.sinya.projects.sportsdiary.sheets.modalSheetLocale.SettingsLanguageSheet
+import com.sinya.projects.sportsdiary.sheets.ChangesSheetContent
+import com.sinya.projects.sportsdiary.sheets.SettingsLanguageSheet
 import com.sinya.projects.sportsdiary.ui.features.BlockOfCards
 import com.sinya.projects.sportsdiary.ui.features.ListCardItem
 import com.sinya.projects.sportsdiary.ui.features.ScreenColumn
@@ -44,10 +48,14 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val changelogState by viewModel.changelogState.collectAsStateWithLifecycle()
     when (state) {
-        is SettingsUiState.Error -> ErrorScreen(onBackClick, (state as SettingsUiState.Error).message)
+        is SettingsUiState.Error -> ErrorScreen(
+            onBackClick,
+            (state as SettingsUiState.Error).message
+        )
 
         SettingsUiState.Loading -> SettingsPlaceholder(
             onBackClick = onBackClick,
@@ -57,6 +65,7 @@ fun SettingsScreen(
         is SettingsUiState.Success -> {
             SettingsScreenView(
                 onBackClick = onBackClick,
+                changelogState = changelogState,
                 state = state as SettingsUiState.Success,
                 onEvent = viewModel::onEvent,
                 sendEmail = {
@@ -65,17 +74,18 @@ fun SettingsScreen(
                 copyErrors = {
                     scope.launch {
                         val systemLogs = LogcatReader.getAppLogs(context)
-                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clipboard =
+                            context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                         val clip = ClipData.newPlainText("App Logcat", systemLogs)
                         clipboard.setPrimaryClip(clip)
-                        Toast.makeText(context, "Логи скопированы в буфер!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Логи скопированы в буфер!", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             )
         }
     }
 }
-
 
 
 @Composable
@@ -85,9 +95,11 @@ private fun SettingsScreenView(
     onEvent: (SettingsEvent) -> Unit,
     sendEmail: () -> Unit,
     copyErrors: () -> Unit,
+    changelogState: ChangelogState,
 ) {
     val context = LocalContext.current
     val stateBottomSheet = remember { mutableStateOf(false) }
+    val changeStateSheet = remember { mutableStateOf(false) }
 
     ScreenColumn(
         navigationType = TypeTopNavigation.WithoutIcon(
@@ -106,43 +118,45 @@ private fun SettingsScreenView(
             ListCardItem(
                 onClick = { onEvent(SettingsEvent.ThemeToggle(!state.themeMode)) },
                 title = stringResource(R.string.theme_title),
-                description = if (state.themeMode) stringResource(R.string.dark_mode)
-                else stringResource(R.string.light_mode),
+                description = when (state.themeMode) {
+                    true -> stringResource(R.string.dark_mode)
+                    false -> stringResource(R.string.light_mode)
+                },
                 state = SwitchItem(
                     state = state.themeMode,
                     onClick = { onEvent(SettingsEvent.ThemeToggle(!state.themeMode)) }
                 )
             )
-//            ListCardItem(
-//                onClick = { },
-//                title = stringResource(R.string.warning_dialog_title),
-//                state = SwitchItem(
-//                    state = state.showTrainingWarningState,
-//                    onClick = { onEvent(SettingsEvent.ShowTrainingWarningToggle(!state.showTrainingWarningState)) }
-//                )
-//            )
-            BlockOfCards(
-                title = stringResource(R.string.app_block)
-            ) {
-                ListCardItem(
-                    onClick = copyErrors,
-                    title = stringResource(R.string.copy_errors),
-                )
-                ListCardItem(
-                    onClick = sendEmail,
-                    title = stringResource(R.string.send_to_support),
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 50.dp),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    AppVersionInfo(state.langMode)
-                }
-                Spacer(Modifier.height(80.dp))
-            }
         }
+        BlockOfCards(
+            title = stringResource(R.string.app_block)
+        ) {
+            ListCardItem(
+                onClick = copyErrors,
+                title = stringResource(R.string.copy_errors),
+                description = stringResource(R.string.copy_errors_description)
+            )
+            ListCardItem(
+                onClick = sendEmail,
+                title = stringResource(R.string.send_to_support),
+                description = stringResource(R.string.send_to_support_description)
+            )
+            ListCardItem(
+                onClick = { changeStateSheet.value = !changeStateSheet.value },
+                title = stringResource(R.string.list_of_changes),
+                description = stringResource(R.string.see_what_changes_in_the_update)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 50.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                AppVersionInfo(state.langMode)
+            }
+            Spacer(Modifier.height(80.dp))
+        }
+
     }
 
     if (stateBottomSheet.value) {
@@ -155,6 +169,15 @@ private fun SettingsScreenView(
             onDismiss = {
                 stateBottomSheet.value = !stateBottomSheet.value
             }
+        )
+    }
+
+    if (changeStateSheet.value) {
+        ChangesSheetContent(
+            onDismiss = { changeStateSheet.value = !changeStateSheet.value },
+            changeLogState = changelogState,
+            onReload = { onEvent(SettingsEvent.SelectChangelog) },
+            upToMarket = { context.openUrl(UrlConfig.marketRuStore) }
         )
     }
 }

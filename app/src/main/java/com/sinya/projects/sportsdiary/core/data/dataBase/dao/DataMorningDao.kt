@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 interface DataMorningDao {
 
     @Query("""
-        SELECT id, date
+        SELECT id, date, note
         FROM data_mornings
         WHERE date >= :startDate AND date <= :endDate
         ORDER BY date
@@ -23,7 +23,7 @@ interface DataMorningDao {
     fun getDataOfMonth(startDate: String, endDate: String) : Flow<List<MorningDay>>
 
     @Query("""
-    SELECT id, date
+    SELECT id, date, note
     FROM data_mornings
     ORDER BY date DESC
 """)
@@ -34,7 +34,7 @@ interface DataMorningDao {
     suspend fun insertMorningComplete(item: DataMorning) : Long
 
     @Update
-    suspend fun updateMorningExercise(item: DataMorning)
+    suspend fun updateMorningExercise(item: DataMorning) : Int
 
     @Transaction
     suspend fun insertOrUpdateMorningExercises(item: DataMorning) {

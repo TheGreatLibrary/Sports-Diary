@@ -1,6 +1,8 @@
 package com.sinya.projects.sportsdiary.presentation.trainingPage
 
 import com.sinya.projects.sportsdiary.core.domain.enums.TrainingMode
+import com.sinya.projects.sportsdiary.core.domain.enums.Visibility
+import com.sinya.projects.sportsdiary.core.domain.enums.WeightState
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseData
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItem
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItemData
@@ -151,7 +153,7 @@ sealed interface TrainingUndoableAction : UndoableAction<TrainingPageUiState.Tra
         }
     }
 
-    data class VisibleExercise(val exerciseId: Int, val oldValue: Int, val value: Int) :
+    data class VisibleExercise(val exerciseId: Int, val oldValue: Visibility, val value: Visibility) :
         TrainingUndoableAction {
         override fun apply(state: TrainingPageUiState.TrainingForm): TrainingPageUiState.TrainingForm {
             return state.copy(
@@ -168,6 +170,27 @@ sealed interface TrainingUndoableAction : UndoableAction<TrainingPageUiState.Tra
 
         override fun revert(state: TrainingPageUiState.TrainingForm): TrainingPageUiState.TrainingForm {
             return VisibleExercise(exerciseId, value, oldValue).apply(state)
+        }
+
+    }
+
+    data class ToggleWeight(val exerciseId: Int, val oldValue: WeightState, val value: WeightState) :
+        TrainingUndoableAction {
+        override fun apply(state: TrainingPageUiState.TrainingForm): TrainingPageUiState.TrainingForm {
+            return state.copy(
+                hasUnsavedChanges = true,
+                item = state.item.copy(
+                    items = state.item.items.map { item ->
+                        if (item.id == exerciseId) {
+                            item.copy(weightState = value)
+                        } else item
+                    }
+                )
+            )
+        }
+
+        override fun revert(state: TrainingPageUiState.TrainingForm): TrainingPageUiState.TrainingForm {
+            return ToggleWeight(exerciseId, value, oldValue).apply(state)
         }
 
     }
@@ -223,6 +246,7 @@ sealed interface TrainingUndoableAction : UndoableAction<TrainingPageUiState.Tra
                     id = item.first,
                     title = item.second,
                     state = 1,
+                    weight = 0,
                     mode = TrainingMode.COUNT.mode,
                     orderIndex = 0,
                     countResult = "0/0/0/0",

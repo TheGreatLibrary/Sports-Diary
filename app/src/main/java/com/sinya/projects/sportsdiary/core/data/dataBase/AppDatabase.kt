@@ -11,7 +11,6 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.dao.TypeTrainingDao
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Categories
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.CategoryTranslation
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataMorning
-import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataPlanMorning
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataProportions
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataTraining
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataTypeTrainings
@@ -28,7 +27,6 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.entity.MechanicTranslat
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Mechanics
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.MuscleTranslations
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Muscles
-import com.sinya.projects.sportsdiary.core.data.dataBase.entity.PlanMornings
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Proportions
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Trainings
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.TypeProportionTranslations
@@ -57,8 +55,6 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.entity.UnitsMeasurement
         MuscleTranslations::class,
 
         DataMorning::class,
-        PlanMornings::class,
-        DataPlanMorning::class,
 
         Trainings::class,
         DataTraining::class,
@@ -72,10 +68,15 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.entity.UnitsMeasurement
 
         UnitsMeasurement::class
     ],
-    version = 9,
+    version = AppDatabase.DB_VERSION,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
+
+    companion object {
+        const val DB_VERSION = 10
+    }
+
     abstract fun typeTrainingDao() : TypeTrainingDao
     abstract fun trainingsDao() : TrainingsDao
     abstract fun exercisesDao() : ExercisesDao

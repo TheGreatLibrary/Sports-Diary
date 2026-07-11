@@ -97,7 +97,9 @@ private fun CategoriesScreenView(
                     modifier = Modifier,
                     id = it.id,
                     title = stringResource(R.string.category_with_name, it.name),
+                    description = if (state.currentPlanId==it.id) stringResource(R.string.plan_morning) else "",
                     onTrainingClick = { onCategoryClick(it.id) },
+                    onChange = { onEvent(CategoriesEvent.OnPlanClick(it.id)) },
                     onDelete = { id -> onEvent(CategoriesEvent.OpenDialog(id)) },
                 )
             }

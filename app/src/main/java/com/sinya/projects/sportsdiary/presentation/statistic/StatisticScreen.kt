@@ -1,6 +1,7 @@
 package com.sinya.projects.sportsdiary.presentation.statistic
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -33,6 +36,7 @@ import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
 import com.sinya.projects.sportsdiary.core.domain.model.RadioItem
 import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.presentation.statistic.components.StatisticPlaceholder
+import com.sinya.projects.sportsdiary.sheets.BodyInfoSheetContent
 import com.sinya.projects.sportsdiary.ui.features.CardWithArrow
 import com.sinya.projects.sportsdiary.ui.features.CustomSnackbar
 import com.sinya.projects.sportsdiary.ui.features.RadioButtons
@@ -40,6 +44,7 @@ import com.sinya.projects.sportsdiary.ui.features.ScreenColumn
 import com.sinya.projects.sportsdiary.ui.features.StatisticCard
 import com.sinya.projects.sportsdiary.ui.features.chart.MultipleChart
 import com.sinya.projects.sportsdiary.ui.features.chart.utils.ChartDataUtils
+import com.sinya.projects.sportsdiary.ui.features.map.BodyCard
 
 @Composable
 fun StatisticScreen(
@@ -78,7 +83,7 @@ private fun StatisticScreenView(
         RadioItem(stringResource(R.string.months), null, TypeTime.MONTHS),
         RadioItem(stringResource(R.string.years), null, TypeTime.YEARS)
     ),
-    fontStyle: TextStyle = MaterialTheme.typography.displayLarge
+    fontStyle: TextStyle = MaterialTheme.typography.displayLarge,
 ) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -102,6 +107,7 @@ private fun StatisticScreenView(
         }
     }
 
+
     Box {
         ScreenColumn(
             navigationType = TypeTopNavigation.WithoutIcon(
@@ -112,12 +118,13 @@ private fun StatisticScreenView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
                     .height(IntrinsicSize.Max),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 StatisticCard(
                     modifier = Modifier
-                        .weight(1f)
+                        .width(150.dp)
                         .fillMaxHeight(),
                     title = stringResource(R.string.count_of_training),
                     count = state.countTrain.toString(),
@@ -126,10 +133,28 @@ private fun StatisticScreenView(
                 )
                 StatisticCard(
                     modifier = Modifier
-                        .weight(1f)
+                        .width(150.dp)
                         .fillMaxHeight(),
                     title = stringResource(R.string.all_weight),
                     count = state.countWeight.toString(),
+                    fontSize = fontSize,
+                    onTextLayout = onTextLayout
+                )
+                StatisticCard(
+                    modifier = Modifier
+                        .width(150.dp)
+                        .fillMaxHeight(),
+                    title = stringResource(R.string.count_completed_mornings),
+                    count = state.countMorning.toString(),
+                    fontSize = fontSize,
+                    onTextLayout = onTextLayout
+                )
+                StatisticCard(
+                    modifier = Modifier
+                        .width(150.dp)
+                        .fillMaxHeight(),
+                    title = stringResource(R.string.series_of_completed_mornings),
+                    count = state.seriesScope.toString(),
                     fontSize = fontSize,
                     onTextLayout = onTextLayout
                 )
@@ -157,6 +182,12 @@ private fun StatisticScreenView(
                 )
             }
 
+            BodyCard(
+                list = state.dataExerciseMuscles,
+                withText = false,
+                onInfoClick = { onEvent(StatisticEvent.OnBodyInfoClick()) }
+            )
+
             CardWithArrow(
                 title = stringResource(R.string.statistic_diagram_title),
                 onClick = navigateToStatisticDiagram
@@ -167,4 +198,12 @@ private fun StatisticScreenView(
 
         CustomSnackbar(snackbarHostState)
     }
+
+    if (state.bodyVisible) {
+        BodyInfoSheetContent(
+            onDismiss = { onEvent(StatisticEvent.OnBodyInfoClick(false)) },
+            listMuscles = state.allMuscles
+        )
+    }
 }
+

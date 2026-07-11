@@ -3,7 +3,11 @@ package com.sinya.projects.sportsdiary.presentation.statistic
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetCountMorningTrainingUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.GetCountTrainingUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetDataExerciseMusclesUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetMusclesUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetSeriesScopeMorningUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.GetSummaryWeightTrainingUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.GetTrainingChartUseCase
 import com.sinya.projects.sportsdiary.core.utils.getErrorMessage
@@ -14,12 +18,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @HiltViewModel
 class StatisticViewModel @Inject constructor(
     private val getCountTrainingUseCase: GetCountTrainingUseCase,
+    private val getCountMorningTrainingUseCase: GetCountMorningTrainingUseCase,
+    private val getSeriesScopeMorningUseCase: GetSeriesScopeMorningUseCase,
     private val getSummaryWeightTrainingUseCase: GetSummaryWeightTrainingUseCase,
     private val getTrainingChartUseCase: GetTrainingChartUseCase,
+    private val getDataExerciseMusclesUseCase: GetDataExerciseMusclesUseCase,
+    private val getMusclesUseCase: GetMusclesUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<StatisticUiState>(StatisticUiState.Loading)
@@ -29,28 +38,36 @@ class StatisticViewModel @Inject constructor(
         loadAll()
     }
 
-    private fun loadAll(type: TypeTime = TypeTime.DAYS) = viewModelScope.launch{
-        val countResult = getCountTrainingUseCase()
-        val weightResult = getSummaryWeightTrainingUseCase()
-        val chartResult = getTrainingChartUseCase(type)
+    private fun loadAll(type: TypeTime = TypeTime.DAYS) = viewModelScope.launch {
+        val endDate = LocalDate.now()
+        val startDate = endDate.minusDays(6)
 
-        val error = listOf(countResult, weightResult, chartResult)
+        val countTrainings = getCountTrainingUseCase()
+        val allMuscles = getMusclesUseCase()
+        val countMorningTrainings = getCountMorningTrainingUseCase()
+        val seriesScope = getSeriesScopeMorningUseCase()
+        val weightSummary = getSummaryWeightTrainingUseCase()
+        val chartResult = getTrainingChartUseCase(type)
+        val exerciseMuscles = getDataExerciseMusclesUseCase(
+            startDate.toString(),
+            endDate.toString()
+        )
+
+        val error = listOf(countTrainings, weightSummary, chartResult)
             .firstOrNull { it.isFailure }
             ?.exceptionOrNull()
 
-        if (error != null) {
-            _state.update {
-                StatisticUiState.Success(errorMessage = error.getErrorMessage())
-            }
-            return@launch
-        }
-
         _state.update {
             StatisticUiState.Success(
-                countTrain = countResult.getOrThrow(),
-                countWeight = weightResult.getOrThrow(),
-                timeMode = type,
-                chartList = chartResult.getOrThrow(),
+                countTrain = countTrainings.getOrElse { 0 },
+                countWeight = weightSummary.getOrElse { 0f },
+                countMorning = countMorningTrainings.getOrElse { 0 },
+                seriesScope = seriesScope.getOrElse { 0 },
+                chartList = chartResult.getOrElse { emptyList() },
+                dataExerciseMuscles = exerciseMuscles.getOrElse { emptyList() },
+                allMuscles = allMuscles.getOrElse { emptyList() }.map { Pair(it.muscleId, it.name) },
+                errorMessage = error?.getErrorMessage(),
+                timeMode = type
             )
         }
     }
@@ -62,8 +79,13 @@ class StatisticViewModel @Inject constructor(
             is StatisticEvent.OnMessage -> updateIfSuccess {
                 it.copy(errorMessage = event.message)
             }
+
+            is StatisticEvent.OnBodyInfoClick -> updateIfSuccess {
+                it.copy(bodyVisible = event.visible)
+            }
         }
     }
+
     private fun loadChart(type: TypeTime = TypeTime.DAYS) = viewModelScope.launch {
         getTrainingChartUseCase(type).fold(
             onSuccess = { chart ->

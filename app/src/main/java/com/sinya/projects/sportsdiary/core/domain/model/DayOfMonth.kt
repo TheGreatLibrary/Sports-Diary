@@ -6,5 +6,6 @@ data class DayOfMonth(
     val date: LocalDate,
     val currentMonth: Boolean = false,
     val trainingState: Boolean = false,
-    val morningState: Boolean = false
+    val morningState: Boolean = false,
+    val note: String? = null
 )

@@ -55,6 +55,7 @@ interface ExercisesRepository {
         exMuscles: List<ExerciseMuscles>
     ): Result<Int>
 
+
     suspend fun checkNameExerciseExists(name: String, id: Int): Result<Boolean>
     suspend fun getForces(language: String = Locale.current.language): Result<List<ForceTranslation>>
     suspend fun getLevels(language: String = Locale.current.language): Result<List<LevelTranslation>>
@@ -233,6 +234,8 @@ class ExercisesRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+
 
     override suspend fun checkNameExerciseExists(name: String, id: Int): Result<Boolean> {
         return try {

@@ -11,6 +11,7 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.DatabaseMigrations.MIGR
 import com.sinya.projects.sportsdiary.core.data.dataBase.DatabaseMigrations.MIGRATION_6_7
 import com.sinya.projects.sportsdiary.core.data.dataBase.DatabaseMigrations.MIGRATION_7_8
 import com.sinya.projects.sportsdiary.core.data.dataBase.DatabaseMigrations.MIGRATION_8_9
+import com.sinya.projects.sportsdiary.core.data.dataBase.DatabaseMigrations.MIGRATION_9_10
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.DataMorningDao
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.ExercisesDao
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.PlanMorningDao
@@ -23,6 +24,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
+import kotlinx.serialization.json.Json
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -48,10 +50,22 @@ object AppModule {
                 MIGRATION_5_6,
                 MIGRATION_6_7,
                 MIGRATION_7_8,
-                MIGRATION_8_9
+                MIGRATION_8_9,
+                MIGRATION_9_10
             )
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
+    }
+
+
 
     @Provides
     fun provideTypeTrainingDao(db: AppDatabase): TypeTrainingDao = db.typeTrainingDao()

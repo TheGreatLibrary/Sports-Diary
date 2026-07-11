@@ -1,6 +1,8 @@
 package com.sinya.projects.sportsdiary.core.domain.model
 
 import com.sinya.projects.sportsdiary.core.domain.enums.TrainingMode
+import com.sinya.projects.sportsdiary.core.domain.enums.Visibility
+import com.sinya.projects.sportsdiary.core.domain.enums.WeightState
 
 data class ExerciseData(
     val id: Int,
@@ -10,6 +12,7 @@ data class ExerciseData(
     val prevCountResult: String,
     val prevWeightResult: String,
     val state: Int,
+    val weight: Int,
     val mode: Int,
     val orderIndex: Int
 )
@@ -41,9 +44,10 @@ fun ExerciseData.toItem(): ExerciseItem {
     return ExerciseItem(
         id = this.id,
         title = this.title,
-        state = this.state,
+        state = Visibility.getState(this.state),
         orderIndex = this.orderIndex,
         items = items,
+        weightState = WeightState.getState(this.weight),
         mode = TrainingMode.getMode(this.mode)
     )
 }

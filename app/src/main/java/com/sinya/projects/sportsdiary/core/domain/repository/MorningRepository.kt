@@ -1,9 +1,9 @@
 package com.sinya.projects.sportsdiary.core.domain.repository
 
+import android.util.Log
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.DataMorningDao
 import com.sinya.projects.sportsdiary.core.data.dataBase.dao.PlanMorningDao
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.DataMorning
-import com.sinya.projects.sportsdiary.core.data.dataBase.entity.PlanMornings
 import com.sinya.projects.sportsdiary.core.domain.model.MorningDay
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -13,15 +13,11 @@ import java.time.LocalDate
 interface MorningRepository {
     fun getList(start: String, end: String): Flow<List<MorningDay>>
     suspend fun getNotes(): List<DataMorning>
-    suspend fun insertMorning(item: DataMorning)
+    suspend fun insertMorning(item: DataMorning) : Result<Int>
     suspend fun updateMorning(item: DataMorning)
-    suspend fun getCount(): Int
-    suspend fun getSeriesScopeMorning(): Int
+    suspend fun getCount(): Result<Int>
+    suspend fun getSeriesScopeMorning(): Result<Int>
 
-    suspend fun getPlans(): List<PlanMornings>
-    suspend fun insertPlanMorning(item: PlanMornings)
-    suspend fun updatePlanMorning(item: PlanMornings)
-    suspend fun deletePlanMorning(item: PlanMornings)
     suspend fun deleteMorning(item: DataMorning)
     suspend fun getMorningByDate(date: String): DataMorning?
     suspend fun markDayMorning(morningState: Boolean, item: DataMorning): Result<Unit>
@@ -44,14 +40,21 @@ class MorningRepositoryImpl @Inject constructor(
         dataMorningDao.updateMorningExercise(item)
     }
 
-    override suspend fun getCount(): Int {
-        return dataMorningDao.getCount()
+    override suspend fun getCount(): Result<Int> {
+        return try {
+            Result.success(dataMorningDao.getCount())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-    override suspend fun getSeriesScopeMorning(): Int {
-        val items = dataMorningDao.getAllMornings()
-
-        return calculateStreak(items)
+    override suspend fun getSeriesScopeMorning(): Result<Int> {
+        return try {
+            val items = dataMorningDao.getAllMornings()
+            Result.success(calculateStreak(items))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     private fun calculateStreak(mornings: List<MorningDay>): Int {
@@ -75,28 +78,34 @@ class MorningRepositoryImpl @Inject constructor(
         return streak
     }
 
-    override suspend fun getPlans(): List<PlanMornings> {
-        return planMorningDao.getListPlan()
-    }
+//    override suspend fun getPlans(): List<PlanMornings> {
+//        return planMorningDao.getListPlan()
+//    }
+//
+//    override suspend fun insertPlanMorning(item: PlanMornings) {
+//        planMorningDao.insertPlan(item)
+//    }
+//
+//    override suspend fun updatePlanMorning(item: PlanMornings) {
+//        planMorningDao.updatePlan(item)
+//
+//    }
+//
+//    override suspend fun deletePlanMorning(item: PlanMornings) {
+//        planMorningDao.deletePlan(item)
+//    }
 
-    override suspend fun insertPlanMorning(item: PlanMornings) {
-        planMorningDao.insertPlan(item)
-    }
+    override suspend fun insertMorning(item: DataMorning): Result<Int> {
+        return try {
+            val itemInDB = dataMorningDao.getByDate(item.date)
+            val id = if (itemInDB != null) dataMorningDao.updateMorningExercise(itemInDB.copy(note = item.note))
+                        else dataMorningDao.insertMorningComplete(item).toInt()
+            Log.d("HomeViewModel", "insertMorning: $id ${item.date}")
 
-    override suspend fun updatePlanMorning(item: PlanMornings) {
-        planMorningDao.updatePlan(item)
-
-    }
-
-    override suspend fun deletePlanMorning(item: PlanMornings) {
-        planMorningDao.deletePlan(item)
-    }
-
-    override suspend fun insertMorning(item: DataMorning) {
-        val itemInDB = dataMorningDao.getByDate(item.date)
-        if (itemInDB != null) {
-            dataMorningDao.updateMorningExercise(itemInDB.copy(note = item.note))
-        } else dataMorningDao.insertMorningComplete(item)
+            Result.success(id)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     override suspend fun deleteMorning(item: DataMorning) {

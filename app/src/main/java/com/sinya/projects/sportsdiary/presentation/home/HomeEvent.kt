@@ -7,5 +7,9 @@ sealed interface HomeEvent {
     data class OnExtended(val extended: Boolean) : HomeEvent
     data class OnButtonMorningClick(val date: LocalDate, val morningState: Boolean, val planId: Int?) : HomeEvent
     data class OnShift(val index: Long) : HomeEvent
+    data object SaveNote : HomeEvent
+
+    data class OnValueChange(val value: String) : HomeEvent
+
     data object OnErrorShown : HomeEvent
 }

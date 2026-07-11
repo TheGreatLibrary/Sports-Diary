@@ -48,6 +48,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     bundle {
@@ -58,6 +59,9 @@ android {
 }
 
 dependencies {
+    // json
+    implementation(libs.kotlinx.serialization.json)
+
     // work manager for widget
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)

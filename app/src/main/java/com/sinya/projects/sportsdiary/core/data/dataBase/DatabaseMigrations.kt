@@ -462,4 +462,59 @@ object DatabaseMigrations {
         }
     }
 
+    val MIGRATION_9_10 = object : Migration(9, 10) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("""
+                    ALTER TABLE data_training
+                    ADD COLUMN weight INTEGER NOT NULL DEFAULT 0
+                """.trimIndent())
+
+            db.execSQL("""
+                    ALTER TABLE data_type_trainings
+                    ADD COLUMN weight INTEGER NOT NULL DEFAULT 0
+                """.trimIndent())
+
+            db.execSQL("""
+                    INSERT INTO type_training (name)
+                    SELECT name
+                    FROM plan_mornings
+                    """.trimIndent()
+            )
+
+            db.execSQL("DROP TABLE data_plan_morning")
+            db.execSQL("DROP TABLE plan_mornings")
+
+            db.execSQL("""
+                    CREATE TABLE data_mornings_new (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        note TEXT,
+                        date TEXT NOT NULL,
+                        category_id INTEGER NULL,
+                        FOREIGN KEY (category_id)
+                        REFERENCES type_training(id)
+                        ON DELETE SET NULL
+                    )""".trimIndent()
+            )
+
+            db.execSQL("""
+                    INSERT INTO data_mornings_new (id, note, date, category_id)
+                    SELECT
+                        id,
+                        note,
+                        date,
+                        plan_id
+                    FROM data_mornings
+                    """.trimIndent()
+            )
+
+            db.execSQL("DROP TABLE data_mornings")
+            db.execSQL("ALTER TABLE data_mornings_new RENAME TO data_mornings")
+
+            db.execSQL("CREATE INDEX IF NOT EXISTS index_data_mornings_category_id ON data_mornings (category_id)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS index_data_mornings_date ON data_mornings (date DESC)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS index_data_mornings_date_category_id ON data_mornings (date, category_id)")
+
+        }
+    }
+
 }

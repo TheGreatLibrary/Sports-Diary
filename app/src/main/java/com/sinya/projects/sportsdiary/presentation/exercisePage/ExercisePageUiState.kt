@@ -8,7 +8,9 @@ sealed interface ExercisePageUiState {
 
     data class Success(
         val exercise: ExerciseWithFullData,
-        val exMuscles: List<ExerciseMusclesData> = emptyList()
+        val exMuscles: List<ExerciseMusclesData> = emptyList(),
+        val bodyVisible: Boolean = false,
+        val allMuscles: List<Pair<Int, String>>
     ) : ExercisePageUiState
 
     data class Error(val message: String) : ExercisePageUiState

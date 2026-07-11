@@ -27,6 +27,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.domain.enums.TrainingMode
+import com.sinya.projects.sportsdiary.core.domain.enums.Visibility
+import com.sinya.projects.sportsdiary.core.domain.enums.WeightState
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItem
 import com.sinya.projects.sportsdiary.ui.features.RoundedIcon
 import com.sinya.projects.sportsdiary.ui.features.SwipeCardBackground
@@ -41,8 +43,9 @@ fun SwipeTrainingCard(
     onMinusClick: () -> Unit,
     onEditSet: (Int, Int, String?, Boolean) -> Unit,
     onDeleteSet: (Int, Int) -> Unit,
+    onWeightClick: (WeightState, Int) -> Unit,
     onModeClick: (TrainingMode, Int) -> Unit,
-    onVisibleClick: (Int, Int) -> Unit
+    onVisibleClick: (Visibility, Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -70,6 +73,7 @@ fun SwipeTrainingCard(
                 onPlusClick = onPlusClick,
                 onEditSet = onEditSet,
                 onDeleteSet = onDeleteSet,
+                onWeightClick = onWeightClick,
                 onVisibleClick = onVisibleClick,
                 onModeClick = onModeClick
             )
@@ -87,8 +91,9 @@ fun SwipeTrainingCardContent(
     onPlusClick: (Int) -> Unit,
     onEditSet: (Int, Int, String?, Boolean) -> Unit,
     onDeleteSet: (Int, Int) -> Unit,
+    onWeightClick: (WeightState, Int) -> Unit,
     onModeClick: (TrainingMode, Int) -> Unit,
-    onVisibleClick: (Int, Int) -> Unit
+    onVisibleClick: (Visibility, Int) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -99,25 +104,50 @@ fun SwipeTrainingCardContent(
     ) {
         HeaderTraining(
             title = item.title,
-            mode = item.mode,
-            iconEye = when (item.state) {
-                1 -> painterResource(R.drawable.ic_eye)
-                else -> painterResource(R.drawable.ic_eye_no)
+            modePainter = when (item.mode) {
+                TrainingMode.COUNT -> painterResource(R.drawable.train_count)
+                TrainingMode.TIME -> painterResource(R.drawable.train_time)
+            },
+            visibilityPainter = when (item.state) {
+                Visibility.VISIBLE -> painterResource(R.drawable.ic_eye)
+                Visibility.INVISIBLE -> painterResource(R.drawable.ic_eye_no)
+            },
+            weightPainter = when (item.weightState) {
+                WeightState.MATTER -> painterResource(R.drawable.train_muscul)
+                WeightState.NOT_MATTER -> painterResource(R.drawable.train_weight_no)
             },
             onInfoClick = { onInfoClick(item.id) },
-            onModeClick = { when(item.mode) {
-                TrainingMode.COUNT -> onModeClick(TrainingMode.TIME, item.id)
-                TrainingMode.TIME -> onModeClick(TrainingMode.COUNT, item.id)
-            }
+            onModeClick = {
+                onModeClick(
+                    when (item.mode) {
+                        TrainingMode.TIME -> TrainingMode.COUNT
+                        TrainingMode.COUNT -> TrainingMode.TIME
+                    }, item.id
+                )
             },
-            onVisibleClick = { onVisibleClick(if (item.state==1) 0 else 1, item.id) }
+            onVisibleClick = {
+                onVisibleClick(
+                    when (item.state) {
+                        Visibility.VISIBLE -> Visibility.INVISIBLE
+                        Visibility.INVISIBLE -> Visibility.VISIBLE
+                    }, item.id
+                )
+            },
+            onWeightClick = {
+                onWeightClick(
+                    when (item.weightState) {
+                        WeightState.MATTER -> WeightState.NOT_MATTER
+                        WeightState.NOT_MATTER -> WeightState.MATTER
+                    }, item.id
+                )
+            }
         )
         TrainingCardContent(
             id = item.id,
             expanded = expanded,
             onExpanded = onExpanded,
             items = item.items,
-            repsUnit = when(item.mode) {
+            repsUnit = when (item.mode) {
                 TrainingMode.COUNT -> stringResource(R.string.count)
                 TrainingMode.TIME -> stringResource(R.string.second)
             },
@@ -132,8 +162,10 @@ fun SwipeTrainingCardContent(
 @Composable
 fun HeaderTraining(
     title: String,
-    iconEye: Painter,
-    mode: TrainingMode,
+    visibilityPainter: Painter,
+    modePainter: Painter,
+    weightPainter: Painter,
+    onWeightClick: () -> Unit,
     onInfoClick: () -> Unit,
     onModeClick: () -> Unit,
     onVisibleClick: () -> Unit,
@@ -157,11 +189,17 @@ fun HeaderTraining(
                 )
         ) {
             RoundedIcon(
+                onClick = onWeightClick,
+                painter = weightPainter,
+                description = "weight",
+                isSelected = true,
+                size = 25.dp,
+                selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
+            )
+            RoundedIcon(
                 onClick = onModeClick,
-                painter = when (mode) {
-                    TrainingMode.COUNT -> painterResource(R.drawable.train_muscul)
-                    TrainingMode.TIME -> painterResource(R.drawable.train_time)
-                },
+                painter = modePainter,
                 description = "mode",
                 isSelected = true,
                 size = 25.dp,
@@ -170,7 +208,7 @@ fun HeaderTraining(
             )
             RoundedIcon(
                 onClick = onVisibleClick,
-                painter = iconEye,
+                painter = visibilityPainter,
                 description = "eye",
                 isSelected = true,
                 size = 25.dp,

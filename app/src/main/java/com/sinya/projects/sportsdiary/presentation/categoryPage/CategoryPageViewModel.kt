@@ -157,6 +157,7 @@ class CategoryPageViewModel @AssistedInject constructor(
             }
     }
 
+
     fun onEvent(event: CategoryPageEvent) {
         when (event) {
             CategoryPageEvent.OnErrorShown -> showMessage(null, null)

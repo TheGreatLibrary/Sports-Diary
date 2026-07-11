@@ -10,21 +10,21 @@ import androidx.room.PrimaryKey
     tableName = "data_mornings",
     foreignKeys = [
         ForeignKey(
-            entity = PlanMornings::class,
+            entity = TypeTraining::class,
             parentColumns = ["id"],
-            childColumns = ["plan_id"],
+            childColumns = ["category_id"],
             onDelete = ForeignKey.SET_NULL
         ),
     ],
     indices = [
-        Index(value = ["plan_id"]),
+        Index(value = ["category_id"]),
         Index(value = ["date"], orders = [Index.Order.DESC]),
-        Index(value = ["date", "plan_id"])
+        Index(value = ["date", "category_id"])
     ]
 )
 data class DataMorning(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "note") val note: String?,
     @ColumnInfo(name = "date") val date: String,
-    @ColumnInfo(name = "plan_id") val planId: Int?
+    @ColumnInfo(name = "category_id") val categoryId: Int?
 )

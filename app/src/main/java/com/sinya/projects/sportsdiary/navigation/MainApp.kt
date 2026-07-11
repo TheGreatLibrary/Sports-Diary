@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.sinya.projects.sportsdiary.presentation.backup.BackupScreen
 import com.sinya.projects.sportsdiary.presentation.categories.CategoriesScreen
 import com.sinya.projects.sportsdiary.presentation.categoryPage.CategoryPageScreen
 import com.sinya.projects.sportsdiary.presentation.exerciseEdit.ExerciseEditScreen
@@ -22,7 +23,6 @@ import com.sinya.projects.sportsdiary.presentation.exercisePage.ExercisePageScre
 import com.sinya.projects.sportsdiary.presentation.exercises.ExercisesScreen
 import com.sinya.projects.sportsdiary.presentation.home.HomeScreen
 import com.sinya.projects.sportsdiary.presentation.menu.MenuScreen
-import com.sinya.projects.sportsdiary.presentation.morningExercises.MorningExercisesScreen
 import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionPageScreen
 import com.sinya.projects.sportsdiary.presentation.proportions.ProportionsScreen
 import com.sinya.projects.sportsdiary.presentation.settings.SettingsScreen
@@ -111,6 +111,12 @@ private fun NavGraph(
                 navigateTo = { route -> navigateTo(route, null) }
             )
         }
+
+        composable<ScreenRoute.Backup> {
+            BackupScreen(
+                onBackClick = navigateToBackStack,
+            )
+        }
         composable<ScreenRoute.Statistic> {
             StatisticScreen(
                 onBackClick = navigateToBackStack,
@@ -165,12 +171,6 @@ private fun NavGraph(
             ProportionPageScreen(
                 id = args.id,
                 onBackClick = navigateToBackStack,
-            )
-        }
-
-        composable<ScreenRoute.MorningExercises> {
-            MorningExercisesScreen(
-                onBackClick = navigateToBackStack
             )
         }
 

@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 sealed class ScreenRoute(val route: String) {
     @Serializable data object Home : ScreenRoute("Home")
     @Serializable data object Menu : ScreenRoute("Menu")
+    @Serializable data object Backup : ScreenRoute("Backup")
     @Serializable data object Statistic : ScreenRoute("Statistic")
     @Serializable data object Settings : ScreenRoute("Settings")
 
@@ -22,7 +23,6 @@ sealed class ScreenRoute(val route: String) {
     @Serializable data object Categories : ScreenRoute("Categories")
     @Serializable data class CategoryPage(val id: Int? = null) : ScreenRoute("CategoryPage")
 
-    @Serializable data object MorningExercises : ScreenRoute("MorningExercises")
     @Serializable data object Calculate : ScreenRoute("Calculate")
 
     @Serializable data object SportExercises : ScreenRoute("SportExercises")

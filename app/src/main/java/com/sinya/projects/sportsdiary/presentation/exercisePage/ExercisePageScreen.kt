@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -18,10 +19,13 @@ import com.sinya.projects.sportsdiary.R
 import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
 import com.sinya.projects.sportsdiary.presentation.error.ErrorScreen
 import com.sinya.projects.sportsdiary.presentation.exerciseEdit.components.CharacteristicRow
-import com.sinya.projects.sportsdiary.presentation.exerciseEdit.components.InfoCard
 import com.sinya.projects.sportsdiary.presentation.exercisePage.components.ExercisePagePlaceholder
-import com.sinya.projects.sportsdiary.presentation.exercisePage.components.MuscleGroup
+import com.sinya.projects.sportsdiary.presentation.exercisePage.components.PointRule
+import com.sinya.projects.sportsdiary.sheets.BodyInfoSheetContent
+import com.sinya.projects.sportsdiary.ui.features.ExpandedCard
 import com.sinya.projects.sportsdiary.ui.features.ScreenColumn
+import com.sinya.projects.sportsdiary.ui.features.map.BodyCard
+import com.sinya.projects.sportsdiary.ui.features.map.model.DataExerciseMuscles
 
 @Composable
 fun ExercisePageScreen(
@@ -46,6 +50,7 @@ fun ExercisePageScreen(
             ExercisePageView(
                 state = state as ExercisePageUiState.Success,
                 onBackClick = onBackClick,
+                onEvent = viewModel::onEvent,
                 navigateToEdit = navigateToEdit
             )
         }
@@ -57,29 +62,38 @@ fun ExercisePageScreen(
     }
 }
 
-
 @Composable
 private fun ExercisePageView(
     state: ExercisePageUiState.Success,
     onBackClick: () -> Unit,
+    onEvent: (ExercisePageEvent) -> Unit,
     navigateToEdit: (Int) -> Unit
 ) {
+    val rules by remember(state.exercise.rule) {
+        mutableStateOf(state.exercise.rule.split("\n\n"))
+    }
+
     ScreenColumn(
-        navigationType = if (state.exercise.isCustom) TypeTopNavigation.WithIcon(
-            onBackClick = onBackClick,
-            title = "",
-            painter = R.drawable.icon_edit,
-            onClick = { navigateToEdit(state.exercise.id) }
-        ) else TypeTopNavigation.WithoutIcon(onBackClick = onBackClick, title = "")
+        arrangement = Arrangement.spacedBy(12.dp),
+        navigationType = when(state.exercise.isCustom) {
+            true -> TypeTopNavigation.WithIcon(
+                onBackClick = onBackClick,
+                title = "",
+                painter = R.drawable.icon_edit,
+                onClick = { navigateToEdit(state.exercise.id) }
+            )
+            false -> TypeTopNavigation.WithoutIcon(onBackClick = onBackClick, title = "")
+        }
     ) {
         Text(
             text = state.exercise.name,
             style = MaterialTheme.typography.displaySmall,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
 
-            )
-
-        InfoCard(title = stringResource(R.string.characteristics)) {
+        ExpandedCard(
+            title = stringResource(R.string.characteristics)
+        ) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 CharacteristicRow(
                     label = stringResource(R.string.level),
@@ -104,15 +118,9 @@ private fun ExercisePageView(
             }
         }
 
-        // Описание и правила
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ExpandedCard(
+            title = stringResource(R.string.description)
         ) {
-            Text(
-                text = stringResource(R.string.description),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
             Text(
                 text = state.exercise.description,
                 style = MaterialTheme.typography.bodyMedium,
@@ -120,55 +128,39 @@ private fun ExercisePageView(
             )
         }
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ExpandedCard(
+            title = stringResource(R.string.rules),
         ) {
-            Text(
-                text = stringResource(R.string.rules),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
-            Text(
-                text = state.exercise.rule,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
+            rules.forEachIndexed { index, it -> PointRule(index + 1, it) }
         }
 
-        // Иллюстрация
-//        Text(
-//            text = stringResource(R.string.illustration),
-//            style = MaterialTheme.typography.titleLarge,
-//            color = MaterialTheme.colorScheme.onPrimary,
-//        )
+        BodyCard(
+            title = stringResource(R.string.muscle_title),
+            list = state.exMuscles.map {
+                DataExerciseMuscles(
+                    muscleId = it.muscleId,
+                    name = it.name,
+                    value = 1f,
+                    level = it.value,
+                    centerX = 0f,
+                    centerY = 0f,
+                    radiusScale = 0f,
+                    res = 0
+                )
+            },
+            withText = false,
+            onInfoClick = { onEvent(ExercisePageEvent.OnBodyInfoClick()) },
+            withColorText = true
+        )
 
-
-        val primaryM = remember {
-            state.exMuscles.filter { it.value == 2 }.joinToString(", ") { it.name }
-        }
-        val secondaryM = remember {
-            state.exMuscles.filter { it.value == 1 }.joinToString(", ") { it.name }
-        }
-
-        InfoCard(title = stringResource(R.string.muscle_title)) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (primaryM.isNotEmpty()) {
-                    MuscleGroup(
-                        label = stringResource(R.string.primary_muscle),
-                        muscles = primaryM,
-                        isPrimary = true
-                    )
-                }
-                if (secondaryM.isNotEmpty()) {
-                    MuscleGroup(
-                        label = stringResource(R.string.secondary_muscle),
-                        muscles = secondaryM,
-                        isPrimary = false
-                    )
-                }
-            }
-        }
         Spacer(Modifier.height(80.dp))
+    }
+
+    if (state.bodyVisible) {
+        BodyInfoSheetContent(
+            onDismiss = { onEvent(ExercisePageEvent.OnBodyInfoClick(false)) },
+            listMuscles = state.allMuscles
+        )
     }
 }
 

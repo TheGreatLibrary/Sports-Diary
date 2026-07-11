@@ -2,6 +2,7 @@ package com.sinya.projects.sportsdiary.presentation.categories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sinya.projects.sportsdiary.core.data.dataStore.SettingsEngine
 import com.sinya.projects.sportsdiary.core.domain.useCase.DeleteCategoryUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.ObserveCategoriesListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
+    private val settingsEngine: SettingsEngine,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
     private val getCategoryListUseCase: ObserveCategoriesListUseCase
 ) : ViewModel() {
@@ -24,7 +26,15 @@ class CategoriesViewModel @Inject constructor(
 
     init {
         loadData()
+        observeSettings()
     }
+
+    private fun observeSettings() = viewModelScope.launch {
+        settingsEngine.uiState.collectLatest { config ->
+            updateIfSuccess { it.copy(currentPlanId = config.planMorningId) }
+        }
+    }
+
 
     fun onEvent(event: CategoriesEvent) {
         when (event) {
@@ -35,8 +45,15 @@ class CategoriesViewModel @Inject constructor(
             CategoriesEvent.ReloadData -> loadData()
 
             CategoriesEvent.DeleteCategory -> delete()
+
+            is CategoriesEvent.OnPlanClick -> {
+                val state = state.value as? CategoriesUiState.Success ?: return
+                if (state.currentPlanId == event.id) settingsEngine.setPlanMorningId(null)
+                else settingsEngine.setPlanMorningId(event.id)
+            }
         }
     }
+
 
     private fun delete() = viewModelScope.launch {
         val currentState = _state.value as? CategoriesUiState.Success ?: return@launch
@@ -46,7 +63,12 @@ class CategoriesViewModel @Inject constructor(
 
             deleteCategoryUseCase(item).fold(
                 onSuccess = {
-                    updateIfSuccess { it.copy(deleteDialogId = null) }
+                    if (item.id==currentState.currentPlanId) settingsEngine.setPlanMorningId(null)
+                    updateIfSuccess {
+                        it.copy(
+                            deleteDialogId = null
+                        )
+                    }
                 },
                 onFailure = { error ->
                     updateIfSuccess { it.copy(errorMessage = error.toString()) }

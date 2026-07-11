@@ -18,7 +18,7 @@ sealed interface CategoryPageUiState {
         val isUndoing: Boolean = false,
         val canUndo: Boolean = false,
         val canRedo: Boolean = false,
-        val isError: Boolean = false
+        val isError: Boolean = false,
     ) : CategoryPageUiState
 
     data object Success : CategoryPageUiState

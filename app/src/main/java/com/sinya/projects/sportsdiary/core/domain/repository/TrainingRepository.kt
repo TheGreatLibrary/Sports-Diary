@@ -11,15 +11,21 @@ import com.sinya.projects.sportsdiary.core.data.dataBase.entity.Trainings
 import com.sinya.projects.sportsdiary.core.data.dataBase.entity.TypeTraining
 import com.sinya.projects.sportsdiary.core.domain.enums.TrainingMode
 import com.sinya.projects.sportsdiary.core.domain.enums.TypeTime
+import com.sinya.projects.sportsdiary.core.domain.enums.Visibility
+import com.sinya.projects.sportsdiary.core.domain.enums.WeightState
 import com.sinya.projects.sportsdiary.core.domain.model.CategoryEntity
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItem
 import com.sinya.projects.sportsdiary.core.domain.model.ExerciseItemData
 import com.sinya.projects.sportsdiary.core.domain.model.Training
 import com.sinya.projects.sportsdiary.core.domain.model.TrainingEntity
 import com.sinya.projects.sportsdiary.core.domain.model.toItem
+import com.sinya.projects.sportsdiary.ui.features.map.model.DataExerciseMuscleRaw
+import com.sinya.projects.sportsdiary.ui.features.map.model.DataExerciseMuscles
 import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartLine
 import com.sinya.projects.sportsdiary.ui.features.chart.model.ChartPoint
 import jakarta.inject.Inject
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -63,6 +69,7 @@ interface TrainingRepository {
     suspend fun updateDataCategory(items: List<DataTypeTrainings>): Result<Int>
     suspend fun checkNameCategoryExists(name: String, id: Int): Result<Boolean>
     suspend fun getExercisesData(list: List<Int>): Result<List<ChartLine>>
+    suspend fun getDataExerciseMuscles(from: String, to: String, language: String = Locale.current.language): Result<List<DataExerciseMuscles>>
 }
 
 
@@ -92,7 +99,8 @@ class TrainingRepositoryImpl @Inject constructor(
                 val weightArr = it.weight.split('/')
 
                 for (i in countArr.indices) {
-                    weight += countArr[i].toInt() * weightArr[i].toFloat()
+                    weight += countArr[i].toInt() * (weightArr[i].toFloat() + it.weightState) /
+                        if (TrainingMode.getMode(it.mode) == TrainingMode.TIME) 4f else 1f
                 }
             }
 
@@ -108,7 +116,7 @@ class TrainingRepositoryImpl @Inject constructor(
 
     override suspend fun getChartList(mode: TypeTime): Result<List<ChartLine>> {
         return try {
-            val raw = trainingDao.getChartList()
+            val raw = trainingDao.getChartList().ifEmpty { return Result.success(emptyList()) }
 
             val grouped = when (mode) {
                 TypeTime.DAYS -> raw.groupBy { it.date } // yyyy-MM-dd
@@ -124,7 +132,7 @@ class TrainingRepositoryImpl @Inject constructor(
                     val weightArr = item.weight.split('/')
 
                     for (i in countArr.indices) {
-                        totalWeight += countArr[i].toInt() * weightArr[i].toFloat() / if (TrainingMode.getMode(
+                        totalWeight += countArr[i].toInt() * (weightArr[i].toFloat() + item.weightState) / if (TrainingMode.getMode(
                                 item.mode
                             ) == TrainingMode.TIME
                         ) 4f else 1f
@@ -186,7 +194,8 @@ class TrainingRepositoryImpl @Inject constructor(
                             ExerciseItem(
                                 id = it.id,
                                 title = it.title,
-                                state = 1,
+                                state = Visibility.VISIBLE,
+                                weightState = WeightState.NOT_MATTER,
                                 mode = TrainingMode.getMode(it.mode),
                                 orderIndex = it.orderIndex,
                                 items = List(4) { setIndex ->
@@ -247,9 +256,6 @@ class TrainingRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
-
-
-
 
     override suspend fun insertDataTraining(items: List<DataTraining>): Result<Int> {
         return try {
@@ -360,7 +366,7 @@ class TrainingRepositoryImpl @Inject constructor(
                                 val weightArr = it.weight.split('/')
 
                                 for (i in countArr.indices) {
-                                    totalWeight += countArr[i].toInt() * weightArr[i].toFloat() / if (TrainingMode.getMode(
+                                    totalWeight += countArr[i].toInt() * (weightArr[i].toFloat() + it.weightState) / if (TrainingMode.getMode(
                                             it.mode
                                         ) == TrainingMode.TIME
                                     ) 4f else 1f
@@ -380,12 +386,110 @@ class TrainingRepositoryImpl @Inject constructor(
                             lineColor = Color.Unspecified
                         )
                     }
-
-
             Result.success(raw)
         } catch (e: Exception) {
             Result.failure(e)
-
         }
+    }
+
+    override suspend fun getDataExerciseMuscles(
+        from: String, // Передаем текущую дату (например, LocalDate.now().toString())
+        to: String,   // В данной логике эти параметры можно вычислить внутри или переопределить
+        language: String
+    ): Result<List<DataExerciseMuscles>> = coroutineScope {
+        try {
+            // 1. Расчет чистых, непересекающихся интервалов по 7 дней
+            val today = LocalDate.parse(to)
+
+            // Текущая неделя (последние 7 дней, включая сегодня): [today - 6 дней, today]
+            val currentFrom = today.minusDays(6).toString()
+            val currentTo = today.toString()
+
+            // Предыдущая неделя (7 дней до этого): [today - 13 дней, today - 7 дней]
+            val previousFrom = today.minusDays(13).toString()
+            val previousTo = today.minusDays(7).toString()
+
+            // 2. Параллельный запуск запросов в БД через async
+            val currentRawDataDeferred = async {
+                trainingDao.getDataExerciseMusclesByDate(currentFrom, currentTo, language)
+            }
+            val previousRawDataDeferred = async {
+                trainingDao.getDataExerciseMusclesByDate(previousFrom, previousTo, language)
+            }
+
+            // Ожидаем завершения обоих запросов
+            val currentRawData = currentRawDataDeferred.await()
+            val previousRawData = previousRawDataDeferred.await()
+            Log.d("Body1",currentRawData.toString())
+            Log.d("Body2",previousRawData.toString())
+
+            // 3. Считаем суммарный тоннаж для каждой мышцы за оба периода
+            val currentTonnageMap = calculateTonnagePerMuscle(currentRawData)
+            val previousTonnageMap = calculateTonnagePerMuscle(previousRawData)
+
+            // 4. Объединяем данные и рассчитываем итоговый Float (%) нагрузки
+            // Берем все уникальные мышцы, которые встречались хотя бы в одном из периодов
+            val allMuscleIds = (currentRawData + previousRawData).map { it.muscleId }.distinct()
+
+            // Находим маппинг ID -> Name и ID -> Level из свежих данных (или старых, если в свежих нет)
+            val rawItemsMap = (previousRawData + currentRawData).associateBy { it.muscleId }
+
+            val processedMuscles = allMuscleIds.map { muscleId ->
+                val rawItem = rawItemsMap[muscleId]!!
+
+                val currentTonnage = currentTonnageMap[muscleId] ?: 0f
+                val previousTonnage = previousTonnageMap[muscleId] ?: 0f
+
+                // Вычисляем процент нагрузки для тепловой карты (Float от 0.0f до 1.0f)
+                val calculatedValue = calculateLoadPercentage(
+                    currentTonnage = currentTonnage,
+                    previousTonnage = previousTonnage
+                )
+
+                DataExerciseMuscles(
+                    res = 0, // или откуда у тебя берется ссылка на drawable (например, маппинг ID в R.drawable)
+                    value = calculatedValue,
+                    level = rawItem.level,  // Уровень вовлечения (0, 1, 2) из БД
+                    name = rawItem.name,
+                    muscleId = rawItem.muscleId,
+                    centerX = 0f,
+                    centerY = 0f,
+                    radiusScale = 0f
+                )
+            }
+
+            Result.success(processedMuscles)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Вспомогательная функция для расчета тоннажа, сгруппированная по ID мышцы
+     */
+    private fun calculateTonnagePerMuscle(rawList: List<DataExerciseMuscleRaw>): Map<Int, Float> {
+        return rawList.groupBy { it.muscleId }.mapValues { (_, entries) ->
+            var totalWeight = 0f
+
+            entries.forEach { item ->
+                val countArr = item.countResult.split('/')
+                val weightArr = item.weightResult.split('/')
+
+                for (i in countArr.indices) {
+                    val count = countArr.getOrNull(i)?.toIntOrNull() ?: 0
+                    val weight = weightArr.getOrNull(i)?.toFloatOrNull() ?: 0f
+
+                    totalWeight += count * (weight + item.weight) / if (TrainingMode.getMode(item.mode) == TrainingMode.TIME) 4f else 1f
+                }
+            }
+            totalWeight / 1000f
+        }
+    }
+
+    private fun calculateLoadPercentage(currentTonnage: Float, previousTonnage: Float): Float {
+        if (currentTonnage == 0f) return 0.0f
+        if (previousTonnage == 0f) return 1.0f
+        val ratio = currentTonnage / previousTonnage
+        return ratio.coerceIn(0.0f, 1.0f)
     }
 }

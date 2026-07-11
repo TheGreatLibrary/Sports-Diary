@@ -308,7 +308,7 @@ class MarkDayMorningExercisesCallback : ActionCallback {
                 id = 0,
                 note = null,
                 date = LocalDate.now().toString(),
-                planId = currentPlanId
+                categoryId = currentPlanId
             )
         )
 

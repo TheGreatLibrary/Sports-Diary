@@ -1,9 +1,13 @@
 package com.sinya.projects.sportsdiary.core.di
 
+import com.sinya.projects.sportsdiary.core.data.dataBase.BackupManager
+import com.sinya.projects.sportsdiary.core.data.dataBase.BackupManagerImpl
 import com.sinya.projects.sportsdiary.core.domain.repository.CategoryRepository
 import com.sinya.projects.sportsdiary.core.domain.repository.CategoryRepositoryImpl
 import com.sinya.projects.sportsdiary.core.domain.repository.ExercisesRepository
 import com.sinya.projects.sportsdiary.core.domain.repository.ExercisesRepositoryImpl
+import com.sinya.projects.sportsdiary.core.domain.repository.ChangelogRepository
+import com.sinya.projects.sportsdiary.core.domain.repository.ChangelogRepositoryImpl
 import com.sinya.projects.sportsdiary.core.domain.repository.MorningRepository
 import com.sinya.projects.sportsdiary.core.domain.repository.MorningRepositoryImpl
 import com.sinya.projects.sportsdiary.core.domain.repository.ProportionRepository
@@ -19,6 +23,19 @@ import jakarta.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepoModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindChangelogRepository(
+        impl: ChangelogRepositoryImpl
+    ): ChangelogRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindBackupManager(
+        impl: BackupManagerImpl
+    ): BackupManager
+
     @Binds
     @Singleton
     abstract fun bindTrainingRepository(

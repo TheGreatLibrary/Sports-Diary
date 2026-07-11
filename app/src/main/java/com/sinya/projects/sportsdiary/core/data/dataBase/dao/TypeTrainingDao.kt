@@ -82,6 +82,7 @@ interface TypeTrainingDao {
         e.id,
         et.name AS title,
         d.mode AS mode,
+        d.weight AS weight,
         d.order_index AS orderIndex
       FROM data_type_trainings d
       JOIN exercises e ON e.id = d.exercise_id

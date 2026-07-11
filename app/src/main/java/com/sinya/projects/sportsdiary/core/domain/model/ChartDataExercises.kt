@@ -6,6 +6,7 @@ data class ChartDataExercises(
     val exerciseId: Int,
     val trainingNumber: Int,
     val mode: Int,
+    val weightState: Float,
     val date: String,
     val categoryName: String
 )

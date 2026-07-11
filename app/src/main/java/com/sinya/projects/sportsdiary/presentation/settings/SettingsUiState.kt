@@ -6,7 +6,7 @@ sealed interface SettingsUiState {
     data class Success(
         val themeMode: Boolean,
         val langMode: String,
-        val showTrainingWarningState: Boolean
+        val showTrainingWarningState: Boolean,
     ) : SettingsUiState
 
     data class Error(val message: String) : SettingsUiState

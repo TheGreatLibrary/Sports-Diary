@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.sportsdiary.core.domain.useCase.ObserveExerciseDescriptionUseCase
 import com.sinya.projects.sportsdiary.core.domain.useCase.GetExerciseMusclesUseCase
+import com.sinya.projects.sportsdiary.core.domain.useCase.GetMusclesUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -20,6 +21,7 @@ class ExercisePageViewModel @AssistedInject constructor(
     @Assisted("id") val id: Int?,
     private val getExerciseDescriptionUseCase: ObserveExerciseDescriptionUseCase,
     private val getExerciseMusclesUseCase: GetExerciseMusclesUseCase,
+    private val getMusclesUseCase: GetMusclesUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ExercisePageUiState>(ExercisePageUiState.Loading)
@@ -37,13 +39,15 @@ class ExercisePageViewModel @AssistedInject constructor(
     }
 
     private fun loadSuccess(id: Int) = viewModelScope.launch {
+        val allMuscles = getMusclesUseCase().getOrElse { emptyList() }.map { Pair(it.muscleId, it.name) }
         combine(
             getExerciseDescriptionUseCase(id),
             getExerciseMusclesUseCase(id)
         ) { exercise, muscles ->
             ExercisePageUiState.Success(
                 exercise = exercise,
-                exMuscles = muscles
+                exMuscles = muscles,
+                allMuscles = allMuscles
             )
         }
         .catch { error ->
@@ -51,6 +55,16 @@ class ExercisePageViewModel @AssistedInject constructor(
         }
         .collect { state ->
             _state.value = state
+        }
+    }
+
+    fun onEvent(event: ExercisePageEvent) {
+        when (event) {
+            is ExercisePageEvent.OnBodyInfoClick -> {
+                _state.value = (_state.value as ExercisePageUiState.Success).copy(
+                    bodyVisible = event.visible
+                )
+            }
         }
     }
 }
