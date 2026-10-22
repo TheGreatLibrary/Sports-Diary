@@ -1,0 +1,13 @@
+<resources>
+    <string name="statistic_count_of_training">Количество тренировок</string>
+    <string name="statistic_all_weight">Общий тоннаж</string>
+    <string name="statistic_count_mornings">Количество зарядок</string>
+    <string name="statistic_series_of_mornings">Серия зарядок</string>
+    <string name="statistic_effect_of_training">Эффективность тренировок</string>
+    <string name="statistic_days">Дни</string>
+    <string name="statistic_months">Месяцы</string>
+    <string name="statistic_years">Года</string>
+    <string name="statistic_muscles_for_week">Загруженность мышц за 7 дней</string>
+    <string name="statistic_muscles_of_body">Тепловая карта тела</string>
+    <string name="statistic_hot_map_description">На тепловой карте отображается загруженность тела за неделю тренировок относительно предыдущей недели</string>
+</resources>

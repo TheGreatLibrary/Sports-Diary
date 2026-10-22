@@ -10,21 +10,27 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sinya.projects.sportsdiary.core.utils.updateLocale
+import com.sinya.projects.datastore.SettingsEngine
+import com.sinya.projects.domain.utils.updateLocale
 import com.sinya.projects.sportsdiary.navigation.MainApp
-import com.sinya.projects.sportsdiary.ui.theme.LocalDateFormat
-import com.sinya.projects.sportsdiary.ui.theme.LocalSettingsEngine
-import com.sinya.projects.sportsdiary.ui.theme.SportsDiaryTheme
-import com.sinya.projects.sportsdiary.core.data.dataStore.SettingsEngine
+import com.sinya.projects.ui.theme.DarkAppGradients
+import com.sinya.projects.ui.theme.LightAppGradients
+import com.sinya.projects.ui.theme.LocalAppGradients
+import com.sinya.projects.ui.theme.LocalDateFormatDMY
+import com.sinya.projects.ui.theme.LocalDateFormatMY
+import com.sinya.projects.ui.theme.SportsDiaryTheme
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.drop
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -65,6 +71,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun App(engine: SettingsEngine) {
         val config by engine.uiState.collectAsStateWithLifecycle()
+        val locale = remember { Locale.getDefault() }
 
         DisposableEffect(config.dark) {
             WindowCompat.getInsetsController(window, window.decorView).apply {
@@ -81,14 +88,30 @@ class MainActivity : ComponentActivity() {
                 }
         }
 
+        val gradients = if (config.dark) DarkAppGradients else LightAppGradients
+
         CompositionLocalProvider(
             LocalSettingsEngine provides engine,
-            LocalDateFormat provides DateTimeFormatter.ofPattern("dd.MM.yyyy")
+            LocalDateFormatDMY provides DateTimeFormatter.ofPattern("dd.MM.yyyy"),
+            LocalDateFormatMY provides DateTimeFormatter.ofPattern("MMMM yyyy", locale),
+            LocalAppGradients provides gradients
         ) {
             SportsDiaryTheme(darkTheme = config.dark, dynamicColor = false) {
+//                val healthConnectClient = HealthConnectClient.getOrCreate(this)
+//
+//                setContent {
+//                    MaterialTheme {
+//                        HealthDataScreen(healthConnectClient)
+//                    }
+//                }
+
                 MainApp()
             }
         }
     }
+}
+
+val LocalSettingsEngine = staticCompositionLocalOf<SettingsEngine> {
+    error("SettingsEngine not provided")
 }
 

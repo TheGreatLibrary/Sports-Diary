@@ -1,0 +1,15 @@
+<resources>
+    <string name="home_morning_completed">M. Done</string>
+    <string name="home_morning">- morning exercises</string>
+    <string name="home_training">- training</string>
+    <string name="home_card_proportion_description">It\'s time to measure your biceps!</string>
+    <string name="home_no_data_of_training">No training records at the moment</string>
+    <string name="home_training_item_description">Training on %1$s №%2$s - %3$s</string>
+    <string name="home_proportion_item_description">Training on №%1$s - %2$s</string>
+    <string name="home_note_of_morning">Morning note</string>
+    <string name="home_card_note_placeholder">Here could be your thoughts about the current day!</string>
+
+    <string name="steps">Steps</string>
+    <string name="sleep">Sleep</string>
+    <string name="kkal">Kcal</string>
+</resources>

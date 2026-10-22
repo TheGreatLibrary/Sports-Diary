@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- форма -->
+    <string name="routine">Рутина</string>
+    <string name="routine_description">Рутина - это тип тренировки с определенным набор упражнений, порядком их выполнения и количеством повторений с весом, которые задает пользователь</string>
+
+    <string name="weight_of_body">Учесть собственный вес</string>
+    <string name="exercise_on_count">Упр. на количество</string>
+    <string name="hide_of_summary">Скрыть из расчёта</string>
+    <string name="add_set">Добавить подход</string>
+    <string name="delete_exercise">Удалить упражнение</string>
+
+    <!-- анализ -->
+    <string name="effect">Эффективность</string>
+    <string name="count_of_step">Кол. повторений</string>
+    <string name="count_set">Кол. подходов</string>
+    <string name="count_ex">Кол. упражнений</string>
+</resources>

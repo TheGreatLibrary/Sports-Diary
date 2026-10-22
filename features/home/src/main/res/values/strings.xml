@@ -1,0 +1,14 @@
+<resources>
+    <string name="home_morning_completed">Вып. зарядку</string>
+    <string name="home_morning">- зарядка</string>
+    <string name="home_training">- тренировка</string>
+    <string name="home_card_proportion_description">Пришло время помериться обхватом бицепса!</string>
+    <string name="home_no_data_of_training">На данный момент нет записей о тренировках</string>
+    <string name="home_training_item_description">Тренировка на %1$s №%2$s - %3$s</string>
+    <string name="home_proportion_item_description">Тренировка на №%1$s - %2$s</string>
+    <string name="home_note_of_morning">Заметка к зарядке</string>
+    <string name="home_card_note_placeholder">Здесь могли бы быть ваши мысли о текущем дне!</string>
+    <string name="steps">Шаги</string>
+    <string name="sleep">Сон</string>
+    <string name="kkal">Калории</string>
+</resources>

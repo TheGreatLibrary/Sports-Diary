@@ -1,0 +1,13 @@
+<resources>
+    <string name="statistic_all_weight">Total tonnage</string>
+    <string name="statistic_count_of_training">Number of trainings</string>
+    <string name="statistic_series_of_mornings">Streak of morning</string>
+    <string name="statistic_count_mornings">Number of morning</string>
+    <string name="statistic_effect_of_training">Training effectiveness</string>
+    <string name="statistic_days">Days</string>
+    <string name="statistic_months">Months</string>
+    <string name="statistic_years">Years</string>
+    <string name="statistic_muscles_for_week">Muscle load over 7 days</string>
+    <string name="statistic_muscles_of_body">Body heatmap</string>
+    <string name="statistic_hot_map_description">The heatmap shows body load over a week of training compared to the previous week</string>
+</resources>

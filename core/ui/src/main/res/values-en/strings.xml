@@ -1,0 +1,176 @@
+<resources>
+    <string name="app_name">Gymble</string>
+
+    <!-- Errors -->
+    <string name="saving">Saving…</string>
+    <string name="saved">Saved</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_title">Error</string>
+
+    <!-- Calculator -->
+    <string name="calculate_title">Calculators</string>
+
+    <!-- Categories -->
+    <string name="routines_title">Routines</string>
+    <string name="category">Category</string>
+    <string name="category_desc">Defines the type of exercise</string>
+    <string name="category_name">Category name</string>
+    <string name="category_name_is_empty">Category name is empty or duplicated</string>
+    <string name="category_with_name">Category %1$s</string>
+    <string name="constructor">Category</string>
+    <string name="create_category">Create category</string>
+    <string name="not_category">Not selected</string>
+
+    <!-- Create Exercise -->
+    <string name="base_exercise">Preset</string>
+    <string name="choose_muscle">Add muscles</string>
+    <string name="create_exercise_title">Create exercise</string>
+    <string name="custom">Custom</string>
+    <string name="equipment_desc">What is required to perform</string>
+    <string name="exercise_name_is_empty">Exercise name is empty or duplicated</string>
+    <string name="force_desc">Shows the load level</string>
+    <string name="level_desc">Whether the exercise is suitable for beginners</string>
+    <string name="mechanic_desc">Type of movement in the exercise</string>
+    <string name="primary_muscl">Primary muscle</string>
+    <string name="put_your_description">Enter description</string>
+    <string name="put_your_rule">Enter execution rules</string>
+    <string name="put_your_title">Enter name</string>
+    <string name="secondary_muscl">Secondary muscle</string>
+
+    <!-- Exercises -->
+    <string name="sports_exercises_title">Exercises</string>
+    <string name="sort_title">Sort</string>
+
+    <!-- Exercise -->
+    <string name="characteristics">Characteristics</string>
+    <string name="description">Description</string>
+    <string name="equipment">Equipment</string>
+    <string name="illustration">Illustrations</string>
+    <string name="level">Level</string>
+    <string name="mechanic">Mechanics</string>
+    <string name="muscle_title">Target muscles</string>
+    <string name="primary_muscle">Primary muscles</string>
+    <string name="rules">Instructions</string>
+    <string name="secondary_muscle">Secondary muscles</string>
+    <string name="type">Type</string>
+
+    <!-- Main Page -->
+    <string name="finished_morning_exercises">M. Done</string>
+    <string name="friday_short">Fri</string>
+    <string name="monday_short">Mon</string>
+    <string name="morning_exercises">- morning exercises</string>
+    <string name="morning_exercises_description">Add a note about completed morning exercises?</string>
+    <string name="not_entries_of_training">No training records at the moment</string>
+    <string name="proportions_description">It\'s time to measure your biceps!</string>
+    <string name="saturday_short">Sat</string>
+    <string name="sunday_short">Sun</string>
+    <string name="thursday_short">Thu</string>
+    <string name="training">- training</string>
+    <string name="tuesday_short">Tue</string>
+    <string name="wednesday_short">Wed</string>
+    <string name="workout_type_training">Training on %1$s #%2$s - %3$s</string>
+
+    <!-- Measurements -->
+    <string name="measurement">Measurement</string>
+    <string name="proportion_number">Measurement #%1$s</string>
+    <string name="proportions_title">Body measurements</string>
+
+    <!-- Menu -->
+    <string name="main_block">Main</string>
+    <string name="menu_title">Menu</string>
+    <string name="other_block">Other</string>
+
+    <!-- Morning Exercises -->
+    <string name="base_description">Basic morning exercises</string>
+    <string name="base_plan">Basic plan</string>
+    <string name="count_completed_mornings">Number of morning</string>
+    <string name="data_of_morning_exercises">Morning exercises data</string>
+    <string name="morning_exercises_title">Morning exercises</string>
+    <string name="morning_has_note">Note exists</string>
+    <string name="name">Name</string>
+    <string name="note_of_morning_exercises">Notes on morning exercises</string>
+    <string name="notes">Notes</string>
+    <string name="save">Save</string>
+    <string name="series_of_completed_mornings">Streak of morning</string>
+
+    <!-- Settings -->
+
+
+    <!-- Statistics -->
+    <string name="all_weight">Total tonnage</string>
+    <string name="not_found_data">No data</string>
+    <string name="statistic_title">Statistics</string>
+    <string name="work_muscles_for_week">Muscle load over 7 days</string>
+    <string name="muscles_of_body">Body heatmap</string>
+    <string name="hot_map_description">The heatmap shows body load over a week of training compared to the previous week</string>
+
+
+    <!-- Additional Statistics -->
+    <string name="grown_up_trainings">Progress of results</string>
+    <string name="measurements">Measurements</string>
+    <string name="statistic_diagram_title">Additional statistics</string>
+    <string name="dropdown_checkbox_description">Select several metrics you would like to view on the chart</string>
+    <string name="diagram_exercise">The chart shows the total tonnage of an exercise per workout. The vertical axis displays tonnage, the horizontal axis shows the workout name (workouts without a category are displayed as just numbers)</string>
+    <string name="diagram_training">The chart shows the total tonnage of workouts per day. The vertical axis displays tonnage, the horizontal axis shows the date</string>
+    <string name="diagram_measurement">The chart shows changes in body measurements. The vertical axis displays units (cm, kg, etc.), the horizontal axis shows measurement numbers</string>
+
+
+    <!-- Trainings -->
+    <string name="sorted_by">Sort by</string>
+    <string name="training_number">Training №%1$s</string>
+    <string name="trainings_title">Trainings</string>
+
+    <!-- Training -->
+    <string name="add">Add</string>
+    <string name="add_exercise">Add exercise</string>
+    <string name="choose_exercises">Add exercises</string>
+    <string name="create">Create</string>
+    <string name="minus">-</string>
+    <string name="training_title">Training</string>
+
+    <!-- Types of Measurements -->
+    <string name="cm">cm</string>
+    <string name="count">pcs</string>
+    <string name="kg">kg</string>
+    <string name="second">sec</string>
+
+
+
+    <!-- Sort & Filter -->
+    <string name="all">All</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="ex_equipment">Equipment</string>
+    <string name="ex_level">Difficulty</string>
+    <string name="ex_muscle">Muscles</string>
+    <string name="force">Strength</string>
+    <string name="month">Mon.</string>
+    <string name="no_one">Not specified</string>
+    <string name="year">Year</string>
+
+    <!-- Delete -->
+    <string name="delete">Delete</string>
+    <string name="delete_info_description">Are you sure you want to delete this item? It will be impossible to restore it!</string>
+    <string name="dont_take_warning">Don\'t show this warning again</string>
+    <string name="enter_delete">Confirm deletion</string>
+
+    <!-- Category -->
+    <string name="time_exercise">Timed exercise</string>
+    <string name="count_exercise">Rep-based exercise</string>
+    <string name="title_is_empty">Title is empty</string>
+    <string name="title_already_existed">Title already exists, duplicates are not allowed</string>
+
+
+    <!-- Backup -->
+    <string name="backup_title">Import/Export DB</string>
+
+
+
+    <string name="watch_data">Connected devices</string>
+    <string name="open">Open</string>
+    <string name="analyze">Analysis</string>
+    <string name="date_at">Date: %1$s</string>
+    <string name="edit"> Edit</string>
+
+    <string name="effective_muscles">Muscle load</string>
+</resources>

@@ -1,0 +1,31 @@
+package com.sinya.projects.domain.model
+
+data class HealthData(
+    val stepsToday: Long = 0,
+    val activeKcalToday: Int = 0,
+    val totalKcalToday: Int = 0,
+    val exerciseMinutesToday: Int = 0,
+    val activeHoursToday: Int = 0,
+    val latestExerciseDate: String = "",
+    val distanceKmToday: Double = 0.0,
+    val floorsClimbedToday: Double = 0.0,
+    val elevationGainMeters: Double = 0.0,
+    val latestHeartRate: Long = 0,
+    val restingHeartRate: Long = 0,
+    val heartRateHourly: List<Float> = List(24) { 0f },
+    val latestSpo2: Double = 0.0,
+    val spo2Hourly: List<Float> = List(24) { 0f },
+    val hrvRmssd: Double = 0.0,
+    val stressScore: Int = 0,
+    val stressHourly: List<Float> = List(24) { 0f },
+    val sleepDurationMinutes: Long = 0,
+    val respiratoryRate: Double = 0.0,
+    val vo2Max: Double = 0.0,
+    val hydrationLitersToday: Double = 0.0,
+    val weightKg: Double? = null,
+    val bodyFatPercent: Double? = null,
+    val leanBodyMassKg: Double? = null,
+    val boneMassKg: Double? = null,
+    val bodyWaterKg: Double? = null,
+    val bmrKcal: Double? = null
+)

@@ -17,8 +17,8 @@ android {
         applicationId = "com.sinya.projects.sportsdiary"
         minSdk = 26
         targetSdk = 36
-        versionCode = 17
-        versionName = "1.4.0"
+        versionCode = 20
+        versionName = "1.6.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -48,7 +48,6 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 
     bundle {
@@ -59,52 +58,60 @@ android {
 }
 
 dependencies {
-    // json
-    implementation(libs.kotlinx.serialization.json)
+    implementation(project(":core:domain"))
+    implementation(project(":core:database"))
+    implementation(project(":core:datastore"))
+    implementation(project(":core:health"))
+    implementation(project(":core:ui"))
 
-    // work manager for widget
-    implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.androidx.hilt.work)
-    implementation(libs.androidx.compose.foundation.layout)
-    ksp(libs.androidx.hilt.compiler)
+    implementation(project(":features:home"))
+    implementation(project(":features:menu"))
+    implementation(project(":features:statistic"))
+    implementation(project(":features:statisticDiagram"))
+    implementation(project(":features:settings"))
+    implementation(project(":features:trainings"))
+    implementation(project(":features:proportions"))
+    implementation(project(":features:exercises"))
+    implementation(project(":features:routines"))
+    implementation(project(":features:pageProportion"))
+    implementation(project(":features:pageTraining"))
+    implementation(project(":features:pageRoutine"))
+    implementation(project(":features:pageExercise"))
+    implementation(project(":features:editExercise"))
+    implementation(project(":features:backup"))
+    implementation(project(":features:calculator"))
+    implementation(project(":features:health"))
+    implementation(project(":features:notes"))
 
-    // widget
-    implementation(libs.androidx.glance.appwidget)
-    implementation(libs.androidx.glance.material3)
+    implementation(project(":widgets:calendar"))
 
-    // room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-
-    // hilt
+    // Hilt (сборка единого DI-графа)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.kotlin.metadata.jvm)
 
-    // datastore
-    implementation(libs.androidx.datastore.preferences)
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    // Навигация и точка входа (MainActivity + NavHost)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+
+    // Базовый UI и Lifecycle (если переведешь :core:ui на api(), эти 6 строчек тоже можно будет удалить)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.navigation.compose.android)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    // Test
+    // Тесты
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.junit.v115)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.runner)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    androidTestImplementation(libs.androidx.room.testing)
-    androidTestImplementation(libs.androidx.junit.v115)
-    androidTestImplementation(libs.androidx.runner)
 }

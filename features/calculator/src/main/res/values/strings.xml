@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calc_1rm_title">Одноповторный макс. жима</string>
+    <string name="calc_1rm_desc">Одноповторный максимум жима лежа - это максимальный вес, который вы можете поднять один раз с правильной техникой. Знание своего 1ПМ критически важно для силовых атлетов, так как позволяет точно планировать тренировочные нагрузки, отслеживать прогресс и ставить реалистичные цели.</string>
+    <string name="lifted_weight">Поднимаемый вес</string>
+    <string name="repetitions">Кол-во повторений</string>
+    <string name="brzycki">По ф. Бжицки</string>
+    <string name="epley">По ф. Эпли</string>
+    <string name="lander">По ф. Лэндера</string>
+    <string name="result">Результаты</string>
+    <!-- Единицы измерения -->
+    <string name="unit_percent">%</string>
+    <string name="unit_index">ед.</string>
+    <string name="unit_rpe">RPE</string>
+    <string name="unit_min">мин</string>
+    <string name="unit_liters">л</string>
+
+    <!-- Общие поля -->
+    <string name="calc_avg_value">Ср. значение</string>
+    <string name="calc_var_height">Рост</string>
+    <string name="calc_var_body_weight">Собственный вес</string>
+
+    <!-- 2. Процент жира ВМС США -->
+    <string name="calc_bf_title">Процент жира (ВМС США)</string>
+    <string name="calc_bf_desc">Оценка доли подкожного жира на основе антропометрических обхватов. Для мужчин учитываются рост, шея и талия. Для женщин дополнительно учитывается обхват бедер.</string>
+    <string name="calc_var_neck">Обхват шеи</string>
+    <string name="calc_var_waist">Обхват талии</string>
+    <string name="calc_var_hips">Обхват бедер (для женщин)</string>
+    <string name="calc_res_bf_men">Для мужчин</string>
+    <string name="calc_res_bf_women">Для женщин</string>
+
+    <!-- 3. FFMI -->
+    <string name="calc_ffmi_title">Индекс мышечной массы (FFMI)</string>
+    <string name="calc_ffmi_desc">Показывает количество чистой мышечной массы относительно роста. Значение 19–20 является средним для мужчин, 22–23 — отлично тренированный атлет, около 25 — верхний генетический предел без фармакологии.</string>
+    <string name="calc_var_bf_percent">Процент жира</string>
+    <string name="calc_res_lbm">Сухая масса тела</string>
+    <string name="calc_res_ffmi_base">Базовый FFMI</string>
+    <string name="calc_res_ffmi_norm">Нормализованный (к 180 см)</string>
+
+    <!-- 4. RPE / RIR -->
+    <string name="calc_rpe_title">Рабочий вес по RPE / RIR</string>
+    <string name="calc_rpe_desc">Рассчитывает оптимальный рабочий вес на штанге на основе вашего 1ПМ, целевого количества повторений и желаемого запаса сил (RIR — сколько еще раз вы могли бы поднять вес до отказа).</string>
+    <string name="calc_var_1rm">Ваш 1ПМ в упражнении</string>
+    <string name="calc_var_rir">Повторения в запасе (RIR)</string>
+    <string name="calc_res_working_weight">Рабочий вес</string>
+    <string name="calc_res_1rm_percent">Интенсивность от 1ПМ</string>
+    <string name="calc_res_rpe_equiv">Тяжесть подхода</string>
+
+    <!-- 5. Норма воды -->
+    <string name="calc_water_title">Суточная норма воды</string>
+    <string name="calc_water_desc">Персональный расчет гидратации по спортивным нормам FPA: базовая потребность составляет 35 мл на кг веса плюс компенсация потери жидкости во время тренировки (около 600 мл в час).</string>
+    <string name="calc_var_workout_time">Длительность тренировки</string>
+    <string name="calc_res_water_base">Базовая норма (в день отдыха)</string>
+    <string name="calc_res_water_during">Выпить за время тренировки</string>
+    <string name="calc_res_water_normal">Суточная (обычный климат)</string>
+    <string name="calc_res_water_hot">Суточная (жаркий климат)</string>
+    <string name="calculator_type">Вид калькулятора</string>
+</resources>

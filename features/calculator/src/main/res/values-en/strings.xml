@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calc_1rm_title">One-Rep Max Bench Press</string>
+    <string name="calc_1rm_desc">The one-rep max bench press is the maximum weight you can lift once with proper technique. Knowing your 1RM is critical for strength athletes, as it allows you to accurately plan training loads, track progress, and set realistic goals.</string>
+    <string name="lifted_weight">Weight lifted</string>
+    <string name="repetitions">Number of reps</string>
+    <string name="brzycki">Brzycki formula</string>
+    <string name="epley">Epley formula</string>
+    <string name="lander">Lander formula</string>
+    <string name="result">Results</string>
+    <!-- Units of measurement -->
+    <string name="unit_percent">%</string>
+    <string name="unit_index">pts</string>
+    <string name="unit_rpe">RPE</string>
+    <string name="unit_min">min</string>
+    <string name="unit_liters">L</string>
+
+    <!-- Common fields -->
+    <string name="calc_avg_value">Avg. value</string>
+    <string name="calc_var_height">Height</string>
+    <string name="calc_var_body_weight">Body weight</string>
+
+    <!-- 2. US Navy Body Fat Percentage -->
+    <string name="calc_bf_title">Body fat percentage (US Navy)</string>
+    <string name="calc_bf_desc">Estimates the subcutaneous fat percentage based on anthropometric measurements. For men, height, neck, and waist are used. For women, hip circumference is additionally taken into account.</string>
+    <string name="calc_var_neck">Neck circumference</string>
+    <string name="calc_var_waist">Waist circumference</string>
+    <string name="calc_var_hips">Hip circumference (for women)</string>
+    <string name="calc_res_bf_men">For men</string>
+    <string name="calc_res_bf_women">For women</string>
+
+    <!-- 3. FFMI -->
+    <string name="calc_ffmi_title">Fat-Free Mass Index (FFMI)</string>
+    <string name="calc_ffmi_desc">Shows the amount of lean muscle mass relative to height. A value of 19–20 is average for men, 22–23 is a well-trained athlete, and around 25 is the upper genetic limit without pharmacology.</string>
+    <string name="calc_var_bf_percent">Body fat percentage</string>
+    <string name="calc_res_lbm">Lean body mass</string>
+    <string name="calc_res_ffmi_base">Base FFMI</string>
+    <string name="calc_res_ffmi_norm">Normalized (to 180 cm)</string>
+
+    <!-- 4. RPE / RIR -->
+    <string name="calc_rpe_title">Working weight by RPE / RIR</string>
+    <string name="calc_rpe_desc">Calculates the optimal barbell working weight based on your 1RM, target rep count, and desired reserve (RIR — how many more reps you could have lifted before failure).</string>
+    <string name="calc_var_1rm">Your 1RM for the exercise</string>
+    <string name="calc_var_rir">Reps in reserve (RIR)</string>
+    <string name="calc_res_working_weight">Working weight</string>
+    <string name="calc_res_1rm_percent">Intensity of 1RM</string>
+    <string name="calc_res_rpe_equiv">Set difficulty</string>
+
+    <!-- 5. Water intake -->
+    <string name="calc_water_title">Daily water intake</string>
+    <string name="calc_water_desc">Personal hydration calculation based on FPA sports standards: the base requirement is 35 ml per kg of body weight plus compensation for fluid loss during training (about 600 ml per hour).</string>
+    <string name="calc_var_workout_time">Workout duration</string>
+    <string name="calc_res_water_base">Base intake (rest day)</string>
+    <string name="calc_res_water_during">Drink during the workout</string>
+    <string name="calc_res_water_normal">Daily (normal climate)</string>
+    <string name="calc_res_water_hot">Daily (hot climate)</string>
+    <string name="calculator_type">Calculator type</string>
+</resources>

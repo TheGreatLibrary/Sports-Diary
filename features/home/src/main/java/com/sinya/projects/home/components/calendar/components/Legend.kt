@@ -1,0 +1,24 @@
+package com.sinya.projects.home.components.calendar.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.sinya.projects.ui.R
+import com.sinya.projects.ui.components.LegendDot
+
+@Composable
+internal fun Legend() {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        LegendDot(
+            text = stringResource(R.string.morning_exercises),
+            color = MaterialTheme.colorScheme.primary
+        )
+        LegendDot(
+            text = stringResource(R.string.training),
+            color = MaterialTheme.colorScheme.secondary
+        )
+    }
+}

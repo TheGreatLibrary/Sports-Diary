@@ -18,9 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.sportsdiary.R
-import com.sinya.projects.sportsdiary.core.domain.model.TypeTopNavigation
-import com.sinya.projects.sportsdiary.ui.features.RoundedIcon
+import com.sinya.projects.ui.components.RoundedIcon
 
 @Composable
 fun NavigationTopBar(
@@ -46,7 +44,7 @@ fun NavigationTopBar(
             onClick = type.onBackClick,
             size = 32.dp,
             selectedContainerColor = Color.Transparent,
-            painter = painterResource(R.drawable.nav_back)
+            painter = painterResource(com.sinya.projects.ui.R.drawable.nav_back)
         )
         title?.let {
             Text(

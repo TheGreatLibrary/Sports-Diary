@@ -5,6 +5,37 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!-- 01 шаги --> <uses-permission android:name="android.permission.health.READ_STEPS" />
+    <!-- 02 дистанция --> <uses-permission android:name="android.permission.health.READ_DISTANCE" />
+    <!-- 03 общие ккал --> <uses-permission android:name="android.permission.health.READ_TOTAL_CALORIES_BURNED" />
+    <!-- 04 активные ккал --> <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED" />
+    <!-- 05 тренировки --> <uses-permission android:name="android.permission.health.READ_EXERCISE" />
+    <!-- 06 этажи --> <uses-permission android:name="android.permission.health.READ_FLOORS_CLIMBED" />
+    <!-- 07 высота --> <uses-permission android:name="android.permission.health.READ_ELEVATION_GAINED" />
+
+    <!-- 08 скорость --> <uses-permission android:name="android.permission.health.READ_SPEED" />
+    <!-- 09 мощность --> <uses-permission android:name="android.permission.health.READ_POWER" />
+    <!-- 10 МПК vo2max --> <uses-permission android:name="android.permission.health.READ_VO2_MAX" />
+
+    <!-- 11 пульс --> <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
+    <!-- 12 пульс покоя --> <uses-permission android:name="android.permission.health.READ_RESTING_HEART_RATE" />
+    <!-- 13 ВСР стресс --> <uses-permission android:name="android.permission.health.READ_HEART_RATE_VARIABILITY" />
+    <!-- 14 кислород spo2 --> <uses-permission android:name="android.permission.health.READ_OXYGEN_SATURATION" />
+    <!-- 15 дыхание --> <uses-permission android:name="android.permission.health.READ_RESPIRATORY_RATE" />
+    <!-- 16 сон --> <uses-permission android:name="android.permission.health.READ_SLEEP" />
+
+    <!-- 17 вес --> <uses-permission android:name="android.permission.health.READ_WEIGHT" />
+    <!-- 18 процент жира --> <uses-permission android:name="android.permission.health.READ_BODY_FAT" />
+    <!-- 19 сухая масса --> <uses-permission android:name="android.permission.health.READ_LEAN_BODY_MASS" />
+    <!-- 20 костная масса --> <uses-permission android:name="android.permission.health.READ_BONE_MASS" />
+    <!-- 21 вода в теле --> <uses-permission android:name="android.permission.health.READ_BODY_WATER_MASS" />
+    <!-- 22 обмен веществ --> <uses-permission android:name="android.permission.health.READ_BASAL_METABOLIC_RATE" />
+    <!-- 23 выпитая вода --> <uses-permission android:name="android.permission.health.READ_HYDRATION" />
+
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
+    </queries>
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -25,18 +56,15 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
 
-        <receiver
-            android:name=".widgets.calendarWidget.CalendarWidgetReceiver"
-            android:exported="true">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>
             </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/exercise_widget_info" />
-        </receiver>
+
+            <intent-filter>
+                <action android:name="androidx.health.ACTION_HEALTH_CONNECT_SETTINGS"/>
+            </intent-filter>
+        </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

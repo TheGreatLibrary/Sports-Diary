@@ -1,0 +1,22 @@
+<resources>
+    <!-- Настройки -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_interface">Интерфейс</string>
+    <string name="settings_app">Приложение</string>
+
+    <string name="settings_lang">Язык</string>
+    <string name="settings_choose_lang">Выбор языка</string>
+    <string name="settings_theme">Тема</string>
+    <string name="settings_dark_mode">Темная</string>
+    <string name="settings_light_mode">Светлая</string>
+
+    <string name="settings_copy_errors">Копировать логи</string>
+    <string name="settings_send_to_support">Написать в поддержку</string>
+
+    <string name="settings_version">Версия %1$s (%2$s)</string>
+
+    <!-- Список изменений -->
+    <string name="settings_list_of_changes">Список изменений</string>
+    <string name="settings_see_what_changes">Узнайте, что изменилось в приложении!</string>
+    <string name="settings_release_title">"Релиз: %1$s"</string>
+</resources>

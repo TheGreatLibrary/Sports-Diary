@@ -11,9 +11,35 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/database" />
+            <option value="$PROJECT_DIR$/core/datastore" />
+            <option value="$PROJECT_DIR$/core/domain" />
+            <option value="$PROJECT_DIR$/core/health" />
+            <option value="$PROJECT_DIR$/core/ui" />
+            <option value="$PROJECT_DIR$/features" />
+            <option value="$PROJECT_DIR$/features/backup" />
+            <option value="$PROJECT_DIR$/features/calculator" />
+            <option value="$PROJECT_DIR$/features/editExercise" />
+            <option value="$PROJECT_DIR$/features/exercises" />
+            <option value="$PROJECT_DIR$/features/health" />
+            <option value="$PROJECT_DIR$/features/home" />
+            <option value="$PROJECT_DIR$/features/menu" />
+            <option value="$PROJECT_DIR$/features/notes" />
+            <option value="$PROJECT_DIR$/features/pageExercise" />
+            <option value="$PROJECT_DIR$/features/pageProportion" />
+            <option value="$PROJECT_DIR$/features/pageRoutine" />
+            <option value="$PROJECT_DIR$/features/pageTraining" />
+            <option value="$PROJECT_DIR$/features/proportions" />
+            <option value="$PROJECT_DIR$/features/routines" />
+            <option value="$PROJECT_DIR$/features/settings" />
+            <option value="$PROJECT_DIR$/features/statistic" />
+            <option value="$PROJECT_DIR$/features/statisticDiagram" />
+            <option value="$PROJECT_DIR$/features/trainings" />
+            <option value="$PROJECT_DIR$/widgets" />
+            <option value="$PROJECT_DIR$/widgets/calendar" />
           </set>
         </option>
-        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="database">База данных</string>
+
+    <string name="backup_title">Импорт/Экспорт БД</string>
+    <string name="share">Поделиться БД</string>
+    <string name="export">Экспортировать БД</string>
+    <string name="import_db">Импортировать БД</string>
+    <string name="complete">Успех</string>
+    <string name="complete_backup"> Для завершения операции требуется перезапуск приложения</string>
+    <string name="ok">ОК</string>
+</resources>

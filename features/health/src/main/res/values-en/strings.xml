@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fat">Fat</string>
+    <string name="muscle">Muscle</string>
+    <string name="bones">Bones</string>
+    <string name="bmr">BMR</string>
+    <string name="body_scale">BODY SCALE</string>
+    <string name="sleep_vitals"><![CDATA[SLEEP & VITALS]]></string>
+    <string name="h_m">%1$dh %2$dm</string>
+    <string name="vo2_max">VO2 Max</string>
+    <string name="breath">Breathing</string>
+    <string name="steps">Floors</string>
+    <string name="water">Water</string>
+    <string name="st">%1$d fl.</string>
+    <string name="liters">%1$s L</string>
+    <string name="min">%1$d /min</string>
+    <string name="kg_h">%1$s kg</string>
+    <string name="kkal">%1$d kcal</string>
+    <string name="stress_hrv">STRESS / HRV</string>
+    <string name="hrv_ms">HRV %1$d ms</string>
+    <string name="recovery">Recovery</string>
+    <string name="blood_oxygen">BLOOD OXYGEN</string>
+    <string name="spo2">SpO2</string>
+    <string name="heart_rate">HEART RATE</string>
+    <string name="rhr">RHR %1$d</string>
+    <string name="today">Today</string>
+    <string name="bpm">%1$s BPM</string>
+    <string name="exercise">EXERCISE</string>
+    <string name="kcal">KCal</string>
+    <string name="minute">min</string>
+    <string name="km">Km</string>
+    <string name="active_kcal">Active kcal</string>
+    <string name="exercise_minutes">Exercise minutes</string>
+    <string name="standing_hours">Standing hours</string>
+    <string name="steps_count">STEPS %1$d</string>
+    <string name="today_b">TODAY</string>
+    <string name="google_health_connect">Google Health Connect is not installed on this device. Tap “+” in the top-right corner to install it.</string>
+    <string name="connected">CONNECTED</string>
+    <string name="disconnected">DISCONNECTED</string>
+    <string name="hc_not_installed">HC NOT INSTALLED</string>
+    <string name="not_supported">NOT SUPPORTED</string>
+    <string name="sync">Sync</string>
+</resources>

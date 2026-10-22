@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calendar_widget_description">Удобная отметка о выполнении зарядок с экрана телефона</string>
+    <string name="monday_16_2026">Понедельник, 16 февраль 2026</string>
+    <string name="finished_morning_exercises">Выполнить</string>
+</resources>

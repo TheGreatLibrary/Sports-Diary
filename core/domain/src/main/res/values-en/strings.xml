@@ -1,0 +1,8 @@
+<resources>
+    <string name="saving">Saving…</string>
+    <string name="saved">Saved</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="title_is_empty">Title is empty</string>
+    <string name="title_already_existed">Title already exists, duplicates are not allowed</string>
+
+</resources>

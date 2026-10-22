@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calendar_widget_description">Convenient marking of completed morning exercises from the phone screen</string>
+    <string name="monday_16_2026">Monday, February 16, 2026</string>
+    <string name="finished_morning_exercises">Morning completed</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="database">DataBase</string>
+
+    <string name="share">Share DB</string>
+    <string name="export">Export DB</string>
+    <string name="import_db">Import DB</string>
+    <string name="complete">Success</string>
+    <string name="complete_backup">A restart is required to complete the operation</string>
+    <string name="ok">OK</string>
+</resources>

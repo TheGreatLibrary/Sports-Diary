@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="routine">Routine</string>
+    <string name="routine_description">A routine is a type of workout with a specific set of exercises, their order, and the number of repetitions with weight set by the user</string>
+
+    <string name="weight_of_body">Account for body weight</string>
+    <string name="exercise_on_count">Count-based exercise</string>
+    <string name="hide_of_summary">Hide from calculation</string>
+    <string name="add_set">Add set</string>
+    <string name="delete_exercise">Delete exercise</string>
+
+    <!-- анализ -->
+    <string name="effect">Efficiency</string>
+    <string name="count_of_step">Reps</string>
+    <string name="count_set">Sets</string>
+    <string name="count_ex">Exercises</string>
+</resources>

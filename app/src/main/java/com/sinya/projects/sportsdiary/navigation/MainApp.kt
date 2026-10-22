@@ -3,7 +3,6 @@ package com.sinya.projects.sportsdiary.navigation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -15,27 +14,34 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.sinya.projects.sportsdiary.presentation.backup.BackupScreen
-import com.sinya.projects.sportsdiary.presentation.categories.CategoriesScreen
-import com.sinya.projects.sportsdiary.presentation.categoryPage.CategoryPageScreen
-import com.sinya.projects.sportsdiary.presentation.exerciseEdit.ExerciseEditScreen
-import com.sinya.projects.sportsdiary.presentation.exercisePage.ExercisePageScreen
-import com.sinya.projects.sportsdiary.presentation.exercises.ExercisesScreen
-import com.sinya.projects.sportsdiary.presentation.home.HomeScreen
-import com.sinya.projects.sportsdiary.presentation.menu.MenuScreen
-import com.sinya.projects.sportsdiary.presentation.proportionPage.ProportionPageScreen
-import com.sinya.projects.sportsdiary.presentation.proportions.ProportionsScreen
-import com.sinya.projects.sportsdiary.presentation.settings.SettingsScreen
-import com.sinya.projects.sportsdiary.presentation.statistic.StatisticScreen
-import com.sinya.projects.sportsdiary.presentation.statisticDiagram.StatisticDiagramScreen
-import com.sinya.projects.sportsdiary.presentation.trainingPage.TrainingPageScreen
-import com.sinya.projects.sportsdiary.presentation.trainings.TrainingsScreen
+import com.sinya.projects.backup.BackupScreen
+import com.sinya.projects.calculator.CalculatorScreen
+import com.sinya.projects.domain.model.TypeBottomNavigation
+import com.sinya.projects.editexercise.ExerciseEditScreen
+import com.sinya.projects.exercises.ExercisesScreen
+import com.sinya.projects.health.HealthDataScreen
+import com.sinya.projects.home.HomeScreen
+import com.sinya.projects.menu.MenuScreen
+import com.sinya.projects.notes.NotesScreen
+import com.sinya.projects.pageExercise.ExercisePageScreen
+import com.sinya.projects.pagecategory.RoutinePageScreen
+import com.sinya.projects.pageproportion.ProportionPageScreen
+import com.sinya.projects.pagetraining.TrainingPageScreen
+import com.sinya.projects.proportions.ProportionsScreen
+import com.sinya.projects.routines.CategoriesScreen
+import com.sinya.projects.settings.SettingsScreen
+import com.sinya.projects.statistic.StatisticScreen
+import com.sinya.projects.statisticdiagram.StatisticDiagramScreen
+import com.sinya.projects.trainings.TrainingsScreen
+import com.sinya.projects.ui.R
+import com.sinya.projects.ui.theme.LocalAppGradients
 
 @Composable
 fun MainApp() {
     val navController = rememberNavController()
     val entry by navController.currentBackStackEntryAsState()
     val currentRoute = entry?.destination?.simpleName
+    val gradients = LocalAppGradients.current
 
     val withBottomBar = remember(currentRoute) { currentRoute in WITH_BOTTOM_BAR }
 
@@ -71,7 +77,10 @@ fun MainApp() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(
+//                MaterialTheme.colorScheme.background
+                brush = gradients.basedGradient
+            ),
         contentAlignment = Alignment.BottomCenter
     ) {
         NavGraph(
@@ -81,9 +90,31 @@ fun MainApp() {
         )
         if (withBottomBar) {
             NavigationBottomBar(
-                currentRoute = currentRoute,
-                navigateTo = navigate,
+                currentRoute = currentRoute ?: ScreenRoute.Home.route,
+                list = listOf(
+                    TypeBottomNavigation(
+                        key = ScreenRoute.Home.route,
+                        icon = R.drawable.nav_home,
+                        onClick = { navigate(ScreenRoute.Home, null) }
+                    ),
+                    TypeBottomNavigation(
+                        key = ScreenRoute.Menu.route,
+                        icon = R.drawable.nav_menu,
+                        onClick = { navigate(ScreenRoute.Menu, null) }
+                    ),
+                    TypeBottomNavigation(
+                        key = ScreenRoute.Statistic.route,
+                        icon = R.drawable.nav_stat,
+                        onClick = { navigate(ScreenRoute.Statistic, null) }
+                    ),
+                    TypeBottomNavigation(
+                        key = ScreenRoute.Settings.route,
+                        icon = R.drawable.nav_set,
+                        onClick = { navigate(ScreenRoute.Settings, null) }
+                    ),
+                )
             )
+
         }
     }
 }
@@ -102,27 +133,59 @@ private fun NavGraph(
     ) {
         composable<ScreenRoute.Home> {
             HomeScreen(
-                navigateTo = { route -> navigateTo(route, null) }
+                navigateToTrainings = { navigateTo(ScreenRoute.Training, null) },
+                navigateToTrainingPage = { id, date ->
+                    navigateTo(
+                        ScreenRoute.TrainingPage(
+                            id,
+                            date
+                        ), null
+                    )
+                },
+                navigateToMeasures = { navigateTo(ScreenRoute.Proportions, null) },
+                navigateToNotes = { navigateTo(ScreenRoute.Notes, null) },
+                navigateToHealth = { navigateTo(ScreenRoute.WatchData, null) },
+                navigateToMeasurePage = { id, date ->
+                    navigateTo(
+                        ScreenRoute.ProportionPage(
+                            id,
+                            date
+                        ), null
+                    )
+                },
             )
         }
-        composable<ScreenRoute.Menu> {
-            MenuScreen(
-                onBackClick = navigateToBackStack,
-                navigateTo = { route -> navigateTo(route, null) }
+        composable<ScreenRoute.Notes> {
+            NotesScreen(
+                onBackClick = navigateToBackStack
             )
         }
 
-        composable<ScreenRoute.Backup> {
-            BackupScreen(
+        composable<ScreenRoute.Menu> {
+            MenuScreen(
                 onBackClick = navigateToBackStack,
+                navigateToTrainings = { navigateTo(ScreenRoute.Training, null) },
+                navigateToMeasures = { navigateTo(ScreenRoute.Proportions, null) },
+                navigateToCategories = { navigateTo(ScreenRoute.Categories, null) },
+                navigateToExercises = { navigateTo(ScreenRoute.SportExercises, null) },
+                navigateToBackup = { navigateTo(ScreenRoute.Backup, null) },
+                navigateToCalculate = { navigateTo(ScreenRoute.Calculate, null) },
+                navigateToWatchData = { navigateTo(ScreenRoute.WatchData, null) }
             )
         }
+
         composable<ScreenRoute.Statistic> {
             StatisticScreen(
                 onBackClick = navigateToBackStack,
                 navigateToStatisticDiagram = { navigateTo(ScreenRoute.StatisticDiagram, null) }
             )
         }
+        composable<ScreenRoute.StatisticDiagram> {
+            StatisticDiagramScreen(
+                onBackClick = navigateToBackStack
+            )
+        }
+
         composable<ScreenRoute.Settings> {
             SettingsScreen(onBackClick = navigateToBackStack)
         }
@@ -130,7 +193,15 @@ private fun NavGraph(
         composable<ScreenRoute.Training> {
             TrainingsScreen(
                 onBackClick = navigateToBackStack,
-                onTrainingClick = { id -> navigateTo(ScreenRoute.TrainingPage(id), null) }
+                onTrainingClick = { id, key ->
+                    navigateTo(
+                        ScreenRoute.TrainingPage(
+                            id = id,
+                            date = null,
+                            key = key
+                        ), null
+                    )
+                }
             )
         }
         composable<ScreenRoute.TrainingPage> { entry ->
@@ -138,6 +209,7 @@ private fun NavGraph(
 
             TrainingPageScreen(
                 id = args.id,
+                key = args.key,
                 date = args.date,
                 onBackClick = navigateToBackStack
             )
@@ -152,12 +224,12 @@ private fun NavGraph(
         composable<ScreenRoute.CategoryPage> { entry ->
             val args = entry.toRoute<ScreenRoute.CategoryPage>()
 
-            CategoryPageScreen(
+            RoutinePageScreen(
                 id = args.id,
+                key = args.key,
                 onBackClick = navigateToBackStack
             )
         }
-
 
         composable<ScreenRoute.Proportions> {
             ProportionsScreen(
@@ -172,10 +244,6 @@ private fun NavGraph(
                 id = args.id,
                 onBackClick = navigateToBackStack,
             )
-        }
-
-        composable<ScreenRoute.Calculate> {
-
         }
 
         composable<ScreenRoute.SportExercises> {
@@ -209,12 +277,24 @@ private fun NavGraph(
             )
         }
 
-        composable<ScreenRoute.StatisticDiagram> {
-            StatisticDiagramScreen(
+        composable<ScreenRoute.Backup> {
+            BackupScreen(
+                onBackClick = navigateToBackStack,
+            )
+        }
+        composable<ScreenRoute.Calculate> {
+            CalculatorScreen(
+                onBackClick = navigateToBackStack
+            )
+        }
+        composable<ScreenRoute.WatchData> {
+            HealthDataScreen(
                 onBackClick = navigateToBackStack
             )
         }
     }
 }
+
+
 
 
