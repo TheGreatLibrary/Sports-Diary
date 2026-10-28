@@ -2,9 +2,7 @@ package com.sinya.projects.health.di
 
 import android.content.Context
 import androidx.health.connect.client.HealthConnectClient
-import androidx.health.connect.client.permission.HealthPermission
-import androidx.health.connect.client.records.*
-import com.sinya.projects.domain.repository.HealthManager
+import com.sinya.projects.domain.managers.HealthManager
 import com.sinya.projects.health.HealthConnectManagerImpl
 import com.sinya.projects.health.HuaweiHealthManagerImpl
 import dagger.Module

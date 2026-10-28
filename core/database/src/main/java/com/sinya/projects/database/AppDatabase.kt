@@ -73,7 +73,7 @@ import com.sinya.projects.database.entity.UnitsMeasurement
 internal abstract class AppDatabase : RoomDatabase() {
 
     companion object {
-        const val DB_VERSION = 10
+        const val DB_VERSION = 11
     }
 
     abstract fun typeTrainingDao() : TypeTrainingDao

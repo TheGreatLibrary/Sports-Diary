@@ -24,7 +24,8 @@ import com.sinya.projects.domain.model.TrainingEntity
 import com.sinya.projects.domain.model.TrainingsEntry
 import com.sinya.projects.domain.model.TypeTrainingEntry
 import com.sinya.projects.domain.model.toItem
-import com.sinya.projects.domain.repository.LanguageProvider
+import com.sinya.projects.domain.providers.LanguageProvider
+import com.sinya.projects.domain.providers.MapStateProvider
 import com.sinya.projects.domain.repository.TrainingRepository
 import com.sinya.projects.domain.utils.calculateLoadPercentage
 import com.sinya.projects.domain.utils.calculateTonnagePerMuscle
@@ -38,7 +39,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 import kotlin.Result
 import kotlin.collections.distinct
 import kotlin.collections.forEach
@@ -48,7 +51,8 @@ import kotlin.collections.map
 internal class TrainingRepositoryImpl @Inject constructor(
     private val typeTrainingDao: TypeTrainingDao,
     private val trainingDao: TrainingsDao,
-    private val languageProvider: LanguageProvider
+    private val languageProvider: LanguageProvider,
+    private val mapStateProvider: MapStateProvider
 ) : TrainingRepository {
 
     // Statistic
@@ -342,69 +346,77 @@ internal class TrainingRepositoryImpl @Inject constructor(
         from: String,
         to: String
     ): Result<List<DataExerciseMuscles>> = coroutineScope {
-         runCatching {
-             val lang = languageProvider.currentLanguage.first()
+        runCatching {
+            val lang = languageProvider.currentLanguage.first()
+            // Читаем твой новый флаг из MapStateProvider (подставь имя своего поля/Flow)
+            val isRollingSevenDays = mapStateProvider.currentMapState.first()
 
-             // 1. Расчет чистых, непересекающихся интервалов по 7 дней
-             val today = LocalDate.parse(to)
+            val targetDate = LocalDate.parse(to)
 
-             // Текущая неделя (последние 7 дней, включая сегодня): [today - 6 дней, today]
-             val currentFrom = today.minusDays(6).toString()
-             val currentTo = today.toString()
+            // 1. Вычисляем интервалы в зависимости от флага MapStateProvider
+            val (currentFromDate, currentToDate) = if (isRollingSevenDays) {
+                // Режим TRUE: скользящие 7 дней [today - 6, today]
+                targetDate.minusDays(6) to targetDate
+            } else {
+                // Режим FALSE: календарная неделя с Понедельника по Воскресенье
+                val monday = targetDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                val sunday = targetDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
+                monday to sunday
+            }
 
-             // Предыдущая неделя (7 дней до этого): [today - 13 дней, today - 7 дней]
-             val previousFrom = today.minusDays(13).toString()
-             val previousTo = today.minusDays(7).toString()
+            // Предыдущая неделя — всегда ровно на 7 дней раньше выбранного интервала:
+            // Для скользящих: [today - 13, today - 7]
+            // Для календарной: [прошлый ПН, прошлое ВС]
+            val previousFromDate = currentFromDate.minusWeeks(1)
+            val previousToDate = currentToDate.minusWeeks(1)
 
-             // 2. Параллельный запуск запросов в БД через async
-             val currentRawDataDeferred = async {
-                 trainingDao.getDataExerciseMusclesByDate(currentFrom, currentTo, lang)
-             }
-             val previousRawDataDeferred = async {
-                 trainingDao.getDataExerciseMusclesByDate(previousFrom, previousTo, lang)
-             }
+            // 2. Параллельный запуск запросов в БД через async
+            val currentRawDataDeferred = async {
+                trainingDao.getDataExerciseMusclesByDate(
+                    currentFromDate.toString(),
+                    currentToDate.toString(),
+                    lang
+                )
+            }
+            val previousRawDataDeferred = async {
+                trainingDao.getDataExerciseMusclesByDate(
+                    previousFromDate.toString(),
+                    previousToDate.toString(),
+                    lang
+                )
+            }
 
-             // Ожидаем завершения обоих запросов
-             val currentRawData = currentRawDataDeferred.await()
-             val previousRawData = previousRawDataDeferred.await()
-             Log.d("Body1", currentRawData.toString())
-             Log.d("Body2", previousRawData.toString())
+            val currentRawData = currentRawDataDeferred.await()
+            val previousRawData = previousRawDataDeferred.await()
 
-             // 3. Считаем суммарный тоннаж для каждой мышцы за оба периода
-             val currentTonnageMap = calculateTonnagePerMuscle(currentRawData)
-             val previousTonnageMap = calculateTonnagePerMuscle(previousRawData)
+            // 3. Считаем суммарный тоннаж для каждой мышцы за оба периода
+            val currentTonnageMap = calculateTonnagePerMuscle(currentRawData)
+            val previousTonnageMap = calculateTonnagePerMuscle(previousRawData)
+            // Находим маппинг ID -> Name и ID -> Level из свежих данных (или старых, если в свежих нет)
 
-             // 4. Объединяем данные и рассчитываем итоговый Float (%) нагрузки
-             // Берем все уникальные мышцы, которые встречались хотя бы в одном из периодов
-             val allMuscleIds = (currentRawData + previousRawData).map { it.muscleId }.distinct()
+            val rawItemsMap = (previousRawData + currentRawData).associateBy { it.muscleId }
 
-             // Находим маппинг ID -> Name и ID -> Level из свежих данных (или старых, если в свежих нет)
-             val rawItemsMap = (previousRawData + currentRawData).associateBy { it.muscleId }
+            rawItemsMap.values.map { rawItem ->
+                val currentTonnage = currentTonnageMap[rawItem.muscleId] ?: 0f
+                val previousTonnage = previousTonnageMap[rawItem.muscleId] ?: 0f
 
-            allMuscleIds.map { muscleId ->
-                 val rawItem = rawItemsMap[muscleId]!!
+                val calculatedValue = calculateLoadPercentage(
+                    currentTonnage = currentTonnage,
+                    previousTonnage = previousTonnage
+                )
 
-                 val currentTonnage = currentTonnageMap[muscleId] ?: 0f
-                 val previousTonnage = previousTonnageMap[muscleId] ?: 0f
-
-                 // Вычисляем процент нагрузки для тепловой карты (Float от 0.0f до 1.0f)
-                 val calculatedValue = calculateLoadPercentage(
-                     currentTonnage = currentTonnage,
-                     previousTonnage = previousTonnage
-                 )
-
-                 DataExerciseMuscles(
-                     res = 0, // или откуда у тебя берется ссылка на drawable (например, маппинг ID в R.drawable)
-                     value = calculatedValue,
-                     level = rawItem.level,  // Уровень вовлечения (0, 1, 2) из БД
-                     name = rawItem.name,
-                     muscleId = rawItem.muscleId,
-                     centerX = 0f,
-                     centerY = 0f,
-                     radiusScale = 0f
-                 )
-             }
-         }
+                DataExerciseMuscles(
+                    res = 0,
+                    value = calculatedValue,
+                    level = rawItem.level,
+                    name = rawItem.name,
+                    muscleId = rawItem.muscleId,
+                    centerX = 0f,
+                    centerY = 0f,
+                    radiusScale = 0f
+                )
+            }
+        }
     }
 
     override suspend fun getMuscleDataById(

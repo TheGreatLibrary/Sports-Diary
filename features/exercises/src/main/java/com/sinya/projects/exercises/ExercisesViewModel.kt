@@ -27,6 +27,8 @@ internal class ExercisesViewModel @Inject constructor(
 
     init {
         loadData()
+
+
     }
 
     fun onEvent(event: ExercisesEvent) {

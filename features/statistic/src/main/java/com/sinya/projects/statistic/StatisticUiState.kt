@@ -20,5 +20,6 @@ internal sealed interface StatisticUiState {
         val bodyVisible: Boolean = false,
         @StringRes val errorMessage: Int? = null,
         val allMuscles: List<Pair<Int, String>>,
+        val mapState: Boolean,
     ) : StatisticUiState
 }

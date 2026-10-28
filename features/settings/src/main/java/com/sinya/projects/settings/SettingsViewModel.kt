@@ -31,6 +31,7 @@ internal class SettingsViewModel @Inject constructor(
             _state.update {
                 SettingsUiState.Success(
                     themeMode = initialConfig.dark,
+                    mapState = initialConfig.map7,
                     langMode = initialConfig.language,
                     showTrainingWarningState = initialConfig.trainingWarning
                 )
@@ -42,6 +43,7 @@ internal class SettingsViewModel @Inject constructor(
                 updateIfSuccess { currentState ->
                     currentState.copy(
                         themeMode = config.dark,
+                        mapState = config.map7,
                         langMode = config.language,
                         showTrainingWarningState = config.trainingWarning
                     )
@@ -53,6 +55,7 @@ internal class SettingsViewModel @Inject constructor(
     fun onEvent(event: SettingsEvent) = viewModelScope.launch {
         when (event) {
             is SettingsEvent.LanguageToggle -> settingsEngine.setLang(event.lang)
+            is SettingsEvent.MapStateToggle -> settingsEngine.setMap7(event.map7)
             is SettingsEvent.ShowTrainingWarningToggle -> settingsEngine.setTrainingWarning(event.state)
             is SettingsEvent.ThemeToggle -> settingsEngine.setDark(event.state)
             is SettingsEvent.SelectChangelog -> fetchChangelog() // Перезапуск загрузки

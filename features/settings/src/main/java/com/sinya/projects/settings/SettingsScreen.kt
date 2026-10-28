@@ -72,7 +72,7 @@ fun SettingsScreen(
                 },
                 copyErrors = {
                     scope.launch {
-                        val systemLogs = LogcatReader.getAppLogs(context)
+                        val systemLogs = LogcatReader.getAppLogs(context   )
                         val clipboard =
                             context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                         val clip = ClipData.newPlainText("App Logcat", systemLogs)
@@ -128,11 +128,21 @@ private fun SettingsScreenView(
                         icon = R.drawable.set_theme_night,
                         onClick = { onEvent(SettingsEvent.ThemeToggle(!state.themeMode)) },
                         switchState = state.themeMode
+                    ),
+                    CardItem(
+                        title = stringResource(R.string.heat_map),
+                        description = when (state.mapState) {
+                            true -> stringResource(R.string.day_7)
+                            false -> stringResource(R.string.week)
+                        },
+                        icon = com.sinya.projects.ui.R.drawable.train_muscul,
+                        onClick = { onEvent(SettingsEvent.MapStateToggle(!state.mapState)) },
+                        switchState = state.mapState
                     )
                 )
             )
             BlockOfCards(
-                title = stringResource(R.string.settings_interface),
+                title = stringResource(R.string.settings_app),
                 list = listOf(
                     CardItem(
                         title = stringResource(R.string.settings_copy_errors),

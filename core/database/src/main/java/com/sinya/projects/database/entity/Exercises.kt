@@ -51,6 +51,7 @@ import androidx.room.PrimaryKey
 data class Exercises(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "icon") val icon: String,
+    @ColumnInfo(name = "gif_url") val gifUrl: String,
     @ColumnInfo(name = "is_custom") val isCustom: Boolean = false,
     @ColumnInfo(name = "force_id") val forceId: Int? = null,
     @ColumnInfo(name = "level_id") val levelId: Int? = null,

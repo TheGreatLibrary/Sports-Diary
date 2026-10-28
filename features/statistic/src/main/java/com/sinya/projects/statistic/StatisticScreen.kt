@@ -35,9 +35,9 @@ import com.sinya.projects.domain.enums.TypeTime
 import com.sinya.projects.domain.model.CardItem
 import com.sinya.projects.domain.model.RadioItem
 import com.sinya.projects.domain.model.TypeTopNavigation
-import com.sinya.projects.statistic.components.ChartSortedRow
 import com.sinya.projects.ui.components.StatisticCard
 import com.sinya.projects.statistic.components.StatisticPlaceholder
+import com.sinya.projects.ui.components.ChartSortedRow
 import com.sinya.projects.ui.components.sheet.components.BodyInfoSheetContent
 import com.sinya.projects.ui.components.ListOfCards
 import com.sinya.projects.ui.components.screen.ScreenColumn
@@ -183,6 +183,10 @@ private fun StatisticScreenView(
             }
 
             BodyCard(
+                title = when(state.mapState) {
+                    true -> stringResource(com.sinya.projects.ui.R.string.work_muscles_for_7_days)
+                    else -> stringResource(com.sinya.projects.ui.R.string.work_muscles_for_week)
+                },
                 list = state.dataExerciseMuscles,
                 withText = false,
                 onInfoClick = { onEvent(StatisticEvent.OnBodyInfoClick()) }

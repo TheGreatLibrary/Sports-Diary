@@ -1,7 +1,9 @@
 package com.sinya.projects.database
 
+import android.content.Context
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import org.json.JSONArray
 
 internal object DatabaseMigrations {
     val MIGRATION_1_2 = object : Migration(1, 2) { override fun migrate(db: SupportSQLiteDatabase) {} }
@@ -517,4 +519,39 @@ internal object DatabaseMigrations {
         }
     }
 
+
+    fun getMigration10To11(context: Context) = object : Migration(10, 11) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            // 1. Добавляем колонку (NOT NULL важен, если в Entity поле String, а не String?)
+            db.execSQL(
+                """
+            ALTER TABLE exercises
+            ADD COLUMN gif_url TEXT NOT NULL DEFAULT ''
+            """.trimIndent()
+            )
+
+            // 2. Читаем файл gifs.json из папки assets
+            val jsonString = context.assets.open("gifs.json")
+                .bufferedReader()
+                .use { it.readText() }
+
+            val jsonArray = JSONArray(jsonString)
+
+            // 3. Быстро обновляем записи через предкомпилированный запрос
+            val statement = db.compileStatement(
+                "UPDATE exercises SET gif_url = ? WHERE id = ?"
+            )
+
+            for (i in 0 until jsonArray.length()) {
+                val item = jsonArray.getJSONObject(i)
+                val id = item.getInt("myExerciseId")
+                val gifUrl = item.getString("gifUrl")
+
+                statement.clearBindings()
+                statement.bindString(1, gifUrl)
+                statement.bindLong(2, id.toLong())
+                statement.executeUpdateDelete()
+            }
+        }
+    }
 }

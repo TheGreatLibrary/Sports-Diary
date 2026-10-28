@@ -17,8 +17,8 @@ android {
         applicationId = "com.sinya.projects.sportsdiary"
         minSdk = 26
         targetSdk = 36
-        versionCode = 20
-        versionName = "1.6.0"
+        versionCode = 21
+        versionName = "1.6.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -84,6 +84,11 @@ dependencies {
     implementation(project(":features:notes"))
 
     implementation(project(":widgets:calendar"))
+
+
+    // coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
 
     // Hilt (сборка единого DI-графа)
     implementation(libs.hilt.android)

@@ -1,15 +1,12 @@
 package com.sinya.projects.home
 
-import android.content.Intent
 import android.util.Log
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.datastore.SettingsEngine
 import com.sinya.projects.domain.model.DayOfMonth
 import com.sinya.projects.domain.model.MorningEntry
-import com.sinya.projects.domain.repository.HealthManager
-import com.sinya.projects.domain.repository.HealthSdkStatus
+import com.sinya.projects.domain.managers.HealthManager
 import com.sinya.projects.domain.useCase.GetMorningListUseCase
 import com.sinya.projects.domain.useCase.GetProportionRangeListUseCase
 import com.sinya.projects.domain.useCase.GetTrainingRangeListUseCase

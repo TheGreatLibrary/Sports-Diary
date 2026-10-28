@@ -1,4 +1,4 @@
-package com.sinya.projects.domain.repository
+package com.sinya.projects.domain.managers
 
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract

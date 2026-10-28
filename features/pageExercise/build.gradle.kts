@@ -51,6 +51,7 @@ dependencies {
 
     //asyncImage
     implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
 
     // hilt
     implementation(libs.hilt.android)

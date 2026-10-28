@@ -84,6 +84,7 @@ internal fun Exercises.toDomain(): ExercisesEntry {
     return ExercisesEntry(
         id = this.id,
         icon = this.icon,
+        gifUrl = this.gifUrl,
         isCustom = this.isCustom,
         forceId = this.forceId,
         levelId = this.levelId,

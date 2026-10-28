@@ -1,21 +1,30 @@
 package com.sinya.projects.pageExercise
 
+import android.util.Log
+import coil.compose.AsyncImage
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,10 +34,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.sinya.projects.domain.model.DataExerciseMuscles
 import com.sinya.projects.domain.model.TypeTopNavigation
 import com.sinya.projects.pageExercise.components.CharacteristicRow
+import com.sinya.projects.pageExercise.components.ExerciseMediaCarousel
 import com.sinya.projects.pageExercise.components.ExercisePagePlaceholder
 import com.sinya.projects.pageExercise.components.PointRule
 import com.sinya.projects.ui.R.drawable
@@ -38,6 +48,7 @@ import com.sinya.projects.ui.components.screen.ScreenColumn
 import com.sinya.projects.ui.components.sheet.CustomModalSheet
 import com.sinya.projects.ui.components.sheet.components.BodyInfoSheetContent
 import com.sinya.projects.ui.components.ExpandedCard
+import kotlinx.coroutines.delay
 
 @Composable
 fun ExercisePageScreen(
@@ -80,37 +91,22 @@ private fun ExercisePageView(
     onEvent: (ExercisePageEvent) -> Unit,
     navigateToEdit: (Int) -> Unit
 ) {
-    val rules by remember(state.exercise.rule) {
-        mutableStateOf(state.exercise.rule.split("\n\n"))
-    }
-    val icon = remember(state.exercise.icon) { state.exercise.icon?.toUri() }
-    val listMuscle = remember(state.exMuscles) {
-        state.exMuscles.map {
-            DataExerciseMuscles(
-                muscleId = it.muscleId,
-                name = it.name,
-                value = 1f,
-                level = it.value,
-                centerX = 0f,
-                centerY = 0f,
-                radiusScale = 0f,
-                res = 0
-            )
-        }
-    }
-
-    ScreenColumn(
-        arrangement = Arrangement.spacedBy(12.dp),
-        navigationType = when (state.exercise.isCustom) {
-            true -> TypeTopNavigation.WithIcon(
+    val navigationType = remember(state.exercise.isCustom, state.exercise.id) {
+        if (state.exercise.isCustom) {
+            TypeTopNavigation.WithIcon(
                 onBackClick = onBackClick,
                 title = "",
                 painter = drawable.icon_edit,
                 onClick = { navigateToEdit(state.exercise.id) }
             )
-
-            false -> TypeTopNavigation.WithoutIcon(onBackClick = onBackClick, title = "")
+        } else {
+            TypeTopNavigation.WithoutIcon(onBackClick = onBackClick, title = "")
         }
+    }
+
+    ScreenColumn(
+        arrangement = Arrangement.spacedBy(12.dp),
+        navigationType = navigationType
     ) {
         Text(
             text = state.exercise.name,
@@ -121,71 +117,54 @@ private fun ExercisePageView(
         ExpandedCard(
             title = stringResource(string.characteristics)
         ) {
+            val notFoundText = stringResource(string.not_found_data)
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 CharacteristicRow(
                     label = stringResource(string.level),
-                    value = state.exercise.level ?: stringResource(string.not_found_data)
+                    value = state.exercise.level ?: notFoundText
                 )
                 CharacteristicRow(
                     label = stringResource(string.type),
-                    value = state.exercise.force ?: stringResource(string.not_found_data)
+                    value = state.exercise.force ?: notFoundText
                 )
                 CharacteristicRow(
                     label = stringResource(string.equipment),
-                    value = state.exercise.equipment ?: stringResource(string.not_found_data)
+                    value = state.exercise.equipment ?: notFoundText
                 )
                 CharacteristicRow(
                     label = stringResource(string.category),
-                    value = state.exercise.category ?: stringResource(string.not_found_data)
+                    value = state.exercise.category ?: notFoundText
                 )
                 CharacteristicRow(
                     label = stringResource(string.mechanic),
-                    value = state.exercise.mechanic ?: stringResource(string.not_found_data)
+                    value = state.exercise.mechanic ?: notFoundText
                 )
             }
         }
 
-        if(icon == null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 180.dp, max = 360.dp)
-                    .padding(bottom = 10.dp)
-                    .clip(MaterialTheme.shapes.small)
-                    .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                    .padding(1.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                AsyncImage(
-                    model = icon,
-                    contentDescription = "Selected image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(MaterialTheme.shapes.small)
+        ExerciseMediaCarousel(mediaItems = state.mediaItems)
+
+        if (state.exercise.description.isNotBlank()) {
+            ExpandedCard(title = stringResource(string.description)) {
+                Text(
+                    text = state.exercise.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
 
-        ExpandedCard(
-            title = stringResource(string.description)
-        ) {
-            Text(
-                text = state.exercise.description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-
-        ExpandedCard(
-            title = stringResource(string.rules),
-        ) {
-            rules.forEachIndexed { index, it -> PointRule(index + 1, it) }
+        if (state.rules.isNotEmpty()) {
+            ExpandedCard(title = stringResource(string.rules)) {
+                state.rules.forEachIndexed { index, rule ->
+                    PointRule(index + 1, rule)
+                }
+            }
         }
 
         BodyCard(
             title = stringResource(string.muscle_title),
-            list = listMuscle,
+            list = state.listMuscle,
             withText = false,
             onInfoClick = { onEvent(ExercisePageEvent.OnBodyInfoClick()) },
             withColorText = true
@@ -201,5 +180,3 @@ private fun ExercisePageView(
         )
     }
 }
-
-

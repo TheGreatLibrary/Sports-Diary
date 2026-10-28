@@ -12,6 +12,7 @@ import com.sinya.projects.database.DatabaseMigrations.MIGRATION_6_7
 import com.sinya.projects.database.DatabaseMigrations.MIGRATION_7_8
 import com.sinya.projects.database.DatabaseMigrations.MIGRATION_8_9
 import com.sinya.projects.database.DatabaseMigrations.MIGRATION_9_10
+import com.sinya.projects.database.DatabaseMigrations.getMigration10To11
 import com.sinya.projects.database.dao.DataMorningDao
 import com.sinya.projects.database.dao.ExercisesDao
 import com.sinya.projects.database.dao.ProportionsDao
@@ -48,7 +49,8 @@ internal object AppModule {
                 MIGRATION_6_7,
                 MIGRATION_7_8,
                 MIGRATION_8_9,
-                MIGRATION_9_10
+                MIGRATION_9_10,
+                getMigration10To11(context)
             )
             .build()
     }

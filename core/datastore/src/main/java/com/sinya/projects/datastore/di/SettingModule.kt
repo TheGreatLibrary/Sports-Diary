@@ -1,7 +1,9 @@
 package com.sinya.projects.datastore.di
 
-import com.sinya.projects.datastore.LanguageProviderImpl
-import com.sinya.projects.domain.repository.LanguageProvider
+import com.sinya.projects.datastore.providers.LanguageProviderImpl
+import com.sinya.projects.datastore.providers.MapStateProviderImpl
+import com.sinya.projects.domain.providers.LanguageProvider
+import com.sinya.projects.domain.providers.MapStateProvider
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,4 +19,10 @@ internal abstract class LanguageModule {
     abstract fun bindLanguageProvider(
         impl: LanguageProviderImpl
     ): LanguageProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindMapStateProvider(
+        impl: MapStateProviderImpl
+    ): MapStateProvider
 }

@@ -115,7 +115,8 @@ internal class ExerciseEditViewModel @AssistedInject constructor(
                             mechanic = null,
                             equipment = null,
                             category = null,
-                            icon = ""
+                            icon = "",
+                            gif = ""
                         ) to emptyList()
                     )
 
@@ -136,6 +137,7 @@ internal class ExerciseEditViewModel @AssistedInject constructor(
                         description = exerciseData.description,
                         rule = exerciseData.rule,
                         icon = exerciseData.icon,
+                        gif = exerciseData.gif,
                         force = forces.fastFirstOrNull { it.name == exerciseData.force },
                         level = levels.fastFirstOrNull { it.name == exerciseData.level },
                         mechanic = mechanics.fastFirstOrNull { it.name == exerciseData.mechanic },
@@ -331,6 +333,7 @@ internal class ExerciseEditViewModel @AssistedInject constructor(
                         forceId = s.exercise.force?.id,
                         levelId = s.exercise.level?.id,
                         equipmentId = s.exercise.equipment?.id,
+                        gifUrl = s.exercise.gif,
                         mechanicId = s.exercise.mechanic?.id,
                         categoryId = s.exercise.category?.id,
                     ),

@@ -19,4 +19,7 @@
     <string name="settings_list_of_changes">Список изменений</string>
     <string name="settings_see_what_changes">Узнайте, что изменилось в приложении!</string>
     <string name="settings_release_title">"Релиз: %1$s"</string>
+    <string name="day_7">7 дней</string>
+    <string name="week">Неделя</string>
+    <string name="heat_map">Теплокарта</string>
 </resources>

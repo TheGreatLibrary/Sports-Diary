@@ -17,11 +17,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.domain.model.TypeTopNavigation
-import com.sinya.projects.domain.repository.HealthSdkStatus
+import com.sinya.projects.domain.managers.HealthSdkStatus
 import com.sinya.projects.domain.utils.UrlConfig
 import com.sinya.projects.domain.utils.openUrl
 import com.sinya.projects.health.components.*

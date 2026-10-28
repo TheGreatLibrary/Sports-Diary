@@ -103,6 +103,7 @@ internal interface ExercisesDao {
             et.description,
             et.rule,
             e.icon,
+            e.gif_url AS gif,
             e.is_custom AS isCustom,
             f.name as force,
             l.name AS level,
@@ -236,4 +237,11 @@ internal interface ExercisesDao {
         ORDER BY tpt.name
     """)
     suspend fun getExercisesTitles(language: String) : List<DropdownCheckboxItem>
+
+    @Query("""
+        SELECT name
+        FROM exercise_translations
+        WHERE exercise_id = :id AND language = 'en'
+    """)
+    suspend fun getEnglishExerciseName(id: Int): String
 }

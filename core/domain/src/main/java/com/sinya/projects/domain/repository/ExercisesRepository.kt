@@ -52,5 +52,6 @@ interface ExercisesRepository {
     suspend fun getExercises(): Result<List<DropdownCheckboxItem>>
     suspend fun getExercisesWithTranslations(): Result<List<ExerciseWithMuscles>>
     fun getExerciseMusclesByIds(id: Int): Flow<List<ExerciseMusclesData>>
+    suspend fun getEnglishExerciseName(id: Int): Result<String>
 }
 

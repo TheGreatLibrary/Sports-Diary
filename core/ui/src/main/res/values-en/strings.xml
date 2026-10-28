@@ -101,6 +101,7 @@
     <string name="not_found_data">No data</string>
     <string name="statistic_title">Statistics</string>
     <string name="work_muscles_for_week">Muscle load over 7 days</string>
+    <string name="work_muscles_for_7_days">Muscle load over week</string>
     <string name="muscles_of_body">Body heatmap</string>
     <string name="hot_map_description">The heatmap shows body load over a week of training compared to the previous week</string>
 

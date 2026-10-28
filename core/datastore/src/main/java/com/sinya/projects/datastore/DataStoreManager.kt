@@ -26,6 +26,7 @@ class DataStoreManager @Inject constructor(
 
     private val SHOW_TRAINING_WARNING = booleanPreferencesKey("show_training_warning")
     private val THEME_MODE = booleanPreferencesKey("theme_mode")
+    private val MAP_7_MODE = booleanPreferencesKey("map_7_mode")
     private val LANG_MODE = stringPreferencesKey("lang_mode")
     private val CATEGORY_MORNING_ID = intPreferencesKey("category_morning_id")
 
@@ -39,6 +40,7 @@ class DataStoreManager @Inject constructor(
         val prefs = context.dataStore.data.first()
         return UiConfig(
             dark = prefs[THEME_MODE] ?: false,
+            map7 = prefs[MAP_7_MODE] ?: true,
             language = prefs[LANG_MODE] ?: TypeLanguages.RU.code,
             planMorningId = prefs[CATEGORY_MORNING_ID],
             trainingWarning = prefs[SHOW_TRAINING_WARNING] ?: false,
@@ -46,6 +48,7 @@ class DataStoreManager @Inject constructor(
     }
 
     suspend fun setThemeMode(value: Boolean) = save(THEME_MODE, value)
+    suspend fun setMap7Mode(value: Boolean) = save(MAP_7_MODE, value)
 
     suspend fun setShowTrainingWarningState(value: Boolean) = save(SHOW_TRAINING_WARNING, value)
 

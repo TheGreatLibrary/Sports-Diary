@@ -7,7 +7,7 @@ import com.sinya.projects.database.repoImpl.ExercisesRepositoryImpl
 import com.sinya.projects.database.repoImpl.MorningRepositoryImpl
 import com.sinya.projects.database.repoImpl.ProportionRepositoryImpl
 import com.sinya.projects.database.repoImpl.TrainingRepositoryImpl
-import com.sinya.projects.domain.repository.BackupManager
+import com.sinya.projects.domain.managers.BackupManager
 import com.sinya.projects.domain.repository.CategoryRepository
 import com.sinya.projects.domain.repository.ChangelogRepository
 import com.sinya.projects.domain.repository.ExercisesRepository

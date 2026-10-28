@@ -85,6 +85,7 @@ internal fun ExercisesEntry.toEntity(): Exercises {
     return Exercises(
         id = this.id,
         icon = this.icon,
+        gifUrl = this.gifUrl,
         isCustom = this.isCustom,
         forceId = this.forceId,
         levelId = this.levelId,

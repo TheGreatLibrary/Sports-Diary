@@ -9,7 +9,7 @@ import com.sinya.projects.domain.model.DropdownCheckboxItem
 import com.sinya.projects.domain.model.ProportionDialogContent
 import com.sinya.projects.domain.model.ProportionItem
 import com.sinya.projects.domain.model.ProportionsEntry
-import com.sinya.projects.domain.repository.LanguageProvider
+import com.sinya.projects.domain.providers.LanguageProvider
 import com.sinya.projects.domain.repository.ProportionRepository
 import com.sinya.projects.domain.utils.getSortedList
 import jakarta.inject.Inject

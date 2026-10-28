@@ -6,6 +6,7 @@ data class ExerciseEditItem(
     val isError: Boolean = false,
     val rule: String = "",
     val icon: String? = null,
+    val gif: String = "",
     val description: String = "",
     val force: ExerciseDescriptionEntry?,
     val level: ExerciseDescriptionEntry?,

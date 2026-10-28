@@ -6,6 +6,7 @@ data class ExerciseWithFullData(
     val description: String,
     val isCustom: Boolean,
     val icon: String?,
+    val gif: String,
     val rule: String,
     val force: String?,
     val level: String?,

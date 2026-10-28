@@ -4,8 +4,8 @@ import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.domain.repository.HealthManager
-import com.sinya.projects.domain.repository.HealthSdkStatus
+import com.sinya.projects.domain.managers.HealthManager
+import com.sinya.projects.domain.managers.HealthSdkStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

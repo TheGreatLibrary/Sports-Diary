@@ -54,7 +54,8 @@
     <!-- Статистика -->
     <string name="all_weight">Общий тоннаж</string>
     <string name="not_found_data">Нет данных</string>
-    <string name="work_muscles_for_week">Загруженность мышц за 7 дней</string>
+    <string name="work_muscles_for_7_days">Загруженность мышц за 7 дней</string>
+    <string name="work_muscles_for_week">Загруженность мышц за неделю</string>
     <string name="muscles_of_body">Тепловая карта тела</string>
     <string name="hot_map_description">На тепловой карте отображается загруженность тела за неделю тренировок относительно предыдущей недели</string>
 

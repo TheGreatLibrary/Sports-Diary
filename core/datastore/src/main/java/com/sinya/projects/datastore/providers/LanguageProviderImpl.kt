@@ -1,6 +1,7 @@
-package com.sinya.projects.datastore
+package com.sinya.projects.datastore.providers
 
-import com.sinya.projects.domain.repository.LanguageProvider
+import com.sinya.projects.datastore.SettingsEngine
+import com.sinya.projects.domain.providers.LanguageProvider
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import kotlinx.coroutines.flow.Flow
@@ -16,3 +17,4 @@ class LanguageProviderImpl @Inject constructor(
         .map { it.language }
         .distinctUntilChanged()
 }
+

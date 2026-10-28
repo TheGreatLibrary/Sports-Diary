@@ -19,4 +19,8 @@
     <string name="settings_list_of_changes">Changelog</string>
     <string name="settings_see_what_changes">See what\'s new in the app!</string>
     <string name="settings_release_title">"Release: %1$s"</string>
+
+    <string name="day_7">7 days</string>
+    <string name="week">week</string>
+    <string name="heat_map">HeatMap</string>
 </resources>

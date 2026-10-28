@@ -23,6 +23,7 @@ class SettingsEngine @Inject constructor(
         _state.update { current ->
             current.copy(
                 dark = prefs.dark,
+                map7 = prefs.map7,
                 language = prefs.language,
                 trainingWarning = prefs.trainingWarning,
                 planMorningId = prefs.planMorningId
@@ -33,6 +34,11 @@ class SettingsEngine @Inject constructor(
     fun setDark(v: Boolean) {
         _state.update { it.copy(dark = v) }
         persist { store.setThemeMode(v) }
+    }
+
+    fun setMap7(v: Boolean) {
+        _state.update { it.copy(map7 = v) }
+        persist { store.setMap7Mode(v) }
     }
 
     fun setLang(v: String) {

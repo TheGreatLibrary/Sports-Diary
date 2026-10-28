@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="animation">Animation</string>
+    <string name="photo">Photo</string>
+    <string name="my_photo">My photo</string>
+    <string name="no_photo">No image available for this exercise</string>
+</resources>

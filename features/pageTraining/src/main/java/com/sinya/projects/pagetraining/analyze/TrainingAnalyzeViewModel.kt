@@ -53,7 +53,9 @@ internal class TrainingAnalyzeViewModel @Inject constructor(
         getTrainingItemUseCase(state.id)
             .collect { entity ->
                 val weight = entity.items.sumOf { category ->
-                    category.items.sumOf { it.count.toInt() * it.weight.toInt() }
+                    category.items.sumOf {
+                        it.count.toFloat().toInt() * it.weight.toFloat().toInt()
+                    }
                 }.toFloat() / 1000
 
                 val weightPrev = getPrevTrainingSummaryWeightUseCase(entity.category?.id, state.id)
@@ -64,7 +66,8 @@ internal class TrainingAnalyzeViewModel @Inject constructor(
                     else -> (weight / weightPrev) * 100f
                 }
 
-                val listData = getMuscleDataUseCase(entity.category?.id, state.id).getOrElse { emptyList() }
+                val listData =
+                    getMuscleDataUseCase(entity.category?.id, state.id).getOrElse { emptyList() }
                 _state.update {
                     state.copy(
                         allMuscles = allMuscles,

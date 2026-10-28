@@ -1,12 +1,11 @@
 package com.sinya.projects.database.repoImpl
 
 import com.sinya.projects.database.dao.TypeTrainingDao
-import com.sinya.projects.database.entity.TypeTraining
 import com.sinya.projects.database.mapper.toDomain
 import com.sinya.projects.domain.model.CategoryEntity
 import com.sinya.projects.domain.model.TypeTrainingEntry
 import com.sinya.projects.domain.repository.CategoryRepository
-import com.sinya.projects.domain.repository.LanguageProvider
+import com.sinya.projects.domain.providers.LanguageProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

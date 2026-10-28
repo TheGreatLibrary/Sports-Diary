@@ -13,7 +13,7 @@ import com.sinya.projects.domain.model.ExerciseWithFullData
 import com.sinya.projects.domain.model.ExerciseWithMuscles
 import com.sinya.projects.domain.model.ExercisesEntry
 import com.sinya.projects.domain.repository.ExercisesRepository
-import com.sinya.projects.domain.repository.LanguageProvider
+import com.sinya.projects.domain.providers.LanguageProvider
 import jakarta.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -56,6 +56,10 @@ internal class ExercisesRepositoryImpl @Inject constructor(
         }.catch {
             emit(emptyList())
         }
+    }
+
+    override suspend fun getEnglishExerciseName(id: Int): Result<String> {
+        return runCatching { exercisesDao.getEnglishExerciseName(id) }
     }
 
     override suspend fun deleteCustomExercise(id: Int): Result<Int> {

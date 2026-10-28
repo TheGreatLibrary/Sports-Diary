@@ -8,8 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import com.sinya.projects.ui.theme.AppColors
 
 
 @Composable
@@ -30,7 +32,7 @@ fun GuideDescriptionView(
             modifier = Modifier
                 .size(150.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.background,
+                    color = AppColors.Black600,
                     shape = MaterialTheme.shapes.extraLarge
                 )
                 .clip(MaterialTheme.shapes.extraLarge)

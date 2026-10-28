@@ -1,6 +1,6 @@
 package com.sinya.projects.health
 
-import com.sinya.projects.domain.repository.HealthSdkStatus
+import com.sinya.projects.domain.managers.HealthSdkStatus
 
 data class HealthDashboardState(
     val isConnected: Boolean = false,

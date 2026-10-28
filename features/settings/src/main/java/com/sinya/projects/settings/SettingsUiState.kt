@@ -7,6 +7,7 @@ internal sealed interface SettingsUiState {
         val themeMode: Boolean,
         val langMode: String,
         val showTrainingWarningState: Boolean,
+        val mapState: Boolean,
     ) : SettingsUiState
 
     data class Error(val message: String) : SettingsUiState

@@ -169,6 +169,7 @@ internal interface TrainingsDao {
         SELECT
             id,
             icon,
+            gif_url,
             is_custom,
             force_id,
             level_id,

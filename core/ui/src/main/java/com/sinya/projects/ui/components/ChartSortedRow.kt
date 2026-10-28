@@ -1,5 +1,4 @@
-package com.sinya.projects.statistic.components
-
+package com.sinya.projects.ui.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,7 @@ import com.sinya.projects.ui.components.RadioButton
 import com.sinya.projects.ui.theme.LocalAppGradients
 
 @Composable
-internal fun <T> ChartSortedRow(
+fun <T> ChartSortedRow(
     radioOptions: List<RadioItem<T>>,
     selectedOption: T?,
     onOptionSelected: (T) -> Unit,

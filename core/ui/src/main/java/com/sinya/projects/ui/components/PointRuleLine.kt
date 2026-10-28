@@ -5,11 +5,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +42,7 @@ fun PointRuleLine(index: Int) {
         }
         Box(
             Modifier
-                .width(4.dp)
+                .width(2.dp)
                 .fillMaxHeight()
                 .background(
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -51,6 +53,7 @@ fun PointRuleLine(index: Int) {
                         bottomEnd = 100.dp
                     )
                 )
+                .padding(vertical = 3.dp)
         )
     }
 }

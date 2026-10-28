@@ -3,7 +3,7 @@ package com.sinya.projects.database
 import android.content.Context
 import android.net.Uri
 import com.sinya.projects.domain.model.BackupInfo
-import com.sinya.projects.domain.repository.BackupManager
+import com.sinya.projects.domain.managers.BackupManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

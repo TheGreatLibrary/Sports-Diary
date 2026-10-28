@@ -3,8 +3,8 @@ package com.sinya.projects.health
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import com.sinya.projects.domain.model.HealthData
-import com.sinya.projects.domain.repository.HealthManager
-import com.sinya.projects.domain.repository.HealthSdkStatus
+import com.sinya.projects.domain.managers.HealthManager
+import com.sinya.projects.domain.managers.HealthSdkStatus
 import javax.inject.Inject
 
 /**
