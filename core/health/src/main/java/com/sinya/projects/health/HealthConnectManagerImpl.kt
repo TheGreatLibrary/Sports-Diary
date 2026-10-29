@@ -31,8 +31,12 @@ import kotlin.reflect.KClass
 
 internal class HealthConnectManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val client: HealthConnectClient
+//    private val client: HealthConnectClient
 ) : HealthManager {
+
+    private val client by lazy {
+        HealthConnectClient.getOrCreate(context)
+    }
 
     private val fetchMutex = Mutex()
     private var cachedData: HealthData? = null

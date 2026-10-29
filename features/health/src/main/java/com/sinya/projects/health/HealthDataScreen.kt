@@ -1,6 +1,7 @@
 package com.sinya.projects.health
 
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
@@ -84,12 +85,18 @@ private fun HealthDataView(
             },
             onBackClick = onBackClick,
             painter = when (state.sdkStatus) {
-                HealthSdkStatus.AVAILABLE, HealthSdkStatus.NOT_INSTALLED -> com.sinya.projects.ui.R.drawable.ic_plus
-                else -> com.sinya.projects.ui.R.drawable.cat_change
+                HealthSdkStatus.AVAILABLE, HealthSdkStatus.NOT_INSTALLED -> com.sinya.projects.ui.R.drawable.cat_change
+                else -> com.sinya.projects.ui.R.drawable.ic_plus
             },
             onClick = {
                 when (state.sdkStatus) {
                     HealthSdkStatus.AVAILABLE -> {
+                        Log.d("Health", "НЕ ПОМОГИТЕ")
+                        onEvent()
+                    }
+
+                    HealthSdkStatus.NOT_INSTALLED -> {
+                        Log.d("Health", "ПОМОГИТЕ")
                         try {
                             permissionsLauncher.launch(permissions)
                         } catch (_: Exception) {
@@ -97,12 +104,8 @@ private fun HealthDataView(
                         }
                     }
 
-                    HealthSdkStatus.NOT_INSTALLED -> {
+                    HealthSdkStatus.NOT_SUPPORTED -> {
                         clickToMarket()
-                    }
-
-                    else -> {
-                        onEvent()
                     }
                 }
             }

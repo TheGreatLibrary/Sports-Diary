@@ -7,6 +7,7 @@ import com.sinya.projects.health.HealthConnectManagerImpl
 import com.sinya.projects.health.HuaweiHealthManagerImpl
 import dagger.Module
 import dagger.Provides
+import dagger.Lazy
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
@@ -18,22 +19,16 @@ internal object HealthModule {
 
     @Provides
     @Singleton
-    fun provideHealthConnectClient(@ApplicationContext context: Context): HealthConnectClient {
-        return HealthConnectClient.getOrCreate(context)
-    }
-
-    @Provides
-    @Singleton
     fun provideHealthManager(
         @ApplicationContext context: Context,
-        healthConnectImpl: HealthConnectManagerImpl,
-        huaweiImpl: HuaweiHealthManagerImpl
+        healthConnectImpl: Lazy<HealthConnectManagerImpl>,
+        huaweiImpl: Lazy<HuaweiHealthManagerImpl>
     ): HealthManager {
         val status = HealthConnectClient.getSdkStatus(context)
         return if (status == HealthConnectClient.SDK_AVAILABLE) {
-            healthConnectImpl
+            healthConnectImpl.get() // Будет создан ТОЛЬКО если SDK доступен
         } else {
-            huaweiImpl
+            huaweiImpl.get()        // Иначе создастся Huawei реализация
         }
     }
 }

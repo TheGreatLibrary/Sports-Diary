@@ -27,6 +27,7 @@ import com.sinya.projects.domain.utils.getString
 import com.sinya.projects.domain.utils.parseMillisToDateTime
 import com.sinya.projects.pageproportion.components.MeasureCard
 import com.sinya.projects.pageproportion.components.ProportionPagePlaceholder
+import com.sinya.projects.pageproportion.components.getDrawableResByName
 import com.sinya.projects.ui.R.string
 import com.sinya.projects.ui.components.screen.ScreenLazyColumn
 import com.sinya.projects.ui.components.CustomSnackbar
@@ -147,16 +148,10 @@ private fun ProportionPageView(
                     onEvent(ProportionPageEvent.OpenDialog(null))
                 },
                 content = {
-                    Log.d("dfdfdf", it.icon.toString())
                     GuideDescriptionView(
                         title = it.name,
                         description = it.description,
-                        image =   it.icon?.let { iconName ->
-                            context.resources
-                                .getIdentifier(iconName, "drawable", context.packageName)
-                                .takeIf { resId -> resId != 0 }
-                                ?.let { resId -> painterResource(resId) }
-                        }
+                        image = painterResource(getDrawableResByName(it.icon))
                     )
                 }
             )
