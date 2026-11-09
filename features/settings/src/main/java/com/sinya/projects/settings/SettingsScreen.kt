@@ -45,6 +45,7 @@ import java.util.Locale
 @Composable
 fun SettingsScreen(
     onBackClick: () -> Unit,
+    onFormProfile: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -67,9 +68,9 @@ fun SettingsScreen(
                 changelogState = changelogState,
                 state = state as SettingsUiState.Success,
                 onEvent = viewModel::onEvent,
-                sendEmail = {
-                    context.sendSupportMail()
-                },
+                sendEmail = { context.sendSupportMail() },
+                sendFormTest = { context.openUrl(UrlConfig.FORM_YANDEX_FOR_GOOGLE_TEST) },
+                onFormProfile = onFormProfile,
                 copyErrors = {
                     scope.launch {
                         val systemLogs = LogcatReader.getAppLogs(context   )
@@ -93,7 +94,9 @@ private fun SettingsScreenView(
     state: SettingsUiState.Success,
     onEvent: (SettingsEvent) -> Unit,
     sendEmail: () -> Unit,
+    onFormProfile: () -> Unit,
     copyErrors: () -> Unit,
+    sendFormTest: () -> Unit,
     changelogState: ChangelogState,
 ) {
     val context = LocalContext.current
@@ -130,6 +133,11 @@ private fun SettingsScreenView(
                         switchState = state.themeMode
                     ),
                     CardItem(
+                        title = stringResource(R.string.put_data_of_user),
+                        icon = R.drawable.set_beta,
+                        onClick = onFormProfile
+                    ),
+                    CardItem(
                         title = stringResource(R.string.heat_map),
                         description = when (state.mapState) {
                             true -> stringResource(R.string.day_7)
@@ -138,6 +146,16 @@ private fun SettingsScreenView(
                         icon = com.sinya.projects.ui.R.drawable.train_muscul,
                         onClick = { onEvent(SettingsEvent.MapStateToggle(!state.mapState)) },
                         switchState = state.mapState
+                    )
+                )
+            )
+            BlockOfCards(
+                title = stringResource(R.string.personal_settings),
+                list = listOf(
+                    CardItem(
+                        title = stringResource(R.string.put_data_of_user),
+                        icon = com.sinya.projects.ui.R.drawable.set_profile,
+                        onClick = onFormProfile
                     )
                 )
             )
@@ -153,6 +171,11 @@ private fun SettingsScreenView(
                         title = stringResource(R.string.settings_send_to_support),
                         icon = R.drawable.set_support,
                         onClick = sendEmail
+                    ),
+                    CardItem(
+                        title = stringResource(R.string.google_play),
+                        icon = R.drawable.set_beta,
+                        onClick = sendFormTest
                     ),
                     CardItem(
                         title = stringResource(R.string.settings_list_of_changes),
@@ -175,14 +198,8 @@ private fun SettingsScreenView(
         CustomModalSheet(
             modifier = if (changeStateSheet.value) Modifier else Modifier.verticalScroll(rememberScrollState()),
             onDismiss = {
-                when {
-                    stateBottomSheet.value -> {
-                        stateBottomSheet.value = !stateBottomSheet.value
-                    }
-                    else -> {
-                        changeStateSheet.value = !changeStateSheet.value
-                    }
-                }
+                stateBottomSheet.value = false
+                changeStateSheet.value = false
             }
         ) {
             when {
@@ -199,7 +216,7 @@ private fun SettingsScreenView(
                     ChangesSheetContent(
                         changeLogState = changelogState,
                         onReload = { onEvent(SettingsEvent.SelectChangelog) },
-                        upToMarket = { context.openUrl(UrlConfig.marketRuStore) }
+                        upToMarket = { context.openUrl(UrlConfig.MARKET_RU_STORE) }
                     )
                 }
             }

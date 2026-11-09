@@ -15,13 +15,13 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.sinya.projects.domain.model.DayOfMonth
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @SuppressLint("UnusedContentLambdaTargetStateParameter")
 @Composable
 internal fun MonthPager(
     days: List<DayOfMonth>,
-    pickDay: (LocalDate) -> Unit,
+    pickDay: (LocalDateTime) -> Unit,
     today: DayOfMonth,
     onSelectionChange: () -> Unit,
     selectionState: Boolean,

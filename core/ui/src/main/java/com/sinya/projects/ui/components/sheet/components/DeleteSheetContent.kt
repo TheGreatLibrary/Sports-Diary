@@ -30,12 +30,12 @@ fun DeleteSheetContent(
     ) {
         Text(
             text = stringResource(R.string.enter_delete),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onPrimary
         )
         Text(
             text = stringResource(R.string.delete_info_description),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimary
         )
 
@@ -50,7 +50,7 @@ fun DeleteSheetContent(
         ) {
             Text(
                 stringResource(R.string.delete),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
     }

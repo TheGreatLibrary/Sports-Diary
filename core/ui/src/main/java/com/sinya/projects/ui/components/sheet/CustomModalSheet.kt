@@ -2,6 +2,7 @@ package com.sinya.projects.ui.components.sheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -13,6 +14,7 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,8 +29,13 @@ fun CustomModalSheet(
     onDismiss: () -> Unit,
     content: @Composable () -> Unit
 ) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        sheetState = sheetState,
         shape = RoundedCornerShape(topEnd = 30.dp, topStart = 30.dp),
         contentColor = MaterialTheme.colorScheme.onPrimary,
         containerColor = Color.Transparent,
@@ -37,19 +44,24 @@ fun CustomModalSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .then(modifier)
                 .background(
                     brush = LocalAppGradients.current.basedGradient,
                     shape = RoundedCornerShape(topEnd = 30.dp, topStart = 30.dp),
                 )
-                .padding(16.dp)
                 .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             BottomSheetDefaults.DragHandle()
 
-            content()
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .then(modifier)
+            ) {
+                content()
+            }
         }
     }
 }

@@ -31,6 +31,7 @@ import com.sinya.projects.ui.theme.LocalAppGradients
 internal fun NoteSwipeContent(
     modifier: Modifier,
     title: String,
+    date: String,
     selected: Boolean,
     maxLines: Int = Int.MAX_VALUE,
     onSelected: () -> Unit,
@@ -78,17 +79,30 @@ internal fun NoteSwipeContent(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            RoundIconButton(
-                modifier = Modifier,
-                buttonSize = 25,
-                iconSize = 20,
-                icon = R.drawable.ic_menu,
-                onClick = onMenuClick,
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimary,
-                    contentColor = MaterialTheme.colorScheme.background
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = date,
+                    maxLines = 1,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
-            )
+                RoundIconButton(
+                    modifier = Modifier,
+                    buttonSize = 25,
+                    iconSize = 20,
+                    icon = R.drawable.ic_menu,
+                    onClick = onMenuClick,
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.onPrimary,
+                        contentColor = MaterialTheme.colorScheme.background
+                    )
+                )
+            }
+
             Column(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -98,7 +112,6 @@ internal fun NoteSwipeContent(
                         text = title,
                         maxLines = maxLines,
                         style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 13.sp,
                         modifier = Modifier.fillMaxWidth(),
                         color = MaterialTheme.colorScheme.onPrimary
                     )

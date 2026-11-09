@@ -2,7 +2,7 @@ package com.sinya.projects.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sinya.projects.datastore.SettingsEngine
+import com.sinya.projects.domain.managers.SettingsEngine
 import com.sinya.projects.domain.model.ChangelogState
 import com.sinya.projects.domain.useCase.GetChangelogListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

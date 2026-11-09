@@ -14,7 +14,7 @@ import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import com.sinya.projects.domain.model.HealthData
 import com.sinya.projects.domain.managers.HealthManager
-import com.sinya.projects.domain.managers.HealthSdkStatus
+import com.sinya.projects.domain.enums.HealthSdkStatus
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

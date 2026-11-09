@@ -69,24 +69,21 @@ fun ExerciseItem.addEmptySet(): ExerciseItem {
 }
 
 fun ExerciseItem.removeSet(setIndex: Int): ExerciseItem {
-    require(setIndex in items.indices) { "Индекс подхода $setIndex вне диапазона" }
+    require(setIndex in items.indices) { "Индекс подхода $setIndex вне диапазона ${items.indices}" }
 
-    return this.copy(items = items.filterIndexed { index, _ -> index != setIndex })
-        .let { item ->
-            item.copy(items = item.items.mapIndexed { newIndex, itemData ->
-                itemData.copy(index = newIndex)
-            })
-        }
+    val updatedItems = items
+        .filterIndexed { index, _ -> index != setIndex }
+        .mapIndexed { newIndex, itemData -> itemData.copy(index = newIndex) }
+
+    return copy(items = updatedItems)
 }
 
 fun ExerciseItem.insertSet(setIndex: Int, exercise: ExerciseItemData): ExerciseItem {
-    val newList = this.items.toMutableList()
-    newList.add(setIndex, exercise)
-    require(setIndex in items.indices) { "Индекс подхода $setIndex вне диапазона" }
+    require(setIndex in 0..items.size) { "Индекс вставки $setIndex вне диапазона 0..${items.size}" }
 
-    return this.copy(items = newList).let { item ->
-        item.copy(items = item.items.mapIndexed { newIndex, itemData ->
-            itemData.copy(index = newIndex)
-        })
-    }
+    val updatedItems = items.toMutableList()
+        .apply { add(setIndex, exercise) }
+        .mapIndexed { newIndex, itemData -> itemData.copy(index = newIndex) }
+
+    return copy(items = updatedItems)
 }

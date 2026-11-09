@@ -18,6 +18,7 @@ internal fun getDrawableResByName(name: String?): Int {
         "image_triceps" -> R.drawable.image_triceps
         "image_waist" -> R.drawable.image_waist
         "image_wrist" -> R.drawable.image_wrist
+        "image_weight" -> R.drawable.image_weight
         else -> com.sinya.projects.ui.R.drawable.train_muscul
     }
 }

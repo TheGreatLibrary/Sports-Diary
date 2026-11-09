@@ -50,7 +50,7 @@ internal interface TrainingsDao {
                 )
             ELSE 0
         END AS weightState,
-            strftime('%Y-%m-%d', t.date) AS date
+        strftime('%Y-%m-%d', t.date) AS date
         FROM trainings t JOIN data_training d ON t.id = d.training_id
         WHERE d.state = 1
     """
@@ -93,10 +93,10 @@ internal interface TrainingsDao {
             t.serial_num as name, 
             t.type_id as categoryId, 
             tt.name as category, 
-              COALESCE(
-            strftime('%Y-%m-%d', t.date),
-            strftime('%Y-%m-%d', 'now','localtime')
-        ) AS date, 
+            COALESCE(
+                strftime('%Y-%m-%d %H:%M', t.date),
+                strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+            ) AS date,
         0 AS selected
         FROM trainings t LEFT JOIN type_training tt ON t.type_id = tt.id
     """
@@ -192,8 +192,8 @@ internal interface TrainingsDao {
             t.type_id AS categoryId,
             tt.name AS category,
             COALESCE(
-                strftime('%Y-%m-%d', t.date),
-                strftime('%Y-%m-%d', 'now','localtime')
+                strftime('%Y-%m-%d %H:%M', t.date),
+                strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
             ) AS date,
         0 AS selected
             
@@ -293,13 +293,14 @@ internal interface TrainingsDao {
             t.serial_num as name, 
             t.type_id as categoryId, 
             tt.name as category, 
-           COALESCE(
-            strftime('%Y-%m-%d', t.date),
-            strftime('%Y-%m-%d', 'now','localtime')
-        ) AS date,
+             COALESCE(
+                strftime('%Y-%m-%d %H:%M', t.date),
+                strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+            ) AS date,
         0 AS selected
         FROM trainings t LEFT JOIN type_training tt ON t.type_id = tt.id
-        WHERE date >= :startDate AND date <= :endDate
+        WHERE COALESCE(strftime('%Y-%m-%d %H:%M', date), date) >= :startDate
+         AND COALESCE(strftime('%Y-%m-%d %H:%M', date), date) <= :endDate
         ORDER BY date
     """
     )
@@ -414,15 +415,24 @@ internal interface TrainingsDao {
 
     @Query(
         """
-        SELECT t.id
-        FROM trainings t
-        WHERE t.type_id = :categoryId AND date < (SELECT date
-            FROM trainings t2
-            WHERE t2.id = :trainingId
-            )
-
-        ORDER BY date DESC
-        LIMIT 1
+    SELECT t.id
+    FROM trainings t
+    INNER JOIN trainings current_t ON current_t.id = :trainingId
+    WHERE (
+        (:categoryId IS NULL AND t.type_id IS NULL) 
+        OR t.type_id = :categoryId
+    )
+      AND (
+          COALESCE(strftime('%Y-%m-%d %H:%M', t.date), t.date) < COALESCE(strftime('%Y-%m-%d %H:%M', current_t.date), current_t.date)
+          OR (
+              COALESCE(strftime('%Y-%m-%d %H:%M', t.date), t.date) = COALESCE(strftime('%Y-%m-%d %H:%M', current_t.date), current_t.date)
+              AND t.id < current_t.id
+          )
+      )
+    ORDER BY 
+        COALESCE(strftime('%Y-%m-%d %H:%M', t.date), t.date) DESC, 
+        t.id DESC
+    LIMIT 1
     """
     )
     suspend fun getLastPrevId(categoryId: Int?, trainingId: Int): Int?

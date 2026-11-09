@@ -26,8 +26,7 @@ internal fun MiniCardItem(
     ) {
         Text(
             text = item,
-            style = MaterialTheme.typography.bodyLarge,
-            fontSize = 12.sp,
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.padding(
                 horizontal = 8.dp,

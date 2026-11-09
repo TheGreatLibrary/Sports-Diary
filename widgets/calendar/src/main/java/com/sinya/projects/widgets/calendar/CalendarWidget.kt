@@ -5,26 +5,28 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastFirstOrNull
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.glance.Button
 import androidx.glance.ButtonDefaults
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
-import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import androidx.glance.appwidget.action.ActionCallback
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
-import androidx.glance.appwidget.updateAll
+import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.background
+import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -37,36 +39,41 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.state.GlanceStateDefinition
+import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.unit.ColorProvider
-import com.sinya.projects.datastore.DataStoreManager
 import com.sinya.projects.domain.model.CalendarWidgetUiState
 import com.sinya.projects.domain.model.DayOfMonth
-import com.sinya.projects.domain.model.MorningEntry
-import com.sinya.projects.domain.useCase.GetWidgetDataUseCase
-import com.sinya.projects.domain.useCase.MarkDayMorningExerciseWidgetUseCase
 import com.sinya.projects.widgets.calendar.themeWidget.WidgetColors
 import com.sinya.projects.widgets.calendar.themeWidget.WidgetType
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
+val WIDGET_TRIGGER_KEY = longPreferencesKey("widget_refresh_trigger")
+
 class CalendarWidget : GlanceAppWidget() {
 
+    override val stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val state = loadWidgetState(context)
+        val initialData = loadWidgetState(context)
 
         provideContent {
+            val prefs = currentState<Preferences>()
+            val trigger = prefs[WIDGET_TRIGGER_KEY] ?: 0L
+
+            val state by produceState(initialValue = initialData, key1 = trigger) {
+                value = loadWidgetState(context)
+            }
+
             GlanceTheme(colors = WidgetColors.colors) {
                 ExerciseWidgetContent(state)
             }
@@ -271,53 +278,15 @@ class CalendarWidget : GlanceAppWidget() {
             }
         }
     }
-}
 
-
-class MarkDayMorningExercisesCallback : ActionCallback {
-
-    companion object {
-        val KEY_CURRENT_STATE = ActionParameters.Key<Boolean>("current_morning_state")
+    suspend fun forceUpdateAllWidgets(context: Context) {
+        val manager = GlanceAppWidgetManager(context)
+        val glanceIds = manager.getGlanceIds(CalendarWidget::class.java)
+        glanceIds.forEach { glanceId ->
+            updateAppWidgetState(context, glanceId) { prefs ->
+                prefs[WIDGET_TRIGGER_KEY] = System.currentTimeMillis()
+            }
+            CalendarWidget().update(context, glanceId)
+        }
     }
-
-    override suspend fun onAction(
-        context: Context,
-        glanceId: GlanceId,
-        parameters: ActionParameters
-    ) {
-        val currentMorningState = parameters[KEY_CURRENT_STATE] ?: false
-        val appContext = context.applicationContext
-        val entryPoint = EntryPointAccessors.fromApplication(
-            appContext,
-            WidgetEntryPoint::class.java
-        )
-        val markExerciseUseCase = entryPoint.markDayMorningExerciseUseCase()
-        val currentPlanId = entryPoint.dataStoreManager().getPlanMorningId().first()
-
-        markExerciseUseCase(
-            morningState = currentMorningState,
-            MorningEntry(
-                id = 0,
-                note = null,
-                date = LocalDate.now().toString(),
-                categoryId = currentPlanId
-            )
-        )
-
-        delay(500)
-
-        CalendarWidget().updateAll(context)
-    }
-}
-
-class CalendarWidgetReceiver : GlanceAppWidgetReceiver() {
-    override val glanceAppWidget: GlanceAppWidget = CalendarWidget()
-}
-
-@EntryPoint
-@InstallIn(SingletonComponent::class)
-interface WidgetEntryPoint {
-    fun dataStoreManager(): DataStoreManager
-    fun getWidgetDataUseCase(): GetWidgetDataUseCase
-    fun markDayMorningExerciseUseCase(): MarkDayMorningExerciseWidgetUseCase
 }

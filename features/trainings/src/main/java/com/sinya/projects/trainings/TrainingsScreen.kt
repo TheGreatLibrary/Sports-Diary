@@ -34,8 +34,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.domain.model.PopupItem
 import com.sinya.projects.domain.model.TypeTopNavigation
 import com.sinya.projects.domain.model.localDateOrNull
+import com.sinya.projects.domain.utils.parseStringToDate
 import com.sinya.projects.trainings.components.TrainingsPlaceholder
 import com.sinya.projects.ui.R
+import com.sinya.projects.ui.components.CustomSnackbar
 import com.sinya.projects.ui.components.PopupMenu
 import com.sinya.projects.ui.components.dragToSelect.dragToSelect
 import com.sinya.projects.ui.components.screen.ScreenLazySmartHeader
@@ -44,10 +46,9 @@ import com.sinya.projects.ui.components.sheet.components.DeleteSheetContent
 import com.sinya.projects.ui.components.sheet.components.SortSheetContent
 import com.sinya.projects.ui.components.smartHeader.util.rememberSmartHeaderManager
 import com.sinya.projects.ui.components.swipeCard.SwipeCard
-import com.sinya.projects.ui.components.CustomSnackbar
-import com.sinya.projects.ui.theme.LocalDateFormatDMY
+import com.sinya.projects.ui.theme.LocalDateFormatDMY_HM
 import com.sinya.projects.ui.theme.LocalDateFormatMY
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.YearMonth
 
 @Composable
@@ -85,9 +86,8 @@ private fun TrainingsScreenView(
 ) {
     val density = LocalDensity.current
     val context = LocalContext.current
-    val dateFmt = LocalDateFormatDMY.current
     val dateFormat = LocalDateFormatMY.current
-
+    val dateFmt = LocalDateFormatDMY_HM.current
     val pullToRefreshState = rememberPullToRefreshState()
     val manager = rememberSmartHeaderManager()
     val smartHeader = manager.rememberScrollDirection()
@@ -107,7 +107,7 @@ private fun TrainingsScreenView(
     }
     val grouped = remember(state.trainings, state.selectedMode) {
         state.selectedMode.filter(state.trainings).groupBy {
-            val date = LocalDate.parse(it.date)
+        val date = parseStringToDate(it.date)
             YearMonth.of(date.year, date.month)
         }
     }
@@ -195,7 +195,7 @@ private fun TrainingsScreenView(
                         SwipeCard(
                             modifier = Modifier,
                             title = context.getString(R.string.training_number, item.name),
-                            description = "${item.category ?: context.getString(R.string.not_category)} • ${dateText}",
+                            description = "${item.category ?: context.getString(R.string.not_category)} • $dateText",
                             swipeToDelete = {
                                 onEvent(TrainingEvent.SelectTraining(item.id))
                                 deleteState = true

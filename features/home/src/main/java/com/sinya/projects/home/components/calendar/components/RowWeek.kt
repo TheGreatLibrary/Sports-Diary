@@ -41,7 +41,7 @@ internal fun RowWeek(
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     color = when(isCurrentMonth && i + 1 == dayIndex) {
                         true -> MaterialTheme.colorScheme.onPrimary
                         false -> MaterialTheme.colorScheme.onSecondary

@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomButton(
     text: String,
-    style: TextStyle = MaterialTheme.typography.bodyMedium,
+    style: TextStyle = MaterialTheme.typography.bodyLarge,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     onClick: () -> Unit

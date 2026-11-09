@@ -32,14 +32,12 @@ fun BodyInfoSheetContent(
         Text(
             text = stringResource(R.string.muscles_of_body),
             style = MaterialTheme.typography.titleMedium,
-            fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
         Text(
             text = stringResource(R.string.hot_map_description),
-            fontSize = 13.sp,
             color = MaterialTheme.colorScheme.onPrimary,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.fillMaxWidth(),

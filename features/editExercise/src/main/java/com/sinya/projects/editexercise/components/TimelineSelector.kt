@@ -252,7 +252,7 @@ private fun TimelineNode(
             if (isTop) {
                 Text(
                     text = text,
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = if (isSelected) selectedColor else unselectedColor,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
@@ -284,7 +284,7 @@ private fun TimelineNode(
             if (!isTop) {
                 Text(
                     text = text,
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = if (isSelected) selectedColor else unselectedColor,
                     textAlign = TextAlign.Center,
                     maxLines = 2,

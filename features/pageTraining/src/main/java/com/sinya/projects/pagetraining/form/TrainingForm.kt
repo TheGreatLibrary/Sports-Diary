@@ -37,7 +37,8 @@ import com.sinya.projects.domain.enums.WeightState
 import com.sinya.projects.domain.model.ExerciseWithMuscles
 import com.sinya.projects.domain.model.PopupItem
 import com.sinya.projects.domain.model.TypeTopNavigation
-import com.sinya.projects.domain.utils.parseMillisToDateTime
+import com.sinya.projects.domain.utils.parseDateToStringDB
+import com.sinya.projects.domain.utils.parseStringToDate
 import com.sinya.projects.pagetraining.form.components.TrainingPagePlaceholder
 import com.sinya.projects.pagetraining.form.components.card.SwipeTrainingCard
 import com.sinya.projects.pagetraining.form.components.card.components.SwipeTrainingCardContent
@@ -54,17 +55,20 @@ import com.sinya.projects.ui.components.sheet.components.ExerciseSheetContent
 import com.sinya.projects.ui.components.trainingConstructor.UndoBottomNavigation
 import com.sinya.projects.ui.components.CustomButton
 import com.sinya.projects.ui.components.CustomSnackbar
-import com.sinya.projects.ui.components.DatePickerModal
+import com.sinya.projects.ui.components.DateTimePickerModal
 import com.sinya.projects.ui.components.DragOverlay
 import com.sinya.projects.ui.components.dialog.GuideDescriptionView
 import com.sinya.projects.ui.components.dialog.GuideDialog
+import com.sinya.projects.ui.theme.LocalDateFormatDMY_HM
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @Composable
 internal fun TrainingForm(
     onBackClick: () -> Unit,
     id: Int?,
     date: String?,
+    afterCreateId: (Int) -> Unit,
 ) {
     val viewModel = hiltViewModel(
         creationCallback = { factory: TrainingFormViewModel.Factory ->
@@ -78,6 +82,13 @@ internal fun TrainingForm(
         TrainingFormUiState.Loading -> TrainingPagePlaceholder("", onBackClick)
 
         is TrainingFormUiState.TrainingForm -> {
+            val formTrainingId = (state as TrainingFormUiState.TrainingForm).item.id
+            LaunchedEffect(formTrainingId) {
+                if (formTrainingId != null && formTrainingId > 0) {
+                    afterCreateId(formTrainingId)
+                }
+            }
+
             TrainingFormView(
                 state = state as TrainingFormUiState.TrainingForm,
                 onEvent = viewModel::onEvent,
@@ -109,10 +120,10 @@ private fun TrainingFormView(
     filtered: List<ExerciseWithMuscles>,
 ) {
     val context = LocalContext.current
-
-    val stateBottomSheet = remember { mutableStateOf(false) }
-    var expanded by remember { mutableStateOf(false) }
+    val dateFmt = LocalDateFormatDMY_HM.current
     val snackbarHostState = remember { SnackbarHostState() }
+    var expanded by remember { mutableStateOf(false) }
+    val stateBottomSheet = remember { mutableStateOf(false) }
 
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -165,41 +176,69 @@ private fun TrainingFormView(
             item {
                 DateCard(
                     onDateClick = { onEvent(TrainingFormEvent.CalendarState(true)) },
-                    date = state.item.date
+                    date = parseStringToDate(state.item.date)
                 )
-                DropdownCheckboxMenu(
-                    items = state.categories,
-                    title = stringResource(com.sinya.projects.pagetraining.R.string.routine),
-                    onInfoClick = {
-                        onEvent(
-                            TrainingFormEvent.OpenDialogGuide(
-                                context.getString(com.sinya.projects.pagetraining.R.string.routine),
-                                context.getString(com.sinya.projects.pagetraining.R.string.routine_description)
+
+                var isMenuExpanded by remember { mutableStateOf(false) }
+
+                Box {
+                    DropdownCheckboxMenu(
+                        items = state.categories,
+                        title = stringResource(com.sinya.projects.pagetraining.R.string.routine),
+                        onInfoClick = {
+                            onEvent(
+                                TrainingFormEvent.OpenDialogGuide(
+                                    context.getString(com.sinya.projects.pagetraining.R.string.routine),
+                                    context.getString(com.sinya.projects.pagetraining.R.string.routine_description)
+                                )
+                            )
+                        },
+                        alignment = Alignment.Start,
+                        selectedItems = listOf(state.item.category),
+                        expanded = expanded,
+                        onExpanded = { expanded = it },
+                        nameObject = { list ->
+                            list.joinToString {
+                                it?.name ?: context.getString(R.string.not_category)
+                            }
+                        },
+                        onPlusClick = {
+                            isMenuExpanded = true
+                        }
+                    ) { item ->
+                        DropdownElement(
+                            title = item?.name ?: stringResource(R.string.not_category),
+                            onClick = {
+                                onEvent(TrainingFormEvent.OnSelectedCategory(item))
+                                expanded = false
+                            }
+                        )
+                    }
+
+                    PopupMenu(
+                        isMenuExpanded = isMenuExpanded,
+                        onMenuExpanded = { isMenuExpanded = it },
+                        item = null,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
+                        listItems = listOf(
+                            PopupItem(
+                                title = stringResource(com.sinya.projects.pagetraining.R.string.routine_create_via_form),
+                                onClick = {
+                                    scope.launch {
+                                        onEvent(TrainingFormEvent.OpenBottomSheetCategory)
+                                        stateBottomSheet.value = !stateBottomSheet.value
+                                    }
+                                },
+                                icon = R.drawable.set_profile,
+                            ),
+                            PopupItem(
+                                title = stringResource(com.sinya.projects.pagetraining.R.string.routine_create_from_workout),
+                                onClick = {
+                                    onEvent(TrainingFormEvent.CreateRoutineFromWorkout)
+                                },
+                                icon = R.drawable.ic_duplicate,
                             )
                         )
-                    },
-                    alignment = Alignment.Start,
-                    selectedItems = listOf(state.item.category),
-                    expanded = expanded,
-                    onExpanded = { expanded = it },
-                    nameObject = { list ->
-                        list.joinToString {
-                            it?.name ?: context.getString(R.string.not_category)
-                        }
-                    },
-                    onPlusClick = {
-                        scope.launch {
-                            onEvent(TrainingFormEvent.OpenBottomSheetCategory)
-                            stateBottomSheet.value = !stateBottomSheet.value
-                        }
-                    }
-                ) { item ->
-                    DropdownElement(
-                        title = item?.name ?: stringResource(R.string.not_category),
-                        onClick = {
-                            onEvent(TrainingFormEvent.OnSelectedCategory(item))
-                            expanded = false
-                        }
                     )
                 }
                 Spacer(Modifier.height(20.dp))
@@ -282,14 +321,17 @@ private fun TrainingFormView(
                         color = MaterialTheme.colorScheme.surfaceContainer,
                         listItems = listOf(
                             PopupItem(
-                                title = stringResource(com.sinya.projects.pagetraining.R.string.weight_of_body),
+                                title = when (item.weightState) {
+                                    WeightState.MATTER -> stringResource(R.string.weight_of_body)
+                                    WeightState.NOT_MATTER -> stringResource(R.string.not_weight_of_body)
+                                },
                                 onClick = {
                                     onEvent(
                                         TrainingFormEvent.Undoable(
                                             TrainingUndoableAction.ToggleWeight(
                                                 item.id,
                                                 item.weightState,
-                                                item.weightState
+                                                WeightState.getNegativeState(item.weightState)
                                             )
                                         )
                                     )
@@ -300,14 +342,17 @@ private fun TrainingFormView(
                                 },
                             ),
                             PopupItem(
-                                title = stringResource(com.sinya.projects.pagetraining.R.string.exercise_on_count),
+                                title = when (item.mode) {
+                                    TrainingMode.COUNT -> stringResource(R.string.exercise_on_count)
+                                    TrainingMode.TIME -> stringResource(R.string.exercise_on_time)
+                                },
                                 onClick = {
                                     onEvent(
                                         TrainingFormEvent.Undoable(
                                             TrainingUndoableAction.ToggleMode(
                                                 item.id,
                                                 item.mode,
-                                                item.mode
+                                                TrainingMode.getNegativeState(item.mode)
                                             )
                                         )
                                     )
@@ -318,7 +363,10 @@ private fun TrainingFormView(
                                 },
                             ),
                             PopupItem(
-                                title = stringResource(com.sinya.projects.pagetraining.R.string.hide_of_summary),
+                                title = when (item.state) {
+                                    Visibility.VISIBLE -> stringResource(com.sinya.projects.pagetraining.R.string.hide_of_summary)
+                                    Visibility.INVISIBLE -> stringResource(com.sinya.projects.pagetraining.R.string.in_cummulation)
+                                },
                                 onClick = {
                                     onEvent(
                                         TrainingFormEvent.Undoable(
@@ -425,12 +473,12 @@ private fun TrainingFormView(
         }
 
         if (state.calendarVisible) {
-            DatePickerModal(
-                onDateSelected = { date ->
+            DateTimePickerModal(
+                onDateTimeSelected = { date ->
                     onEvent(
                         TrainingFormEvent.Undoable(
                             TrainingUndoableAction.OnPickDate(
-                                parseMillisToDateTime(date),
+                                parseDateToStringDB(date),
                                 state.item.date
                             )
                         )
@@ -471,7 +519,10 @@ private fun TrainingFormView(
                                 )
                             )
                         },
-                        onClickSuccess = { onEvent(TrainingFormEvent.OnCreateCategory) },
+                        onClickSuccess = {
+                            onEvent(TrainingFormEvent.OnCreateCategory)
+                            stateBottomSheet.value = !stateBottomSheet.value
+                        },
                         onCategoryChange = { s -> onEvent(TrainingFormEvent.OnNameChange(s)) },
                         onQueryChange = { s -> onEvent(TrainingFormEvent.OnQueryChange(s)) },
                         onToggle = { id -> onEvent(TrainingFormEvent.Toggle(id)) },
@@ -492,7 +543,10 @@ private fun TrainingFormView(
                             )
                         },
                         onToggle = { id -> onEvent(TrainingFormEvent.Toggle(id)) },
-                        onClickSuccess = { onEvent(TrainingFormEvent.AddExercise) },
+                        onClickSuccess = {
+                            onEvent(TrainingFormEvent.AddExercise)
+                            stateBottomSheet.value = !stateBottomSheet.value
+                        },
                         onCancelClick = { stateBottomSheet.value = !stateBottomSheet.value },
                         modesFlattened = modesFlattened
                     )

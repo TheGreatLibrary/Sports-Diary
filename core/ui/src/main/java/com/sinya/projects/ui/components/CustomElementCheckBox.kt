@@ -58,7 +58,7 @@ fun CustomElementCheckBox(
             )
             Text(
                 text = description,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSecondary,
                 maxLines = if (opened.value) Int.MAX_VALUE else 1,
                 overflow = TextOverflow.Ellipsis

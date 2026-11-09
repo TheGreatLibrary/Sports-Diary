@@ -17,17 +17,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.sinya.projects.calculator.components.InputCalculateCard
-import com.sinya.projects.calculator.components.OutputCalculateCard
 import com.sinya.projects.domain.model.CalculatorConfig
 import com.sinya.projects.domain.model.ProportionRow
 import com.sinya.projects.domain.model.ResultSpec
 import com.sinya.projects.domain.model.TypeTopNavigation
 import com.sinya.projects.domain.model.VariableSpec
 import com.sinya.projects.ui.R.string
+import com.sinya.projects.ui.components.GoalCardItem
 import com.sinya.projects.ui.components.dropdown.DropdownCheckboxMenu
 import com.sinya.projects.ui.components.dropdown.components.DropdownElement
 import com.sinya.projects.ui.components.screen.ScreenColumn
+import com.sinya.projects.ui.components.textField.CustomTextFieldWithTitle
 import java.util.Locale
 
 @SuppressLint("LocalContextGetResourceValueCall")
@@ -179,7 +179,7 @@ fun CalculatorScreen(
             selectedCalc.variables.forEachIndexed { index, variable ->
                 val currentValue = inputValues[variable.key] ?: "0"
 
-                InputCalculateCard(
+                CustomTextFieldWithTitle(
                     title = stringResource(variable.titleRes),
                     item = ProportionRow(
                         id = index,
@@ -209,17 +209,14 @@ fun CalculatorScreen(
                 val rawResult = resultItem.formula(parsedVariables)
                 val formattedResult = String.format(Locale.US, "%.1f", rawResult)
 
-                OutputCalculateCard(
-                    title = stringResource(resultItem.titleRes),
+                GoalCardItem(
                     item = ProportionRow(
                         id = index + 100,
-                        title = context.getString(resultItem.titleRes),
+                        title = stringResource(resultItem.titleRes),
                         value = formattedResult,
-                        unitMeasure = context.getString(resultItem.measureRes),
-                        delta = null
+                        unitMeasure = stringResource(resultItem.measureRes),
                     ),
-                    onValueChange = { _, _, _ -> },
-                    context = context,
+                    onClick = {  },
                 )
             }
         }

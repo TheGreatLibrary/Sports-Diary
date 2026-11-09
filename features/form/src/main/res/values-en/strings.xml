@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_title">Athlete profile</string>
+
+
+
+    <string name="years_date">Date of birth</string>
+
+    <string name="max_plc">Max heart rate</string>
+    <string name="plc_min">bpm</string>
+    <string name="auto_data">" (Auto)"</string>
+
+    <string name="weight_chci">Target weight</string>
+
+    <string name="steps_chci">Step goal</string>
+    <string name="steps_unit">steps</string>
+
+    <string name="lenght_sleep">Sleep goal</string>
+    <string name="time_sleep">%1$s:%2$s</string>
+    <string name="count_sleep">hh:mm</string>
+
+    <string name="chci_kkal">Calorie goal</string>
+    <string name="kkal_unit">kcal</string>
+
+    <plurals name="calculated_years">
+        <item quantity="one">%d year</item>
+        <item quantity="other">%d years</item>
+    </plurals>
+</resources>

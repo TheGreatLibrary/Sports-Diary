@@ -1,13 +1,20 @@
 package com.sinya.projects.health
 
-import com.sinya.projects.domain.managers.HealthSdkStatus
+import com.sinya.projects.domain.enums.HealthSdkStatus
 
 data class HealthDashboardState(
+    // target values
+
+    val targetStepsCount: Int = 0,
+    val targetActiveKcal: Int = 0,
+    val targetSleep: Int = 0,
+
+    // данные с HealthConnect
+
     val isConnected: Boolean = false,
     val isLoading: Boolean = false,
     val statusMessage: String? = null,
     val sdkStatus: HealthSdkStatus = HealthSdkStatus.AVAILABLE,
-
 
     // Верхняя карточка TODAY
     val stepsToday: Long = 0L,

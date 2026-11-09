@@ -101,8 +101,7 @@ fun CompactUnitField(
                             DeltaHint(delta)
                             Text(
                                 text = unit,
-                                fontSize = 12.sp,
-                                style = MaterialTheme.typography.bodyLarge,
+                                style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSecondary
                             )
                         }

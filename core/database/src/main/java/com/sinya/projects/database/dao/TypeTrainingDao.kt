@@ -11,6 +11,8 @@ import com.sinya.projects.domain.model.ExerciseItemWithoutList
 import com.sinya.projects.database.entity.DataTypeTrainings
 import com.sinya.projects.database.entity.TypeTraining
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import java.time.Instant
 
 @Dao
 internal interface TypeTrainingDao {
@@ -90,4 +92,21 @@ internal interface TypeTrainingDao {
       WHERE d.type_id = :id AND et.language = :lang
     """)
     fun observeItemsTypeTraining(id: Int?, lang: String): Flow<List<ExerciseItemWithoutList>>
+
+
+    @Transaction
+    suspend fun duplicateRoutine(id: Int) : Int {
+        val exercises = observeItemsTypeTraining(id, "en").first().map {
+            DataTypeTrainings(
+                typeId = 0,
+                exerciseId = it.id,
+                mode = it.mode,
+                weight = it.weight,
+                orderIndex = it.orderIndex
+            )
+        }
+        val routine = getById(id)?: TypeTraining(0, "Nameless Routine")
+
+        return createTypeWithExercises(routine.copy(id = 0, name = "${routine.name} ${Instant.now().epochSecond}"), exercises)
+    }
 }

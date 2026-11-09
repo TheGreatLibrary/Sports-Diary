@@ -1,7 +1,6 @@
 package com.sinya.projects.pageproportion
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +23,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.domain.model.TypeTopNavigation
 import com.sinya.projects.domain.model.buildMeasureItemsFromKeys
 import com.sinya.projects.domain.utils.getString
-import com.sinya.projects.domain.utils.parseMillisToDateTime
+import com.sinya.projects.domain.utils.parseDateToStringDB
+import com.sinya.projects.domain.utils.parseStringToDate
 import com.sinya.projects.pageproportion.components.MeasureCard
 import com.sinya.projects.pageproportion.components.ProportionPagePlaceholder
 import com.sinya.projects.pageproportion.components.getDrawableResByName
@@ -32,19 +32,22 @@ import com.sinya.projects.ui.R.string
 import com.sinya.projects.ui.components.screen.ScreenLazyColumn
 import com.sinya.projects.ui.components.CustomSnackbar
 import com.sinya.projects.ui.components.DateCard
-import com.sinya.projects.ui.components.DatePickerModal
+import com.sinya.projects.ui.components.DateTimePickerModal
 import com.sinya.projects.ui.components.dialog.GuideDescriptionView
 import com.sinya.projects.ui.components.dialog.GuideDialog
 import com.sinya.projects.ui.components.trainingConstructor.UndoBottomNavigation
+import com.sinya.projects.ui.theme.LocalDateFormatDMY_HM
+import java.time.LocalDateTime
 
 @Composable
 fun ProportionPageScreen(
     id: Int?,
+    date: String?,
     onBackClick: () -> Unit,
 ) {
     val viewModel = hiltViewModel(
         creationCallback = { factory: ProportionPageViewModel.Factory ->
-            factory.create(id = id)
+            factory.create(id = id, date = date)
         }
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -83,6 +86,7 @@ private fun ProportionPageView(
     onEvent: (ProportionPageEvent) -> Unit,
 ) {
     val context = LocalContext.current
+    val dateFmt = LocalDateFormatDMY_HM.current
     val snackbarHostState = remember { SnackbarHostState() }
     val rows = remember(state.item) { state.item.items.buildMeasureItemsFromKeys() }
 
@@ -110,7 +114,7 @@ private fun ProportionPageView(
             item {
                 DateCard(
                     onDateClick = { onEvent(ProportionPageEvent.CalendarState(true)) },
-                    date = state.item.date
+                    date = parseStringToDate(state.item.date)
                 )
             }
 
@@ -158,12 +162,12 @@ private fun ProportionPageView(
         }
 
         if (state.calendarVisible) {
-            DatePickerModal(
-                onDateSelected = { date ->
+            DateTimePickerModal(
+                onDateTimeSelected = { date ->
                     onEvent(
                         ProportionPageEvent.Undoable(
                             ProportionUndoableAction.OnPickDate(
-                                parseMillisToDateTime(date),
+                                parseDateToStringDB(date),
                                 state.item.date
                             )
                         )

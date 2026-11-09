@@ -17,15 +17,19 @@ import kotlinx.coroutines.flow.Flow
 internal interface DataMorningDao {
 
     @Query("""
-        SELECT id, date, note
+        SELECT id, COALESCE(strftime('%Y-%m-%d %H:%M', date), date) AS date, note
         FROM data_mornings
-        WHERE date >= :startDate AND date <= :endDate
+         WHERE COALESCE(strftime('%Y-%m-%d %H:%M', date), date) >= :startDate
+        AND COALESCE(strftime('%Y-%m-%d %H:%M', date), date) <= :endDate
         ORDER BY date
     """)
     fun getDataOfMonth(startDate: String, endDate: String) : Flow<List<MorningDay>>
 
     @Query("""
-    SELECT id, date, note
+    SELECT 
+        id,
+        date,
+        note
     FROM data_mornings
     ORDER BY date DESC
 """)
@@ -47,7 +51,7 @@ internal interface DataMorningDao {
         else insertMorningComplete(item)
     }
 
-    @Query("SELECT * FROM data_mornings WHERE date = :date")
+    @Query("SELECT * FROM data_mornings WHERE COALESCE(strftime('%Y-%m-%d', date), date) = :date")
     suspend fun getByDate(date: String) : DataMorning?
 
     @Query("SELECT COUNT(*) FROM data_mornings")
@@ -63,8 +67,16 @@ internal interface DataMorningDao {
     @Delete
     suspend fun deleteMorning(item: DataMorning)
 
-    @Query("SELECT * FROM data_mornings WHERE date IN (:dates)")
-    suspend fun getByDates(dates: List<String>): List<DataMorning> // Тип List<String> или List<Long>, смотря как хранишь
+    @Query("""
+        SELECT 
+            id,
+            category_id AS categoryId,
+            COALESCE(strftime('%Y-%m-%d', date), date) AS date,
+            note
+        FROM data_mornings
+        WHERE COALESCE(strftime('%Y-%m-%d', date), date) IN (:dates)
+    """)
+    suspend fun getByDates(dates: List<String>): List<DataMorning>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMorningList(items: List<DataMorning>)

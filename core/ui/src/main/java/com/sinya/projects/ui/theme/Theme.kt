@@ -26,7 +26,7 @@ fun SportsDiaryTheme(
 
 
 
-val LocalDateFormatDMY = staticCompositionLocalOf<DateTimeFormatter> {
+val LocalDateFormatDMY_HM = staticCompositionLocalOf<DateTimeFormatter> {
     error("DateTimeFormatter not provider")
 }
 val LocalDateFormatMY = staticCompositionLocalOf<DateTimeFormatter> {

@@ -5,7 +5,7 @@
     <string name="bones">Bones</string>
     <string name="bmr">BMR</string>
     <string name="body_scale">BODY SCALE</string>
-    <string name="sleep_vitals"><![CDATA[SLEEP & VITALS]]></string>
+    <string name="sleep_vitals">SLEEP</string>
     <string name="h_m">%1$dh %2$dm</string>
     <string name="vo2_max">VO2 Max</string>
     <string name="breath">Breathing</string>
@@ -28,10 +28,11 @@
     <string name="exercise">EXERCISE</string>
     <string name="kcal">KCal</string>
     <string name="minute">min</string>
+    <string name="hour">h</string>
     <string name="km">Km</string>
     <string name="active_kcal">Active kcal</string>
-    <string name="exercise_minutes">Exercise minutes</string>
-    <string name="standing_hours">Standing hours</string>
+    <string name="counts_of_steps">Exercise minutes</string>
+    <string name="sleeps_count">Standing hours</string>
     <string name="steps_count">STEPS %1$d</string>
     <string name="today_b">TODAY</string>
     <string name="google_health_connect">Google Health Connect is not installed on this device. Tap “+” in the top-right corner to install it.</string>

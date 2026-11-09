@@ -17,13 +17,13 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sinya.projects.datastore.SettingsEngine
+import com.sinya.projects.domain.managers.SettingsEngine
 import com.sinya.projects.domain.utils.updateLocale
 import com.sinya.projects.sportsdiary.navigation.MainApp
 import com.sinya.projects.ui.theme.DarkAppGradients
 import com.sinya.projects.ui.theme.LightAppGradients
 import com.sinya.projects.ui.theme.LocalAppGradients
-import com.sinya.projects.ui.theme.LocalDateFormatDMY
+import com.sinya.projects.ui.theme.LocalDateFormatDMY_HM
 import com.sinya.projects.ui.theme.LocalDateFormatMY
 import com.sinya.projects.ui.theme.SportsDiaryTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -92,19 +92,11 @@ class MainActivity : ComponentActivity() {
 
         CompositionLocalProvider(
             LocalSettingsEngine provides engine,
-            LocalDateFormatDMY provides DateTimeFormatter.ofPattern("dd.MM.yyyy"),
+            LocalDateFormatDMY_HM provides DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"),
             LocalDateFormatMY provides DateTimeFormatter.ofPattern("MMMM yyyy", locale),
             LocalAppGradients provides gradients
         ) {
             SportsDiaryTheme(darkTheme = config.dark, dynamicColor = false) {
-//                val healthConnectClient = HealthConnectClient.getOrCreate(this)
-//
-//                setContent {
-//                    MaterialTheme {
-//                        HealthDataScreen(healthConnectClient)
-//                    }
-//                }
-
                 MainApp()
             }
         }

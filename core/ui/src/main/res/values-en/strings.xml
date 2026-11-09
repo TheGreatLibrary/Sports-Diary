@@ -156,8 +156,7 @@
     <string name="enter_delete">Confirm deletion</string>
 
     <!-- Category -->
-    <string name="time_exercise">Timed exercise</string>
-    <string name="count_exercise">Rep-based exercise</string>
+
     <string name="title_is_empty">Title is empty</string>
     <string name="title_already_existed">Title already exists, duplicates are not allowed</string>
 
@@ -174,4 +173,10 @@
     <string name="edit"> Edit</string>
 
     <string name="effective_muscles">Muscle load</string>
+
+    <!-- -->
+    <string name="weight_of_body">Account for body weight</string>
+    <string name="not_weight_of_body">Excluding body weight</string>
+    <string name="exercise_on_time">Timed exercise</string>
+    <string name="exercise_on_count">Count-based exercise</string>
 </resources>

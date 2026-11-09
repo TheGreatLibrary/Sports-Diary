@@ -67,8 +67,8 @@ fun BoxScope.SmartSheetHeader(
                 placeholder = stringResource(R.string.category_name),
                 leadingIcon = {
                     Icon(
-                        painterResource(R.drawable.ic_search),
-                        contentDescription = "search",
+                        painterResource(R.drawable.menu_routines),
+                        contentDescription = "menu",
                         tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(18.dp)
                     )

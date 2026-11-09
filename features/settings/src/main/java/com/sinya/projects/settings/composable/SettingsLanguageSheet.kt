@@ -43,7 +43,6 @@ internal fun SettingsLanguageSheet(
         Text(
             text = stringResource(R.string.settings_choose_lang),
             style = MaterialTheme.typography.titleMedium,
-            fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onPrimary,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()

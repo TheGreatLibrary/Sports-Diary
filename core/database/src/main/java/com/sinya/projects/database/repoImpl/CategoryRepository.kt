@@ -31,4 +31,10 @@ internal class CategoryRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun duplicateRoutine(id: Int): Result<Int> {
+        return runCatching {
+            typeTrainingDao.duplicateRoutine(id)
+        }
+    }
 }

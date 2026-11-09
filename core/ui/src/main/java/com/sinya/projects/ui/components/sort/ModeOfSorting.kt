@@ -52,8 +52,7 @@ sealed class ModeOfSorting(
             return when (items.firstOrNull()) {
                 is Training -> (items as List<Training>).filterByYearMonth(year, month) as List<T>
                 is NoteItem -> (items as List<NoteItem>).filterByYearMonth(year, month) as List<T>
-                is ProportionsEntry -> (items as List<ProportionsEntry>).filterByYearMonth(
-                    year,
+                is ProportionsEntry -> (items as List<ProportionsEntry>).filterByYearMonth(year,
                     month
                 ) as List<T>
 

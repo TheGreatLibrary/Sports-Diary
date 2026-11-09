@@ -58,7 +58,6 @@ internal fun BasedCard(
                     text = title,
                     style = MaterialTheme.typography.bodyMedium,
                     color = contentColor,
-                    fontSize = 14.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

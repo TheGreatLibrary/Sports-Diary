@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ObserveNewProportionEntityUseCase @Inject constructor(
     private val repository: ProportionRepository
 ) {
-    operator fun invoke() : Flow<ProportionItem> {
-        return repository.observeNewProportion()
+    operator fun invoke(date: String) : Flow<ProportionItem> {
+        return repository.observeNewProportion(date)
     }
 }

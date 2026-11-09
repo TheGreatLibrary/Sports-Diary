@@ -47,7 +47,7 @@ fun MuscleSheetContent(
     ) {
         Text(
             text = stringResource(R.string.choose_muscle),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center

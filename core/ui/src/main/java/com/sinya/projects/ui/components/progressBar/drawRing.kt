@@ -16,16 +16,16 @@ fun DrawScope.drawRing(
 ) {
     val ringSize = size.width - (inset * 2)
     val topLeftOffset = Offset(inset, inset+15)
-    val sweepAngle = 360f * progress
+    val sweepAngle = 270f * progress
 
     drawArc(
         color = backgroundColor,
-        startAngle = 0f,
-        sweepAngle = 360f,
+        startAngle = -90f,
+        sweepAngle = 270f,
         useCenter = false,
         topLeft = topLeftOffset,
         size = Size(ringSize, ringSize),
-        style = Stroke(width = strokeWidthPx)
+        style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
     )
 
     drawArc(
@@ -35,9 +35,6 @@ fun DrawScope.drawRing(
         useCenter = false,
         topLeft = topLeftOffset,
         size = Size(ringSize, ringSize),
-        style = Stroke(
-            width = strokeWidthPx,
-            cap = StrokeCap.Round
-        )
+        style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
     )
 }

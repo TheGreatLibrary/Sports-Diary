@@ -22,7 +22,7 @@ fun GuideDescriptionView(
 ) {
     Text(
         text = title,
-        style = MaterialTheme.typography.bodyLarge,
+        style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.onPrimary
     )
     image?.let {
@@ -42,7 +42,7 @@ fun GuideDescriptionView(
     description?.let {
         Text(
             text = description,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimary
         )
     }

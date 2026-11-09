@@ -44,16 +44,13 @@ internal fun BentoSparklineCard(
             Column {
                 Text(
                     text = title,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.bodyLarge,
-                    letterSpacing = 0.5.sp
+                    style = MaterialTheme.typography.displayMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             }
@@ -61,7 +58,7 @@ internal fun BentoSparklineCard(
 
         Text(
             text = mainValue,
-            fontSize = 20.sp,
+            fontSize = 22.sp,
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onPrimary
@@ -114,17 +111,15 @@ internal fun BentoSparklineCard(
             ) {
                 Text(
                     text = "00:00",
-                    fontSize = 10.sp,
+                    fontSize = 11.sp,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    fontWeight = FontWeight.Medium
                 )
                 Text(
                     text = "24:00",
-                    fontSize = 10.sp,
+                    fontSize = 11.sp,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    fontWeight = FontWeight.Medium
                 )
             }
         }

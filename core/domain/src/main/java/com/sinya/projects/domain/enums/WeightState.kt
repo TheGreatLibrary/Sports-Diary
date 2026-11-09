@@ -7,6 +7,13 @@ enum class WeightState(val state: Int) {
     companion object {
         fun getState(code: Int): WeightState =
             entries.find { it.state == code } ?: MATTER
+
+        fun getNegativeState(state: WeightState): WeightState =
+            when (state) {
+                MATTER -> NOT_MATTER
+                else -> MATTER
+            }
+
     }
 
 }

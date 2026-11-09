@@ -32,6 +32,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.domain.model.PopupItem
 import com.sinya.projects.domain.model.TypeTopNavigation
+import com.sinya.projects.domain.model.localDateOrNull
 import com.sinya.projects.notes.components.NoteCard
 import com.sinya.projects.ui.R
 import com.sinya.projects.ui.R.string
@@ -43,7 +44,7 @@ import com.sinya.projects.ui.components.sheet.components.DeleteSheetContent
 import com.sinya.projects.ui.components.sheet.components.SortSheetContent
 import com.sinya.projects.ui.components.smartHeader.util.rememberSmartHeaderManager
 import com.sinya.projects.ui.components.CustomSnackbar
-import com.sinya.projects.ui.theme.LocalDateFormatDMY
+import com.sinya.projects.ui.theme.LocalDateFormatDMY_HM
 import com.sinya.projects.ui.theme.LocalDateFormatMY
 import java.time.LocalDate
 import java.time.YearMonth
@@ -76,7 +77,7 @@ private fun NotesView(
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
-    val dateFmt = LocalDateFormatDMY.current
+    val dateFmt = LocalDateFormatDMY_HM.current
     val dateFormat = LocalDateFormatMY.current
 
     val pullToRefreshState = rememberPullToRefreshState()
@@ -182,13 +183,13 @@ private fun NotesView(
                     key = { it.id }
                 ) { item ->
                     var isMenuExpanded by remember { mutableStateOf(false) }
-//                    val dateText = remember(item.date) { item.localDateOrNull()?.format(dateFmt) ?: item.date }
-
+                    val dateText = remember(item.date) { item.localDateOrNull()?.format(dateFmt) ?: item.date }
                     Box(modifier = Modifier.fillMaxWidth()) {
                         NoteCard(
                             modifier = Modifier,
                             note = item.note,
                             edit = item.edit,
+                            date = dateText,
                             swipeToDelete = {
                                 onEvent(NotesEvent.SelectNote(item.id))
                                 deleteState = true

@@ -17,8 +17,8 @@ android {
         applicationId = "com.sinya.projects.sportsdiary"
         minSdk = 26
         targetSdk = 36
-        versionCode = 22
-        versionName = "1.6.2"
+        versionCode = 24
+        versionName = "1.6.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -44,6 +44,7 @@ android {
     kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
+            freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
         }
     }
     buildFeatures {
@@ -82,6 +83,7 @@ dependencies {
     implementation(project(":features:calculator"))
     implementation(project(":features:health"))
     implementation(project(":features:notes"))
+    implementation(project(":features:form"))
 
     implementation(project(":widgets:calendar"))
 

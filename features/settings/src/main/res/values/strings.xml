@@ -22,4 +22,7 @@
     <string name="day_7">7 дней</string>
     <string name="week">Неделя</string>
     <string name="heat_map">Теплокарта</string>
+    <string name="google_play">Бета-тест Google Play</string>
+    <string name="put_data_of_user">Уточнить цели и данные</string>
+    <string name="personal_settings">Пользователь</string>
 </resources>

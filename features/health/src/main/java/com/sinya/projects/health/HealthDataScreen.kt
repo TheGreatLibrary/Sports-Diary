@@ -1,7 +1,6 @@
 package com.sinya.projects.health
 
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
@@ -21,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.domain.model.TypeTopNavigation
-import com.sinya.projects.domain.managers.HealthSdkStatus
+import com.sinya.projects.domain.enums.HealthSdkStatus
 import com.sinya.projects.domain.utils.UrlConfig
 import com.sinya.projects.domain.utils.openUrl
 import com.sinya.projects.health.components.*
@@ -56,7 +55,7 @@ fun HealthDataScreen(
         permissions = viewModel.permissions,
         getPermissionIntent = permissionIntent,
         permissionsLauncher = permissionsLauncher,
-        clickToMarket = { context.openUrl(UrlConfig.healthAPK) }
+        clickToMarket = { context.openUrl(UrlConfig.HEALTH_APK) }
     )
 }
 
@@ -73,6 +72,16 @@ private fun HealthDataView(
     ) {
     val gradient = LocalAppGradients.current
     val context = LocalContext.current
+
+    val stepsProgress = remember(state.stepsToday, state.targetStepsCount) {
+        (state.stepsToday / state.targetStepsCount.toFloat()).coerceIn(0.05f, 1f)
+    }
+    val sleepProgress = remember(state.sleepDurationMinutes, state.targetSleep) {
+        (state.sleepDurationMinutes / state.targetSleep.toFloat()).coerceIn(0.05f, 1f)
+    }
+    val kcalProgress = remember(state.totalKcalToday, state.targetActiveKcal) {
+        (state.totalKcalToday / state.targetActiveKcal.toFloat()).coerceIn(0.05f, 1f)
+    }
 
     ScreenColumn(
         navigationType = TypeTopNavigation.WithIcon(
@@ -91,17 +100,15 @@ private fun HealthDataView(
             onClick = {
                 when (state.sdkStatus) {
                     HealthSdkStatus.AVAILABLE -> {
-                        Log.d("Health", "НЕ ПОМОГИТЕ")
-                        onEvent()
-                    }
-
-                    HealthSdkStatus.NOT_INSTALLED -> {
-                        Log.d("Health", "ПОМОГИТЕ")
                         try {
                             permissionsLauncher.launch(permissions)
                         } catch (_: Exception) {
                             runCatching { context.startActivity(getPermissionIntent) }
                         }
+                    }
+
+                    HealthSdkStatus.NOT_INSTALLED -> {
+                        onEvent()
                     }
 
                     HealthSdkStatus.NOT_SUPPORTED -> {
@@ -113,7 +120,7 @@ private fun HealthDataView(
     ) {
         if (state.sdkStatus != HealthSdkStatus.AVAILABLE || state.statusMessage != null) {
             Surface(
-                color = MaterialTheme.colorScheme.background,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -125,7 +132,6 @@ private fun HealthDataView(
                     },
                     color = Color.White,
                     style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 13.sp,
                     modifier = Modifier.padding(14.dp)
                 )
             }
@@ -135,36 +141,34 @@ private fun HealthDataView(
             modifier = Modifier.fillMaxWidth(),
             gradient = gradient.basedCard2Gradient
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .background(
-                            MaterialTheme.colorScheme.primaryContainer,
-                            MaterialTheme.shapes.extraLarge
-                        )
-                        .padding(horizontal = 14.dp, vertical = 6.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.today_b),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        fontSize = 11.sp,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                    )
-                }
-
-                Text(
-                    text = stringResource(R.string.steps_count, state.stepsToday),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Box(
+//                    modifier = Modifier
+//                        .background(
+//                            MaterialTheme.colorScheme.primaryContainer,
+//                            MaterialTheme.shapes.extraLarge
+//                        )
+//                        .padding(horizontal = 14.dp, vertical = 6.dp),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Text(
+//                        text = stringResource(R.string.today_b),
+//                        color = MaterialTheme.colorScheme.onPrimary,
+//                        fontSize = 12.sp,
+//                        style = MaterialTheme.typography.bodyLarge,
+//                    )
+//                }
+//
+//                Text(
+//                    text = stringResource(R.string.steps_count, state.stepsToday),
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    color = MaterialTheme.colorScheme.onPrimary
+//                )
+//            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -173,22 +177,22 @@ private fun HealthDataView(
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     TodayMetricBlock(
+                        value = "${state.stepsToday}",
+                        label = stringResource(R.string.counts_of_steps)
+                    )
+                    TodayMetricBlock(
                         value = "${state.activeKcalToday}",
                         label = stringResource(R.string.active_kcal)
                     )
                     TodayMetricBlock(
-                        value = "${state.exerciseMinutesToday}",
-                        label = stringResource(R.string.exercise_minutes)
-                    )
-                    TodayMetricBlock(
-                        value = "${state.activeHoursToday}",
-                        label = stringResource(R.string.standing_hours)
+                        value = "${state.sleepDurationMinutes / 60f}",
+                        label = stringResource(R.string.sleeps_count)
                     )
                 }
                 ActivityRingsCanvas(
-                    kcalProgress = (state.activeKcalToday / 600f).coerceIn(0.05f, 1f),
-                    exerciseProgress = (state.exerciseMinutesToday / 45f).coerceIn(0.05f, 1f),
-                    standingProgress = (state.activeHoursToday / 12f).coerceIn(0.05f, 1f),
+                    stepsProgress = stepsProgress,
+                    kcalProgress = kcalProgress,
+                    sleepProgress = sleepProgress,
                     modifier = Modifier
                         .size(165.dp)
                         .padding(8.dp)
@@ -219,16 +223,13 @@ private fun HealthDataView(
                         Text(
                             text = stringResource(R.string.exercise),
                             color = MaterialTheme.colorScheme.onPrimary,
-                            fontSize = 12.sp,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.8.sp
+                            style = MaterialTheme.typography.displayMedium
                         )
                         Text(
                             text = state.latestExerciseDate,
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodyLarge,
-                            fontSize = 11.sp
+                            fontSize = 12.sp
                         )
                     }
                 }
@@ -246,8 +247,8 @@ private fun HealthDataView(
                         unit = stringResource(R.string.minute)
                     )
                     ExerciseValueLine(
-                        value = "${state.activeKcalToday}",
-                        unit = stringResource(R.string.kcal)
+                        value = "${state.activeHoursToday}",
+                        unit = stringResource(R.string.hour)
                     )
                 }
             }
@@ -308,18 +309,19 @@ private fun HealthDataView(
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .height(IntrinsicSize.Max),
             horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             ParamHealthCard(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
                 gradient = gradient.basedCard2Gradient
             ) {
                 Text(
                     text = stringResource(R.string.sleep_vitals),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.displayMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 Text(
@@ -356,13 +358,13 @@ private fun HealthDataView(
             }
 
             ParamHealthCard(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f)
+                    .fillMaxHeight(),
                 gradient = gradient.basedCard2Gradient
             ) {
                 Text(
                     text = stringResource(R.string.body_scale),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.displayMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 Text(

@@ -29,7 +29,6 @@ fun HeaderWithInfo(
     ) {
         Text(
             text = title,
-            fontSize = 14.sp,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimary,
         )

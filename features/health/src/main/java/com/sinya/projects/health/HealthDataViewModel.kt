@@ -5,17 +5,20 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.domain.managers.HealthManager
-import com.sinya.projects.domain.managers.HealthSdkStatus
+import com.sinya.projects.domain.enums.HealthSdkStatus
+import com.sinya.projects.domain.managers.SettingsEngine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 internal class HealthDataViewModel @Inject constructor(
+    private val settingsEngine: SettingsEngine,
     private val healthManager: HealthManager
 ) : ViewModel() {
 
@@ -32,6 +35,17 @@ internal class HealthDataViewModel @Inject constructor(
 
     init {
         checkSdkStatus()
+
+        viewModelScope.launch {
+            val config = settingsEngine.uiState.first()
+            _state.update { state ->
+                state.copy(
+                    targetStepsCount = config.dailyStepsGoal,
+                    targetSleep = config.sleepDurationMinutes,
+                    targetActiveKcal = config.targetActiveKcal,
+                )
+            }
+        }
     }
 
     private fun checkSdkStatus() {

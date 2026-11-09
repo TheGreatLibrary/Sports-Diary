@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.domain.model.HealthProgressData
+import com.sinya.projects.domain.utils.parseDateToStringDB
+import com.sinya.projects.domain.utils.parseStringDateToStringUI
 import com.sinya.projects.home.components.HomePlaceholder
 import com.sinya.projects.home.components.calendar.Calendar
 import com.sinya.projects.home.components.card.HomeCard
@@ -35,6 +37,7 @@ import com.sinya.projects.home.components.card.NoteCard
 import com.sinya.projects.home.components.healthPager.HealthRings
 import com.sinya.projects.ui.components.CustomSnackbar
 import com.sinya.projects.ui.theme.LocalAppGradients
+import com.sinya.projects.ui.theme.LocalDateFormatDMY_HM
 
 @Composable
 fun HomeScreen(
@@ -45,7 +48,6 @@ fun HomeScreen(
     navigateToMeasurePage: (Int?, String?) -> Unit,
     navigateToHealth: () -> Unit
 ) {
-
     val viewModel: HomeViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -80,6 +82,16 @@ private fun HomeScreenView(
 ) {
     val gradients = LocalAppGradients.current
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val stepsProgress = remember(state.stepsToday, state.targetStepsCount) {
+        (state.stepsToday / state.targetStepsCount.toFloat()).coerceIn(0.05f, 1f)
+    }
+    val sleepProgress = remember(state.sleepDurationMinutes, state.targetSleep) {
+        (state.sleepDurationMinutes / state.targetSleep.toFloat()).coerceIn(0.05f, 1f)
+    }
+    val kcalProgress = remember(state.totalKcalToday, state.targetKcalActiveCount) {
+        (state.totalKcalToday / state.targetKcalActiveCount.toFloat()).coerceIn(0.05f, 1f)
+    }
 
     LaunchedEffect(state.errorMessage) {
         state.errorMessage?.let { message ->
@@ -136,16 +148,23 @@ private fun HomeScreenView(
                     getText = { item ->
                         stringResource(
                             R.string.home_training_item_description,
-                            item.category ?: stringResource(com.sinya.projects.ui.R.string.not_category),
+                            item.category
+                                ?: stringResource(com.sinya.projects.ui.R.string.not_category),
                             item.name,
-                            item.date
+                            parseStringDateToStringUI(item.date)
                         )
                     },
                     backgroundColor = gradients.trainingCardGradient,
                     backgroundItemColor = gradients.trainingCardItemGradient,
                     onCardClick = navigateToTrainings,
-                    onIconClick = { navigateToTrainingPage(null, state.date.date.toString()) }
+                    onIconClick = {
+                        navigateToTrainingPage(
+                            null,
+                            parseDateToStringDB(state.date.date)
+                        )
+                    }
                 )
+
                 Row(
                     modifier = Modifier.heightIn(max = 160.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -159,26 +178,27 @@ private fun HomeScreenView(
                                 stringResource(R.string.steps),
                                 R.drawable.health_foot,
                                 Color.valueOf(MaterialTheme.colorScheme.primary.value.toLong()),
-                                state.stepsToday/10000f,
+                                stepsProgress,
                                 state.stepsToday.toString()
-                            ),
-                            HealthProgressData(
-                                stringResource(R.string.sleep),
-                                R.drawable.health_sleep,
-                                Color.valueOf(MaterialTheme.colorScheme.tertiary.value.toLong()),
-                                state.sleepDurationMinutes/120f,
-                                state.sleepDurationMinutes.toString()
                             ),
                             HealthProgressData(
                                 stringResource(R.string.kkal),
                                 R.drawable.health_calories,
                                 Color.valueOf(MaterialTheme.colorScheme.secondary.value.toLong()),
-                                state.totalKcalToday/400f,
+                                kcalProgress,
                                 state.totalKcalToday.toString()
+                            ),
+                            HealthProgressData(
+                                stringResource(R.string.sleep),
+                                R.drawable.health_sleep,
+                                Color.valueOf(MaterialTheme.colorScheme.tertiary.value.toLong()),
+                                sleepProgress,
+                                state.sleepDurationMinutes.toString()
                             )
                         ),
                         navigateToHealth = navigateToHealth
                     )
+
                     HomeCard(
                         modifier = Modifier
                             .weight(1.1f)
@@ -191,18 +211,24 @@ private fun HomeScreenView(
                             stringResource(
                                 R.string.home_proportion_item_description,
                                 item.id,
-                                item.date
+                                parseStringDateToStringUI(item.date)
                             )
                         },
                         backgroundColor = gradients.measurementCardGradient,
                         backgroundItemColor = gradients.measurementCardItemGradient,
                         onCardClick = navigateToMeasures,
-                        onIconClick = { navigateToMeasurePage(null, state.date.date.toString()) }
+                        onIconClick = {
+                            navigateToMeasurePage(
+                                null,
+                                parseDateToStringDB(state.date.date)
+                            )
+                        }
                     )
                 }
 
                 NoteCard(
-                    value = state.monthDays.find { it.date == state.date.date }?.note ?: "",
+                    value = state.monthDays.find { it.date.toLocalDate() == state.date.date.toLocalDate() }?.note
+                        ?: "",
                     onValueChange = { s -> onEvent(HomeEvent.OnValueChange(s)) },
                     onIconClick = { onEvent(HomeEvent.SaveNote) },
                     contentColor = MaterialTheme.colorScheme.onPrimary,

@@ -26,13 +26,13 @@ import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import com.sinya.projects.domain.model.DayOfMonth
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Composable
 internal fun GridDays(
     days: List<DayOfMonth>,
     onCheckClick: (DayOfMonth) -> Unit,
-    pickDay: (LocalDate) -> Unit,
+    pickDay: (LocalDateTime) -> Unit,
     selectionState: Boolean,
     onSelectionChange: () -> Unit,
     today: DayOfMonth
@@ -115,7 +115,7 @@ internal fun GridDays(
         maxItemsInEachRow = 7
     ) {
         days.forEachIndexed { index, dayCell ->
-            val isToday = dayCell.date == today.date
+            val isToday = dayCell.date.toLocalDate() == today.date.toLocalDate()
 
             DayCard(
                 modifier = Modifier.onGloballyPositioned { coordinates ->

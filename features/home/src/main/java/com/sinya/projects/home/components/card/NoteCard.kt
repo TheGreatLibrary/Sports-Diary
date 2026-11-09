@@ -39,6 +39,7 @@ internal fun NoteCard(
             value = value,
             placeholder = placeholder,
             maxLines = 7,
+            minLines = 3,
             focusRequester = focusRequester,
             onValueChange = { s -> onValueChange(s) },
             contentColor = contentColor

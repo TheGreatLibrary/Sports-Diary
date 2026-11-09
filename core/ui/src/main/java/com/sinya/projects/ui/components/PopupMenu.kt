@@ -65,7 +65,6 @@ fun <T> BoxScope.PopupMenu(
                             Text(
                                 text = it.title,
                                 style = MaterialTheme.typography.bodyLarge,
-                                fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onPrimary
                             )
                         }

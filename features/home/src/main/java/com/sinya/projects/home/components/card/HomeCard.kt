@@ -80,8 +80,7 @@ internal fun <T> HomeCard(
                     Text(
                         text = description,
                         textAlign = descriptionAlign,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 11.sp,
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }

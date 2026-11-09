@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -29,11 +31,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.domain.enums.TrainingMode
+import com.sinya.projects.domain.enums.WeightState
 import com.sinya.projects.domain.model.ExerciseWithMuscles
 import com.sinya.projects.domain.model.PopupItem
 import com.sinya.projects.domain.model.TypeTopNavigation
@@ -172,6 +176,14 @@ private fun CategoryPageView(
                             )
                         )
                     },
+                    leadingIcon = {
+                        Icon(
+                            painterResource(R.drawable.menu_routines),
+                            contentDescription = "menu",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    },
                     placeholder = stringResource(R.string.category_name),
                     errorMessage = stringResource(string.category_name_is_empty),
                     maxLines = 1,
@@ -206,10 +218,13 @@ private fun CategoryPageView(
                         title = item.title,
                         description = stringResource(
                             when (TrainingMode.getMode(item.mode)) {
-                                TrainingMode.COUNT -> string.count_exercise
-                                TrainingMode.TIME -> string.time_exercise
+                                TrainingMode.COUNT -> string.exercise_on_count
+                                TrainingMode.TIME -> string.exercise_on_time
                             }
-                        ),
+                        ) + " " + stringResource(when (WeightState.getState(item.weight)) {
+                            WeightState.MATTER -> R.string.weight_of_body
+                            WeightState.NOT_MATTER -> R.string.not_weight_of_body
+                        }),
                         swipeToDelete = {
                             onEvent(
                                 RoutinePageEvent.Undoable(
@@ -237,7 +252,10 @@ private fun CategoryPageView(
                         selectionState = false,
                         onMenuClick = { isMenuExpanded = true },
                         onSelected = { },
-                        startIconBack = R.drawable.cat_change,
+                        startIconBack =  when (TrainingMode.getMode(item.mode)) {
+                            TrainingMode.COUNT -> R.drawable.train_count
+                            TrainingMode.TIME -> R.drawable.train_time
+                        },
                         endIconBack = R.drawable.morn_trash,
                     )
 
@@ -252,11 +270,32 @@ private fun CategoryPageView(
                                 icon = R.drawable.back_import
                             ),
                             PopupItem(
+                                title = stringResource(when (WeightState.getState(item.weight)) {
+                                    WeightState.MATTER -> R.string.weight_of_body
+                                    WeightState.NOT_MATTER -> R.string.not_weight_of_body
+                                }),
+                                onClick = {
+                                    onEvent(
+                                        RoutinePageEvent.Undoable(
+                                            RoutineUndoableAction.ToggleWeight(
+                                                item.id,
+                                                WeightState.getNegativeState(WeightState.getState(item.weight)).state,
+                                                item.weight
+                                            )
+                                        )
+                                    )
+                                },
+                                icon = when (WeightState.getState(item.weight)) {
+                                    WeightState.MATTER -> R.drawable.train_muscul
+                                    WeightState.NOT_MATTER -> R.drawable.train_weight_no
+                                },
+                            ),
+                            PopupItem(
                                 title = stringResource(
                                     when (TrainingMode.getMode(item.mode)) {
-                                        TrainingMode.COUNT -> string.count_exercise
-                                        TrainingMode.TIME -> string.time_exercise
-                                    }
+                                        TrainingMode.COUNT -> R.string.exercise_on_count
+                                        TrainingMode.TIME -> R.string.exercise_on_time
+                                    },
                                 ),
                                 onClick = {
                                     onEvent(
@@ -268,7 +307,10 @@ private fun CategoryPageView(
                                         )
                                     )
                                 },
-                                icon = R.drawable.cat_change
+                                icon = when (TrainingMode.getMode(item.mode)) {
+                                    TrainingMode.COUNT -> R.drawable.train_count
+                                    TrainingMode.TIME -> R.drawable.train_time
+                                },
                             ),
                             PopupItem(
                                 title = stringResource(string.delete),

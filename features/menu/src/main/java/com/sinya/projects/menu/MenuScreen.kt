@@ -44,7 +44,7 @@ fun MenuScreen(
                 ),
                 CardItem(
                     stringResource(R.string.menu_routines),
-                    R.drawable.menu_routines,
+                    com.sinya.projects.ui.R.drawable.menu_routines,
                     navigateToCategories
                 ),
                 CardItem(

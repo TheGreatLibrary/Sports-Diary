@@ -50,6 +50,7 @@ internal fun SwipeTrainingCardContent(
             weightUnit = stringResource(R.string.kg),
             onEditSet = onEditSet,
             onPlusClick = onPlusClick,
+            hideState = item.state.state,
             onDeleteSet = onDeleteSet,
         )
     }

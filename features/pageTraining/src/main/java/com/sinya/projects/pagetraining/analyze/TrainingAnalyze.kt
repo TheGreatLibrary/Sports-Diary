@@ -26,14 +26,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.domain.model.TypeTopNavigation
 import com.sinya.projects.pagetraining.form.components.TrainingPagePlaceholder
 import com.sinya.projects.ui.R
-import com.sinya.projects.ui.components.DateCard
 import com.sinya.projects.ui.components.StatisticCard
 import com.sinya.projects.ui.components.map.BodyCard
 import com.sinya.projects.ui.components.screen.ScreenLazyColumn
 import com.sinya.projects.ui.components.sheet.CustomModalSheet
 import com.sinya.projects.ui.components.sheet.components.BodyInfoSheetContent
-import com.sinya.projects.ui.theme.LocalDateFormatDMY
-import java.time.LocalDate
+import com.sinya.projects.ui.theme.LocalDateFormatDMY_HM
 
 
 @Composable
@@ -69,8 +67,8 @@ private fun TrainingAnalyzeView(
     onEvent: (TrainingAnalyzeEvent) -> Unit,
     onBackClick: () -> Unit
 ) {
-    val formatter = LocalDateFormatDMY.current
-    val currentDate = remember(state.date) { LocalDate.parse(state.date.toString()).format(formatter) }
+    val formatter = LocalDateFormatDMY_HM.current
+    val currentDate = remember(state.date) { state.date.format(formatter) }
 
     val fontStyle2 = MaterialTheme.typography.displaySmall
     var fontSize2 by remember { mutableStateOf(fontStyle2.fontSize) }
@@ -109,7 +107,6 @@ private fun TrainingAnalyzeView(
                 Text(
                     text = stringResource(R.string.date_at, currentDate),
                     style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 14.sp,
                     modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Start
@@ -120,7 +117,6 @@ private fun TrainingAnalyzeView(
                 Text(
                     text = "${stringResource(com.sinya.projects.pagetraining.R.string.routine)}: ${state.category?.name ?: stringResource(R.string.not_category)}",
                     style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 14.sp,
                     modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Start

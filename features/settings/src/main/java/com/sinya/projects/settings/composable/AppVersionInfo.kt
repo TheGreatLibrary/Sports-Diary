@@ -26,7 +26,6 @@ internal fun AppVersionInfo(lang: String? = null) {
     Log.d("AppVersionInfo", "Recomposed with locale: $locale")
     Text(
         stringResource(R.string.settings_version, versionName?:0, versionCode),
-        fontSize = 13.sp,
         color = MaterialTheme.colorScheme.onPrimary,
         style = MaterialTheme.typography.bodyLarge
     )

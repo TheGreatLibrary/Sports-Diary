@@ -33,6 +33,7 @@ import com.sinya.projects.domain.model.DayOfMonth
 import com.sinya.projects.home.R
 import com.sinya.projects.ui.components.RoundIconButton
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.YearMonth
 import kotlin.collections.chunked
 import kotlin.math.abs
@@ -42,9 +43,9 @@ internal fun CalendarBody(
     days: List<DayOfMonth>,
     date: DayOfMonth,
     expanded: Boolean,
-    onButtonMorningClick: (LocalDate, Boolean) -> Unit,
+    onButtonMorningClick: (LocalDateTime, Boolean) -> Unit,
     onToggleListOfMorningDays: () -> Unit,
-    pickDay: (LocalDate) -> Unit,
+    pickDay: (LocalDateTime) -> Unit,
     onShift: (Long) -> Unit,
     onCheckClick: (DayOfMonth) -> Unit,
     navigateToNotes: () -> Unit,
@@ -70,12 +71,12 @@ internal fun CalendarBody(
     var dragX by remember { mutableFloatStateOf(0f) }
 
     var currentWeekIndex by remember(days, date) {
-        mutableIntStateOf(days.indexOfFirst { it.date == date.date }
+        mutableIntStateOf(days.indexOfFirst { it.date.toLocalDate() == date.date.toLocalDate() }
             .coerceIn(0, days.lastIndex) / 7)
     }
 
     LaunchedEffect(date.date) {
-        val newIndex = days.indexOfFirst { it.date == date.date }.coerceIn(0, days.lastIndex) / 7
+        val newIndex = days.indexOfFirst { it.date.toLocalDate() == date.date.toLocalDate() }.coerceIn(0, days.lastIndex) / 7
         if (newIndex != -1) {
             currentWeekIndex = newIndex
         }
@@ -95,7 +96,7 @@ internal fun CalendarBody(
             .padding(top = 16.dp, bottom = 24.dp, start = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        CalendarHeader(today = date.date)
+        CalendarHeader(today = date.date.toLocalDate())
 
         Column(
             modifier = Modifier
@@ -137,7 +138,7 @@ internal fun CalendarBody(
         ) {
             RowWeek(
                 isCurrentMonth = highlightMonth,
-                today = date.date
+                today = date.date.toLocalDate()
             )
 
             MonthPager(

@@ -1,6 +1,8 @@
 package com.sinya.projects.domain.model
 
+import com.sinya.projects.domain.utils.parseStringToDate
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class ProportionsEntry(
     val id: Int = 0,
@@ -41,5 +43,4 @@ fun List<ProportionsEntry>.filterByYearMonth(year: Int? = null, month: Int? = nu
         .sortedByDescending { it.localDateOrNull() }
 }
 
-fun ProportionsEntry.localDateOrNull(): LocalDate? =
-    runCatching { LocalDate.parse(date) }.getOrNull()
+fun ProportionsEntry.localDateOrNull(): LocalDateTime? = parseStringToDate(date)

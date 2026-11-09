@@ -88,6 +88,7 @@ internal class TrainingRepositoryImpl @Inject constructor(
     ): Result<Float> {
         return runCatching {
             val prevId = trainingDao.getLastPrevId(categoryId, trainingId)
+            Log.d("prevId", prevId.toString())
             val prevData =
                 if (prevId != null) trainingDao.getPrevTrainingSummaryWeight(prevId) else emptyList()
             var weight = 0f
@@ -96,15 +97,24 @@ internal class TrainingRepositoryImpl @Inject constructor(
                 val countArr = it.count.split('/')
                 val weightArr = it.weight.split('/')
 
+
                 for (i in countArr.indices) {
-                    weight += countArr[i].toFloat() * (weightArr[i].toFloat() + it.weightState) /
-                            if (TrainingMode.getMode(it.mode) == TrainingMode.TIME) 4f else 1f
+                    val countVal = countArr.getOrNull(i)?.toFloatOrNull() ?: 0f
+                    val weightVal = weightArr.getOrNull(i)?.toFloatOrNull() ?: 0f
+
+
+                    val divisor = if (TrainingMode.getMode(it.mode) == TrainingMode.TIME) 4f else 1f
+
+                    weight += countVal * (weightVal + it.weightState) / divisor
+                    Log.d("prevData", weight.toString())
                 }
+                Log.d("prevData1", weight.toString())
             }
 
-            val result = weight / 1000
+            val result = weight / 1000f
 
-            String.format(java.util.Locale.ENGLISH, "%.1f", result).toFloat()
+
+            result
         }
     }
 

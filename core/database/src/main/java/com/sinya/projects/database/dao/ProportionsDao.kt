@@ -27,9 +27,9 @@ internal interface ProportionsDao {
         SELECT 
             p.id as id,
              COALESCE(
-            strftime('%Y-%m-%d', p.date),
-            strftime('%Y-%m-%d', 'now','localtime')
-        ) AS date
+                strftime('%Y-%m-%d %H:%M', date),
+                strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+            ) AS date
         FROM proportions p
     """
     )
@@ -81,7 +81,12 @@ internal interface ProportionsDao {
     """)
     fun newProportionsWithPrevData(language: String): Flow<List<ProportionRow>>
 
-    @Query("SELECT * FROM proportions WHERE id = :id")
+    @Query("""
+        SELECT 
+            id,
+            strftime('%Y-%m-%d %H:%M', date) date
+        FROM proportions WHERE id = :id
+    """)
     fun getById(id: Int): Flow<Proportions?>
 
     @Transaction
@@ -149,9 +154,9 @@ internal interface ProportionsDao {
             value AS yValue,
             p.proportion_id AS xDate,
              COALESCE(
-            strftime('%Y-%m-%d', pr.date),
-            strftime('%Y-%m-%d', 'now','localtime')
-        ) AS date
+                strftime('%Y-%m-%d %H:%M', date),
+                strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+            ) AS date
         FROM proportions pr 
         JOIN data_proportions p ON pr.id = p.proportion_id
         WHERE p.type_id IN (:id)
@@ -163,13 +168,24 @@ internal interface ProportionsDao {
         SELECT 
             p.id as id,
              COALESCE(
-            strftime('%Y-%m-%d', p.date),
-            strftime('%Y-%m-%d', 'now','localtime')
-        ) AS date,
+                strftime('%Y-%m-%d %H:%M', date),
+                strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+            ) AS date,
         0 as selected
         FROM proportions p
-         WHERE date >= :start AND date <= :end
+        WHERE COALESCE(strftime('%Y-%m-%d %H:%M', date), date) >= :start
+         AND COALESCE(strftime('%Y-%m-%d %H:%M', date), date) <= :end
         ORDER BY date
     """)
     fun getList(start: String, end: String) : Flow<List<ProportionsEntry>>
+
+    @Query("""
+        SELECT
+            COALESCE(value, 0) AS weight
+        FROM data_proportions JOIN proportions ON data_proportions.proportion_id = proportions.id
+        WHERE type_id = 22
+        ORDER BY date DESC
+        LIMIT 1
+    """)
+    suspend fun getWeightUser(): Float
 }

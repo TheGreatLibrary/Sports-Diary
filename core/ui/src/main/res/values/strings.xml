@@ -161,8 +161,7 @@
     <string name="category_name_is_empty">Название категории пустое или дублируется</string>
 
     <!-- Категория -->
-    <string name="time_exercise">Упражнение на время</string>
-    <string name="count_exercise">Упражнение на количество</string>
+
     <string name="title_is_empty">Название пустое</string>
     <string name="title_already_existed">Название уже существует, дубликаты запрещены</string>
 
@@ -179,5 +178,17 @@
     <string name="date_at">Дата: %1$s</string>
 
     <string name="effective_muscles">Загруженность мышц</string>
+
+
+
+
+
+
+    <!-- -->
+    <string name="weight_of_body">Учесть собственный вес</string>
+    <string name="not_weight_of_body">Без учёта собств. веса</string>
+    <string name="exercise_on_time">Упражн. на время</string>
+
+    <string name="exercise_on_count">Упражн. на кол-во</string>
 
 </resources>

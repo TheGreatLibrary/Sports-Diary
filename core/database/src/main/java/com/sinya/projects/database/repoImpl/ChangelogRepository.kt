@@ -2,7 +2,7 @@ package com.sinya.projects.database.repoImpl
 
 import com.sinya.projects.domain.model.ChangelogResponse
 import com.sinya.projects.domain.repository.ChangelogRepository
-import com.sinya.projects.domain.utils.UrlConfig.config
+import com.sinya.projects.domain.utils.UrlConfig.CONFIG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -14,7 +14,7 @@ internal class ChangelogRepositoryImpl @Inject constructor(
 ) : ChangelogRepository {
     override suspend fun getChangelog(): Result<ChangelogResponse> = withContext(Dispatchers.IO) {
         try {
-            val response = URL(config).readText()
+            val response = URL(CONFIG).readText()
             Result.success(json.decodeFromString<ChangelogResponse>(response))
         } catch (e: Exception) {
             Result.failure(e)

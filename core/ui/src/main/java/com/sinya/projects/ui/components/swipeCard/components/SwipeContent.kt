@@ -106,14 +106,12 @@ fun SwipeContent(
                     text = title,
                     maxLines = maxLines,
                     style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 Text(
                     text = description,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSecondary,
-                    fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )

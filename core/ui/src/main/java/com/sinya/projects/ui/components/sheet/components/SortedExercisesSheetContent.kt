@@ -31,7 +31,6 @@ fun SortedExercisesSheetContent(
         Text(
             text = stringResource(R.string.sort_title),
             style = MaterialTheme.typography.titleMedium,
-            fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center

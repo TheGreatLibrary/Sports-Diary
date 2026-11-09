@@ -48,11 +48,12 @@ import com.sinya.projects.pageExercise.ExerciseMediaItem
 import com.sinya.projects.pageExercise.R
 import com.sinya.projects.ui.R.drawable
 import com.sinya.projects.ui.components.ChartSortedRow
+import com.sinya.projects.ui.components.EmptyMediaPlaceholder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun ExerciseMediaCarousel(
+internal fun ExerciseMediaCarousel(
     mediaItems: List<ExerciseMediaItem>,
     modifier: Modifier = Modifier
 ) {
@@ -61,7 +62,7 @@ fun ExerciseMediaCarousel(
     }
 
     if (validItems.isEmpty()) {
-        EmptyMediaPlaceholder(modifier = modifier)
+        EmptyMediaPlaceholder(modifier = modifier, stringResource(R.string.no_photo))
         return
     }
 
@@ -180,37 +181,7 @@ private fun SingleImageSlide(
     }
 }
 
-@Composable
-private fun EmptyMediaPlaceholder(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .aspectRatio(16f / 9f)
-            .clip(MaterialTheme.shapes.small)
-            .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-            .padding(24.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                painter = painterResource(drawable.cat_change),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                modifier = Modifier.size(40.dp)
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.no_photo),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
+
 
 @Composable
 private fun SmoothTwoFrameSlideshow(

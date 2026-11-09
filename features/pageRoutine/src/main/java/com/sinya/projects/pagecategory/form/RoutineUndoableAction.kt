@@ -1,5 +1,6 @@
 package com.sinya.projects.pagecategory.form
 
+import com.sinya.projects.domain.enums.WeightState
 import com.sinya.projects.domain.model.ExerciseItemWithoutList
 import com.sinya.projects.domain.model.ExerciseWithMuscles
 import com.sinya.projects.domain.model.UndoableAction
@@ -130,5 +131,25 @@ internal sealed interface RoutineUndoableAction :
                 )
             )
         }
+    }
+
+    data class ToggleWeight(val id: Int, val weight: Int, val negativeState: Int)  : RoutineUndoableAction  {
+        override fun apply(state: RoutinePageUiState.RoutineForm): RoutinePageUiState.RoutineForm {
+            return state.copy(
+                hasUnsavedChanges = true,
+                item = state.item.copy(
+                    items = state.item.items.map { item ->
+                        if (item.id == id) item.copy(weight = weight)
+                        else item
+                    }
+                )
+            )
+        }
+
+
+        override fun revert(state: RoutinePageUiState.RoutineForm): RoutinePageUiState.RoutineForm {
+            return ToggleWeight(id, negativeState, weight).apply(state)
+        }
+
     }
 }

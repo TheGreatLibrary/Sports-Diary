@@ -11,6 +11,7 @@ import com.sinya.projects.domain.model.DayOfMonth
 import com.sinya.projects.home.components.calendar.components.CalendarBody
 import com.sinya.projects.home.components.calendar.components.ExpandButton
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 @Composable
@@ -21,8 +22,8 @@ internal fun Calendar(
     onExtended: () -> Unit,
     onShift: (Long) -> Unit,
     onCheckClick: (DayOfMonth) -> Unit,
-    onButtonMorningClick: (LocalDate, Boolean) -> Unit,
-    pickDay: (LocalDate) -> Unit,
+    onButtonMorningClick: (LocalDateTime, Boolean) -> Unit,
+    pickDay: (LocalDateTime) -> Unit,
     onToggleListOfMorningDays: () -> Unit,
     navigateToNotes: () -> Unit
 ) {

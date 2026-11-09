@@ -1,6 +1,5 @@
 package com.sinya.projects.editexercise.subScreen
 
-import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -10,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -28,13 +28,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.sinya.projects.editexercise.R
+import com.sinya.projects.ui.components.EmptyMediaPlaceholder
 import com.sinya.projects.ui.components.textField.CustomTextField
 import com.sinya.projects.ui.components.textField.ErrorTextField
-import java.io.File
-import java.io.FileOutputStream
-import java.util.UUID
 
 @Composable
 internal fun DescriptionScreen(
@@ -46,7 +45,7 @@ internal fun DescriptionScreen(
     description: String,
     descriptionPlaceholder: String,
     onDescriptionChange: (String) -> Unit,
-    imageUri: Uri?,
+    imageUri: String?,
     onImageSelected: (Uri) -> Unit
 ) {
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -73,63 +72,36 @@ internal fun DescriptionScreen(
                     color = MaterialTheme.colorScheme.surfaceContainerLowest,
                     shape = MaterialTheme.shapes.extraLarge
                 ),
+            leadingIcon = {
+                Icon(
+                    painterResource(com.sinya.projects.ui.R.drawable.train_muscul),
+                    contentDescription = "menu",
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(18.dp)
+                )
+            },
             contentColor = MaterialTheme.colorScheme.onSurface,
             isError = isNameError,
             errorMessage = stringResource(com.sinya.projects.ui.R.string.exercise_name_is_empty),
             shape = MaterialTheme.shapes.extraLarge,
         )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 100.dp)
-                .padding(bottom = 10.dp)
-                .clip(MaterialTheme.shapes.small)
-                .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                .clickable {
-                    photoPickerLauncher.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
-                }
-                .padding(1.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            when (imageUri) {
-                null -> Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(com.sinya.projects.ui.R.drawable.ic_plus),
-                        contentDescription = "Add photo",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(30.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.add_photo),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
-                else -> AsyncImage(
-                        model = imageUri,
-                        contentDescription = "Selected image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(MaterialTheme.shapes.small)
-                    )
+        MediaFile(
+            imageUri = imageUri,
+            addImage = {
+                photoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
             }
-        }
+        )
 
         CustomTextField(
             value = description,
             onValueChange = onDescriptionChange,
             placeholder = descriptionPlaceholder,
             maxLines = 15,
+            minLines = 5,
             modifier = Modifier
-                .heightIn(min = 100.dp)
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainerLowest,
                     shape = MaterialTheme.shapes.small
@@ -139,23 +111,58 @@ internal fun DescriptionScreen(
     }
 }
 
-fun saveImageToInternalStorage(context: Context, uri: Uri): Uri? {
-    return try {
-        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+@Composable
+internal fun MediaFile(
+    imageUri: String?,
+    addImage: () -> Unit
+) {
+    if (imageUri.isNullOrEmpty()) {
+        EmptyMediaPlaceholder(
+            modifier = Modifier.clickable { addImage() },
+            stringResource(R.string.no_photo)
+        )
+        return
+    }
 
-        val fileName = "exercise_img_${UUID.randomUUID()}.jpg"
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 100.dp)
+            .padding(bottom = 10.dp)
+            .clip(MaterialTheme.shapes.small)
+            .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+            .clickable { addImage() }
+            .padding(1.dp),
+        contentAlignment = Alignment.Center
+    ) {
 
-        val file = File(context.filesDir, fileName)
-        val outputStream = FileOutputStream(file)
 
-        inputStream.copyTo(outputStream)
+        when (imageUri) {
+            null -> Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    painter = painterResource(com.sinya.projects.ui.R.drawable.ic_plus),
+                    contentDescription = "Add photo",
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(30.dp)
+                )
+                Text(
+                    text = stringResource(R.string.add_photo),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
 
-        inputStream.close()
-        outputStream.close()
-
-        Uri.fromFile(file)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
+            else -> AsyncImage(
+                model = imageUri.toUri(),
+                contentDescription = "Selected image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(MaterialTheme.shapes.small)
+            )
+        }
     }
 }

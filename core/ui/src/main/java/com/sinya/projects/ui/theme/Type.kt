@@ -29,9 +29,9 @@ val Typography = Typography(
         fontSize = 30.sp,
     ), // цифры в статистике
     displayMedium = TextStyle(
-        fontFamily = Unbounded,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 18.sp,
+        fontFamily = Golos,
+        fontWeight = FontWeight.Bold,
+        fontSize = 13.sp,
     ), // календарь
     displaySmall = TextStyle(
         fontFamily = Unbounded,
@@ -42,17 +42,17 @@ val Typography = Typography(
     titleLarge = TextStyle(
         fontFamily = Unbounded,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 15.sp,
+        fontSize = 16.sp,
     ), // заголовок страниц
     titleMedium = TextStyle(
         fontFamily = Unbounded,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 15.sp,
+        fontSize = 14.sp,
     ), // заголовок категорий
     titleSmall = TextStyle(
         fontFamily = Unbounded,
         fontWeight = FontWeight.Normal,
-        fontSize = 13.sp,
+        fontSize = 14.sp,
     ), // заголовок в карточках
 
     bodyLarge = TextStyle(
@@ -64,6 +64,19 @@ val Typography = Typography(
         fontFamily = Golos,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
-    ) // заметки
+    ), // заметки
+
+    bodySmall = TextStyle(
+        fontFamily = Golos,
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp,
+    ),
+
+
+    labelSmall = TextStyle(
+        fontFamily = Golos,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+    ),
 )
 

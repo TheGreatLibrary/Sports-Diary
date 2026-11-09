@@ -5,7 +5,7 @@
     <string name="bones">Кости</string>
     <string name="bmr">BMR</string>
     <string name="body_scale">СОСТАВ ТЕЛА</string>
-    <string name="sleep_vitals"><![CDATA[СОН И ПОКАЗАТЕЛИ]]></string>
+    <string name="sleep_vitals">СОН</string>
     <string name="h_m">%1$dч %2$dм</string>
     <string name="vo2_max">VO2 Max</string>
     <string name="breath">Дыхание</string>
@@ -28,10 +28,11 @@
     <string name="exercise">ТРЕНИРОВКИ</string>
     <string name="kcal">Ккал</string>
     <string name="minute">мин</string>
+    <string name="hour">ч</string>
     <string name="km">Км</string>
     <string name="active_kcal">Активные ккал</string>
-    <string name="exercise_minutes">Минуты тренировок</string>
-    <string name="standing_hours">Часы стояния</string>
+    <string name="counts_of_steps">Число шагов</string>
+    <string name="sleeps_count">Время сна</string>
     <string name="steps_count">ШАГИ %1$d</string>
     <string name="today_b">СЕГОДНЯ</string>
     <string name="google_health_connect">На этом устройстве не установлен сервис Google Health Connect. Нажмите «+» в правом верхнем углу для установки.</string>

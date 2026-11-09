@@ -14,6 +14,7 @@ import com.sinya.projects.ui.components.swipeCard.components.SwipeBackground
 internal fun NoteCard(
     modifier: Modifier,
     note: String,
+    date: String,
     swipeToEdit: () -> Unit,
     onValueChange: (String) -> Unit,
     onSelect: () -> Unit,
@@ -54,6 +55,7 @@ internal fun NoteCard(
         content = {
             NoteSwipeContent(
                 title = note,
+                date = date,
                 selected = selected,
                 edit = edit,
                 onSelected = onSelect,

@@ -63,11 +63,17 @@ internal class ProportionRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun observeNewProportion(): Flow<ProportionItem> {
+    override fun observeNewProportion(date: String): Flow<ProportionItem> {
         return languageProvider.currentLanguage.flatMapLatest { language ->
             proportionsDao.newProportionsWithPrevData(language).map { items ->
-                ProportionItem(null, "", LocalDate.now().toString(), items)
+                ProportionItem(null, "", date, items)
             }
+        }
+    }
+
+    override suspend fun getWeightUser(): Result<Float> {
+        return runCatching {
+            proportionsDao.getWeightUser()
         }
     }
 

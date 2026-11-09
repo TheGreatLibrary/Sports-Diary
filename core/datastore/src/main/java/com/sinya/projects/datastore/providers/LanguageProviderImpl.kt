@@ -1,6 +1,6 @@
 package com.sinya.projects.datastore.providers
 
-import com.sinya.projects.datastore.SettingsEngine
+import com.sinya.projects.domain.managers.SettingsEngine
 import com.sinya.projects.domain.providers.LanguageProvider
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 @Singleton
-class LanguageProviderImpl @Inject constructor(
+internal class LanguageProviderImpl @Inject constructor(
     private val settingsEngine: SettingsEngine
 ) : LanguageProvider {
 
@@ -17,4 +17,5 @@ class LanguageProviderImpl @Inject constructor(
         .map { it.language }
         .distinctUntilChanged()
 }
+
 

@@ -30,7 +30,7 @@ fun DeltaHint(delta: Float?) {
         Text(
             text = "${abs(delta)}",
             color = color,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 }

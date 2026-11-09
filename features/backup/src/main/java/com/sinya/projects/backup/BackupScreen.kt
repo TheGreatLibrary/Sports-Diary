@@ -90,10 +90,11 @@ fun BackupScreen(
                 Text(
                     text = stringResource(R.string.complete_backup),
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyLarge
                 )
             },
             confirmButton = {
+
                 Button(
                     onClick = {
                         val intent =

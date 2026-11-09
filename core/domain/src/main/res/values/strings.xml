@@ -6,6 +6,9 @@
     <string name="title_already_existed">Название уже существует, дубликаты запрещены</string>
     <string name="all">Все</string>
 
+    <string name="male">Мужской</string>
+    <string name="women">Женский</string>
+
     <string name="custom">Пользовательские</string>
     <string name="base_exercise">Предустановленные</string>
 </resources>

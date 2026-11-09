@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 fun CustomTextButton(
     onClick: () -> Unit,
     text: String,
-    style: TextStyle = MaterialTheme.typography.bodyMedium,
+    style: TextStyle = MaterialTheme.typography.bodyLarge,
     containerColor: Color = Color.Transparent,
     contentColor: Color = MaterialTheme.colorScheme.secondary ,
     disabledContentColor: Color = MaterialTheme.colorScheme.tertiaryContainer,

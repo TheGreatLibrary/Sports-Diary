@@ -22,7 +22,6 @@ fun MusclesNameRow(
         list.forEach {
             Text(
                 text = getText(it.first, it.second),
-                fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodyLarge,
             )

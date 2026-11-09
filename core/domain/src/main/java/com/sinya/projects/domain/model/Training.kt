@@ -1,6 +1,9 @@
 package com.sinya.projects.domain.model
 
-import java.time.LocalDate
+import android.util.Log
+import com.sinya.projects.domain.utils.parseStringToDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 data class Training(
     val id: Int,
@@ -36,6 +39,7 @@ fun List<Training>.monthsForYear(year: Int?): List<Int> {
 }
 
 fun List<Training>.filterByYearMonth(year: Int? = null, month: Int? = null): List<Training> {
+    Log.d("Trainnn", this.toString())
     return this
         .filter { training ->
             training.localDateOrNull()?.let { date ->
@@ -55,6 +59,4 @@ fun List<Training>.filterByMuscle(category: String?): List<Training> {
         }
         .sortedByDescending { it.localDateOrNull() }
 }
-
-fun Training.localDateOrNull(): LocalDate? =
-    runCatching { LocalDate.parse(date) }.getOrNull()
+fun Training.localDateOrNull(): LocalDateTime? = parseStringToDate(date)

@@ -15,8 +15,7 @@ import com.sinya.projects.ui.components.shimmer.ShimmerBox
 import com.sinya.projects.ui.components.shimmer.ShimmerDiagram
 
 @Composable
-fun ExercisePagePlaceholder(
-    title: String,
+internal fun ExercisePagePlaceholder(
     onBackClick: () -> Unit
 ) {
     ScreenColumn(

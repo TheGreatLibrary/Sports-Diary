@@ -10,6 +10,9 @@ internal sealed interface HomeUiState {
     data class Success(
         val date: DayOfMonth,
         val currentPlanId: Int?,
+        val targetStepsCount: Int,
+        val targetSleep: Int,
+        val targetKcalActiveCount: Int,
         val monthDays: List<DayOfMonth>,
         val trainingList: List<Training> = emptyList(),
         val calendarExpanded: Boolean = false,

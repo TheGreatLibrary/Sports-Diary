@@ -16,6 +16,8 @@ internal sealed interface TrainingFormEvent {
     data object Save : TrainingFormEvent
     data class OpenDialogGuide(val title: String, val descr: String) : TrainingFormEvent
 
+    data object CreateRoutineFromWorkout : TrainingFormEvent
+
     data class CalendarState(val state: Boolean) : TrainingFormEvent
     data object OpenBottomSheetCategory : TrainingFormEvent
     data object OpenBottomSheetTraining : TrainingFormEvent

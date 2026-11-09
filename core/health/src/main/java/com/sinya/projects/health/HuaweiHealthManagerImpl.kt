@@ -4,7 +4,7 @@ import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import com.sinya.projects.domain.model.HealthData
 import com.sinya.projects.domain.managers.HealthManager
-import com.sinya.projects.domain.managers.HealthSdkStatus
+import com.sinya.projects.domain.enums.HealthSdkStatus
 import javax.inject.Inject
 
 /**

@@ -37,6 +37,7 @@ internal fun TrainingCardContent(
     expanded: Boolean,
     items: List<ExerciseItemData>,
     repsUnit: String,
+    hideState: Boolean,
     weightUnit: String,
     onExpanded: (Boolean) -> Unit,
     onEditSet: (Int, Int, String?, Boolean) -> Unit,
@@ -51,7 +52,10 @@ internal fun TrainingCardContent(
             .fillMaxWidth()
             .background(
                 shape = MaterialTheme.shapes.small,
-                color = MaterialTheme.colorScheme.secondaryContainer
+                color = when (hideState) {
+                    true -> MaterialTheme.colorScheme.secondaryContainer
+                    else -> MaterialTheme.colorScheme.primaryContainer
+                }
             )
             .clip(shape = MaterialTheme.shapes.small)
             .animateContentSize()
@@ -63,6 +67,7 @@ internal fun TrainingCardContent(
             repsSummary = repsSummary,
             weightsSummary = weightsSummary,
             repsUnit = repsUnit,
+            hideState = hideState,
             weightUnit = weightUnit,
             onClick = { onExpanded(!expanded) }
         )
@@ -87,7 +92,8 @@ private fun CollapsedSummary(
     weightsSummary: AnnotatedString,
     repsUnit: String,
     weightUnit: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    hideState: Boolean
 ) {
     AnimatedVisibility(
         visible = visible,
@@ -105,11 +111,19 @@ private fun CollapsedSummary(
                 text = repsSummary,
                 unit = repsUnit,
                 modifier = Modifier.weight(1f),
+                color = when (hideState) {
+                    false -> MaterialTheme.colorScheme.secondaryContainer
+                    else -> MaterialTheme.colorScheme.primaryContainer
+                }
             )
             SummaryPill(
                 text = weightsSummary,
                 unit = weightUnit,
                 modifier = Modifier.weight(1f),
+                color = when (hideState) {
+                    false -> MaterialTheme.colorScheme.secondaryContainer
+                    else -> MaterialTheme.colorScheme.primaryContainer
+                }
             )
         }
     }

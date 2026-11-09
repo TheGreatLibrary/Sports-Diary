@@ -26,7 +26,7 @@ import com.sinya.projects.domain.useCase.ObserveExerciseDescriptionUseCase
 import com.sinya.projects.domain.useCase.UpsertCustomExerciseUseCase
 import com.sinya.projects.domain.utils.UndoManager
 import com.sinya.projects.domain.utils.getErrorMessage
-import com.sinya.projects.editexercise.subScreen.saveImageToInternalStorage
+import com.sinya.projects.domain.utils.saveImageToInternalStorage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

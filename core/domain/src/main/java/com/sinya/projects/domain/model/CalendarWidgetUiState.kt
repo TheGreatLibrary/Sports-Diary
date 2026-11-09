@@ -1,8 +1,8 @@
 package com.sinya.projects.domain.model
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class CalendarWidgetUiState(
-    val date: LocalDate,
+    val date: LocalDateTime?,
     val monthDays: List<DayOfMonth>
 )

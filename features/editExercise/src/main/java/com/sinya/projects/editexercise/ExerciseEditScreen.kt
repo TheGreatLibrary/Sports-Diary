@@ -153,7 +153,7 @@ private fun ExerciseEditView(
                                 )
                             )
                         },
-                        imageUri = state.exercise.icon?.toUri(),
+                        imageUri = state.exercise.icon,
                         onImageSelected = { uri ->
                             onEvent(ExerciseEditEvent.OnImagePicked(uri, context))
                         }

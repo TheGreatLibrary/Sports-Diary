@@ -23,4 +23,7 @@
     <string name="day_7">7 days</string>
     <string name="week">week</string>
     <string name="heat_map">HeatMap</string>
+    <string name="google_play">Google Play beta test</string>
+    <string name="put_data_of_user">Set goals and data</string>
+    <string name="personal_settings">User</string>
 </resources>

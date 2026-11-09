@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_title">Анкета спортсмена</string>
+
+
+
+    <string name="years_date">Дата рождения</string>
+
+    <string name="max_plc">Макс. пульс</string>
+    <string name="plc_min">уд/мин</string>
+    <string name="auto_data">" (Авто)"</string>
+
+    <string name="weight_chci">Желаемый вес</string>
+
+    <string name="steps_chci">Цель по шагам</string>
+    <string name="steps_unit">шагов</string>
+
+    <string name="lenght_sleep">Цель по сну</string>
+    <string name="time_sleep">%1$s:%2$s</string>
+    <string name="count_sleep">чч:мм</string>
+
+    <string name="chci_kkal">Цель по калориям</string>
+    <string name="kkal_unit">ккал</string>
+
+    <plurals name="calculated_years">
+        <item quantity="one">%1$d год</item>
+        <item quantity="few">%1$d года</item>
+        <item quantity="many">%1$d лет</item>
+        <item quantity="other">%1$d года</item>
+    </plurals>
+</resources>

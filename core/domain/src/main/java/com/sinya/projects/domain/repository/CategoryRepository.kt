@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface CategoryRepository {
     fun observeCategoryEntity(id: Int?): Flow<CategoryEntity>
+    suspend fun duplicateRoutine(id: Int): Result<Int>
 }

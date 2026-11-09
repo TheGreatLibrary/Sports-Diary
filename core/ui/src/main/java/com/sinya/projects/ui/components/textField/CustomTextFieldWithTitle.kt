@@ -1,4 +1,4 @@
-package com.sinya.projects.calculator.components
+package com.sinya.projects.ui.components.textField
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
@@ -15,9 +15,8 @@ import com.sinya.projects.domain.model.ProportionRow
 import com.sinya.projects.domain.utils.getString
 import com.sinya.projects.ui.components.trainingConstructor.CompactUnitField
 
-
 @Composable
-internal fun InputCalculateCard(
+fun CustomTextFieldWithTitle(
     title: String,
     item: ProportionRow,
     onValueChange: (Int, String, String) -> Unit,

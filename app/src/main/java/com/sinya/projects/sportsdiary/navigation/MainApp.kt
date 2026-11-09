@@ -19,6 +19,7 @@ import com.sinya.projects.calculator.CalculatorScreen
 import com.sinya.projects.domain.model.TypeBottomNavigation
 import com.sinya.projects.editexercise.ExerciseEditScreen
 import com.sinya.projects.exercises.ExercisesScreen
+import com.sinya.projects.form.UserProfileScreen
 import com.sinya.projects.health.HealthDataScreen
 import com.sinya.projects.home.HomeScreen
 import com.sinya.projects.menu.MenuScreen
@@ -78,7 +79,6 @@ fun MainApp() {
         modifier = Modifier
             .fillMaxSize()
             .background(
-//                MaterialTheme.colorScheme.background
                 brush = gradients.basedGradient
             ),
         contentAlignment = Alignment.BottomCenter
@@ -187,7 +187,7 @@ private fun NavGraph(
         }
 
         composable<ScreenRoute.Settings> {
-            SettingsScreen(onBackClick = navigateToBackStack)
+            SettingsScreen(onBackClick = navigateToBackStack, onFormProfile = { navigateTo(ScreenRoute.Form, null) })
         }
 
         composable<ScreenRoute.Training> {
@@ -242,6 +242,7 @@ private fun NavGraph(
 
             ProportionPageScreen(
                 id = args.id,
+                date = args.date,
                 onBackClick = navigateToBackStack,
             )
         }
@@ -289,6 +290,12 @@ private fun NavGraph(
         }
         composable<ScreenRoute.WatchData> {
             HealthDataScreen(
+                onBackClick = navigateToBackStack
+            )
+        }
+
+        composable<ScreenRoute.Form> {
+            UserProfileScreen(
                 onBackClick = navigateToBackStack
             )
         }

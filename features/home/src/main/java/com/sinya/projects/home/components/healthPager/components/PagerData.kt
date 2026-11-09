@@ -43,8 +43,7 @@ internal fun PagerData(
             )
             Text(
                 text = list[page].count.toString(),
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.bodySmall,
                 color = Color(list[page].color.toArgb())
             )
         }

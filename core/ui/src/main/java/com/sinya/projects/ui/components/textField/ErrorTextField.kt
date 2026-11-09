@@ -106,7 +106,7 @@ fun ErrorTextField(
             Text(
                 text = if (isError) errorMessage else "",
                 color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

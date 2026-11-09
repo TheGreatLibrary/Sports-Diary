@@ -34,8 +34,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sinya.projects.domain.model.PopupItem
 import com.sinya.projects.domain.model.TypeTopNavigation
 import com.sinya.projects.domain.model.localDateOrNull
+import com.sinya.projects.domain.utils.parseStringToDate
 import com.sinya.projects.proportions.components.ProportionsPlaceholder
 import com.sinya.projects.ui.R.string
+import com.sinya.projects.ui.components.CustomSnackbar
 import com.sinya.projects.ui.components.PopupMenu
 import com.sinya.projects.ui.components.dragToSelect.dragToSelect
 import com.sinya.projects.ui.components.screen.ScreenLazySmartHeader
@@ -44,10 +46,9 @@ import com.sinya.projects.ui.components.sheet.components.DeleteSheetContent
 import com.sinya.projects.ui.components.sheet.components.SortSheetContent
 import com.sinya.projects.ui.components.smartHeader.util.rememberSmartHeaderManager
 import com.sinya.projects.ui.components.swipeCard.SwipeCard
-import com.sinya.projects.ui.components.CustomSnackbar
-import com.sinya.projects.ui.theme.LocalDateFormatDMY
+import com.sinya.projects.ui.theme.LocalDateFormatDMY_HM
 import com.sinya.projects.ui.theme.LocalDateFormatMY
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.YearMonth
 
 @Composable
@@ -85,7 +86,7 @@ private fun ProportionsScreenView(
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
-    val dateFmt = LocalDateFormatDMY.current
+    val dateFmt = LocalDateFormatDMY_HM.current
     val dateFormat = LocalDateFormatMY.current
 
     val pullToRefreshState = rememberPullToRefreshState()
@@ -107,7 +108,7 @@ private fun ProportionsScreenView(
     }
     val grouped = remember(state.proportions, state.selectedMode) {
         state.selectedMode.filter(state.proportions).groupBy {
-            val date = LocalDate.parse(it.date)
+            val date = parseStringToDate(it.date)
             YearMonth.of(date.year, date.month)
         }
     }

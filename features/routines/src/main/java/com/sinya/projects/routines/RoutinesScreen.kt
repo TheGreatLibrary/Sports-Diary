@@ -197,9 +197,14 @@ private fun CategoriesScreenView(
                                 icon = com.sinya.projects.ui.R.drawable.nav_stat
                             ),
                             PopupItem(
+                                title = stringResource(R.string.duplicate),
+                                onClick = { onEvent(RoutinesEvent.DuplicateRoutine(it.id)) },
+                                icon = com.sinya.projects.ui.R.drawable.ic_duplicate
+                            ),
+                            PopupItem(
                                 title = stringResource(R.string.plan_morning),
                                 onClick = { onEvent(RoutinesEvent.OnPlanClick(it.id)) },
-                                icon = com.sinya.projects.ui.R.drawable.back_export
+                                icon = com.sinya.projects.ui.R.drawable.ic_calendar
                             ),
                             PopupItem(
                                 title = stringResource(com.sinya.projects.ui.R.string.delete),

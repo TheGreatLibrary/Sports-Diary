@@ -36,7 +36,7 @@ fun BoxScope.CustomSnackbar(
             Box(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                 Text(
                     text = data.visuals.message,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
             }

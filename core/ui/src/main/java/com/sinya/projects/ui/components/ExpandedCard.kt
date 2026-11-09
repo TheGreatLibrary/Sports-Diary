@@ -57,7 +57,6 @@ fun ExpandedCard(
                 text = title,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onPrimary,
-                fontSize = 14.sp,
             )
             IconButton(
                 modifier = Modifier

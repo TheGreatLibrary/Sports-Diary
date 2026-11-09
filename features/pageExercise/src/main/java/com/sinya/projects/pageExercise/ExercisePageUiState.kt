@@ -11,8 +11,8 @@ sealed interface ExercisePageUiState {
         val exercise: ExerciseWithFullData,
         val exMuscles: List<ExerciseMusclesData> = emptyList(),
         val bodyVisible: Boolean = false,
-        val rules: List<String>,                 // Уже порезанные и очищенные правила
-        val listMuscle: List<DataExerciseMuscles>, // Уже смапленные мышцы для BodyCard
+        val rules: List<String>,
+        val listMuscle: List<DataExerciseMuscles>,
         val mediaItems: List<ExerciseMediaItem>,
         val allMuscles: List<Pair<Int, String>>,
         val nameExerciseForImages: String

@@ -33,7 +33,7 @@ internal fun PointRule(index: Int, item: String) {
         Text(
             text = item,
             modifier = Modifier.fillMaxWidth(),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimary
         )
     }

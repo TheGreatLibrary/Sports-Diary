@@ -25,6 +25,7 @@ fun CustomTextField(
     value: String,
     placeholder: String,
     maxLines: Int = 1,
+    minLines: Int = 1,
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester = FocusRequester(),
     colors: TextFieldColors = TextFieldDefaults.colors(
@@ -45,9 +46,10 @@ fun CustomTextField(
     BasicTextField(
         value = value,
         onValueChange = { s -> onValueChange(s) },
-        textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary, fontSize = 12.sp),
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary, fontSize = 14.sp),
         cursorBrush = SolidColor(contentColor),
         maxLines = maxLines,
+        minLines = minLines,
         modifier = Modifier
             .fillMaxWidth()
             .focusRequester(focusRequester)
@@ -66,9 +68,11 @@ fun CustomTextField(
                 placeholder = {
                     Text(
                         text = placeholder,
+                        minLines = minLines,
+                        maxLines = maxLines,
                         style = MaterialTheme.typography.bodyLarge.copy(
                             color = MaterialTheme.colorScheme.onSecondary,
-                            fontSize = 12.sp
+                            fontSize = 14.sp
                         )
                     )
                 },

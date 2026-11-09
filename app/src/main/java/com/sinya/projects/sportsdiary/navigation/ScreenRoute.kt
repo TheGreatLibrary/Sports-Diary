@@ -65,6 +65,9 @@ sealed class ScreenRoute(val route: String) {
 
     @Serializable
     data object Notes : ScreenRoute("Notes")
+
+    @Serializable
+    data object Form : ScreenRoute("Form")
 }
 
 val WITH_BOTTOM_BAR = setOf(

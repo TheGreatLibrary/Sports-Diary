@@ -10,6 +10,7 @@ import com.sinya.projects.domain.useCase.ObserveProportionEntityUseCase
 import com.sinya.projects.domain.useCase.UpsertProportionUseCase
 import com.sinya.projects.domain.utils.UndoManager
 import com.sinya.projects.domain.utils.getErrorMessage
+import com.sinya.projects.domain.utils.parseDateToStringDB
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -33,11 +34,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel(assistedFactory = ProportionPageViewModel.Factory::class)
 internal class ProportionPageViewModel @AssistedInject constructor(
     @Assisted("id") private val id: Int?,
+    @Assisted("date") private val date: String?,
     private val observeProportionEntityUseCase: ObserveProportionEntityUseCase,
     private val observeNewProportionEntityUseCase: ObserveNewProportionEntityUseCase,
     private val upsertProportionUseCase: UpsertProportionUseCase,
@@ -55,7 +58,8 @@ internal class ProportionPageViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("id") id: Int?
+            @Assisted("id") id: Int?,
+            @Assisted("date") date: String?
         ): ProportionPageViewModel
     }
 
@@ -68,7 +72,7 @@ internal class ProportionPageViewModel @AssistedInject constructor(
         measureId
             .flatMapLatest { id ->
                 when (id) {
-                    null -> observeNewProportionEntityUseCase()
+                    null -> observeNewProportionEntityUseCase(date ?: parseDateToStringDB(LocalDateTime.now()))
                     else -> observeProportionEntityUseCase(id)
                 }
             }

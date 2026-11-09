@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 internal fun ActivityRingsCanvas(
     kcalProgress: Float,
-    exerciseProgress: Float,
-    standingProgress: Float,
+    sleepProgress: Float,
+    stepsProgress: Float,
     orangeColor: Color = MaterialTheme.colorScheme.primary,
     darkColor: Color = MaterialTheme.colorScheme.secondary,
     greyColor: Color = MaterialTheme.colorScheme.tertiary,
@@ -28,7 +28,7 @@ internal fun ActivityRingsCanvas(
     val trackColor = MaterialTheme.colorScheme.surfaceContainerLowest
 
     Canvas(modifier = modifier) {
-        val strokeWidth = 14.dp.toPx()
+        val strokeWidth = 10.dp.toPx()
         val gap = 5.dp.toPx()
         val startAngle = -90f
         val maxSweep = 270f // Треть круга остается открытой слева внизу, как на картинке
@@ -48,7 +48,7 @@ internal fun ActivityRingsCanvas(
         drawArc(
             color = orangeColor,
             startAngle = startAngle,
-            sweepAngle = maxSweep * kcalProgress,
+            sweepAngle = maxSweep * stepsProgress,
             useCenter = false,
             topLeft = outerTopLeft,
             size = Size(outerDiameter, outerDiameter),
@@ -70,7 +70,7 @@ internal fun ActivityRingsCanvas(
         drawArc(
             color = darkColor,
             startAngle = startAngle,
-            sweepAngle = maxSweep * exerciseProgress,
+            sweepAngle = maxSweep * kcalProgress,
             useCenter = false,
             topLeft = midTopLeft,
             size = Size(midDiameter, midDiameter),
@@ -92,7 +92,7 @@ internal fun ActivityRingsCanvas(
         drawArc(
             color = greyColor,
             startAngle = startAngle,
-            sweepAngle = maxSweep * standingProgress,
+            sweepAngle = maxSweep * sleepProgress,
             useCenter = false,
             topLeft = innerTopLeft,
             size = Size(innerDiameter, innerDiameter),

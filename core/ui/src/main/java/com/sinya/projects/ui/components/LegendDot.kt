@@ -30,8 +30,7 @@ fun LegendDot(
         )
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyLarge,
-            fontSize = 12.sp,
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onPrimary
         )
     }

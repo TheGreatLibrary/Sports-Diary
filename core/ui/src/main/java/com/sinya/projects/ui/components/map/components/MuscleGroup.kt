@@ -47,7 +47,7 @@ internal fun MuscleGroup(
         }
         Text(
             text = muscles,
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.padding(start = 16.dp)
         )

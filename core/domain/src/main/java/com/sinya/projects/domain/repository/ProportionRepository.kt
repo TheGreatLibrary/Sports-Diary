@@ -18,10 +18,11 @@ interface ProportionRepository {
     suspend fun getMeasurementData(list: List<Int>): Result<List<ChartLine>>
 
     fun observeProportionEntityById(id: Int): Flow<ProportionItem>
-    fun observeNewProportion(): Flow<ProportionItem>
     suspend fun getMeasurementDataById(id: Int): Result<ProportionDialogContent>
     suspend fun getMeasurementsList(): Result<List<DropdownCheckboxItem>>
     fun getList(start: String, end: String): Flow<List<ProportionsEntry>>
+    fun observeNewProportion(date: String): Flow<ProportionItem>
+    suspend fun getWeightUser(): Result<Float>
 }
 
 

@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CharacteristicRow(
+internal fun CharacteristicRow(
     label: String,
     value: String
 ) {
@@ -28,7 +28,7 @@ fun CharacteristicRow(
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onPrimary
         )
     }

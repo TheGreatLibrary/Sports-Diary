@@ -1,6 +1,8 @@
 package com.sinya.projects.domain.model
 
+import com.sinya.projects.domain.utils.parseStringToDate
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class NoteItem(
     val id: Int = 0,
@@ -10,8 +12,8 @@ data class NoteItem(
     val selected: Boolean = false
 )
 
-fun NoteItem.localDateOrNull(): LocalDate? =
-    runCatching { LocalDate.parse(date) }.getOrNull()
+fun NoteItem.localDateOrNull(): LocalDateTime? = parseStringToDate(date)
+
 
 fun List<NoteItem>.monthsForYear(year: Int?): List<Int> {
     return this

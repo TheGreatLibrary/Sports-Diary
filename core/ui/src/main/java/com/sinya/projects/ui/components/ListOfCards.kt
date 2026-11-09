@@ -70,15 +70,13 @@ fun ListOfCards(
                     )
                     Text(
                         text = item.title,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontSize = 12.sp,
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                     item.description?.let {
                         Text(
                             text = "•  $it",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontSize = 12.sp,
+                            style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSecondary
                         )
                     }

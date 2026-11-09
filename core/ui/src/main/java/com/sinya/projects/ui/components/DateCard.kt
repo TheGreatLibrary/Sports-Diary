@@ -12,20 +12,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.sinya.projects.domain.utils.parseDateToStringUI
 import com.sinya.projects.ui.R
 import com.sinya.projects.ui.components.annotatedText.TextPart
 import com.sinya.projects.ui.components.annotatedText.buildAnnotatedText
-import com.sinya.projects.ui.theme.LocalDateFormatDMY
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Composable
 fun DateCard(
     onDateClick: () -> Unit,
-    date: String
+    date: LocalDateTime
 ) {
-    val formatter = LocalDateFormatDMY.current
-    val currentDate = remember(date) { LocalDate.parse(date).format(formatter) }
-    
+    val currentDate = remember(date) { parseDateToStringUI(date) }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),

@@ -126,7 +126,7 @@ private fun StepInputCard(
             placeholder = "Опишите действие...",
             maxLines = 7,
             trailingIcon = {
-                IconButton(onClick = { if (canRemove) onRemove() }, modifier = Modifier.size(32.dp)) {
+                IconButton(onClick = { if (canRemove) onRemove() }, modifier = Modifier.size(18.dp)) {
                     Icon(
                         painter = painterResource(R.drawable.morn_trash),
                         contentDescription = "Удалить шаг",

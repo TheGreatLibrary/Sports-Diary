@@ -1,5 +1,6 @@
 package com.sinya.projects.pagetraining.form
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sinya.projects.domain.error.EmptyTitleError
@@ -51,6 +52,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDateTime
+import java.util.UUID
 import kotlin.collections.fold
 import kotlin.collections.map
 
@@ -292,6 +296,8 @@ internal class TrainingFormViewModel @AssistedInject constructor(
             is TrainingFormEvent.Undo -> undo()
 
             is TrainingFormEvent.Redo -> redo()
+
+            TrainingFormEvent.CreateRoutineFromWorkout -> createRoutineFromWorkout()
         }
     }
 
@@ -330,6 +336,39 @@ internal class TrainingFormViewModel @AssistedInject constructor(
                 )
             }
             updateIfForm { it.copy(isUndoing = false) }
+        }
+    }
+
+    private fun createRoutineFromWorkout() {
+        val s = _state.value as? TrainingFormUiState.TrainingForm ?: return
+
+        viewModelScope.launch {
+            val items = s.item.items.map {
+                DataTypeTrainingsEntry(
+                    typeId = 0,
+                    exerciseId = it.id,
+                    mode = it.mode.mode,
+                    weight = it.weightState.state,
+                    orderIndex = it.orderIndex
+                )
+            }
+
+            insertCategoryUseCase(
+                item = TypeTrainingEntry(0, "Nameless Routine at ${Instant.now().epochSecond}"),
+                items = items
+            ).fold(
+                onSuccess = {
+                    Log.d("HomeViewModel", "$it")
+                },
+                onFailure = { error ->
+                    Log.d("HomeViewModel", "$error")
+                    updateIfForm {
+                        it.copy(
+                            errorMessage = error.getErrorMessage()
+                        )
+                    }
+                }
+            )
         }
     }
 
@@ -489,5 +528,4 @@ internal class TrainingFormViewModel @AssistedInject constructor(
             }
         }
     }
-
 }
